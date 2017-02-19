@@ -1,1 +1,2 @@
-./qtbuild/
+build_support/CMakeLists.txt.user
+qtbuild/
