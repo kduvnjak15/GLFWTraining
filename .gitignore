@@ -1,2 +1,3 @@
 build_support/CMakeLists.txt.user
 qtbuild/
+Shaders/*~

@@ -1,9 +1,15 @@
 #include <iostream>
+#include <cmath>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
+#include "GT_Shader.h"
+
 #define WINDOW_WIDTH  800
 #define WINDOW_HEIGHT 600
+
+#define VShader "../Shaders/shader.vs"
+#define FShader "../Shaders/shader.fs"
 
 class initialCallbacks
 {
@@ -69,25 +75,46 @@ public:
 
     bool Run()
     {
+        glGenVertexArrays(1, &VAO_);
+        glBindVertexArray(VAO_);
+
 
         glGenBuffers(1, &VBO_);
         glBindBuffer(GL_ARRAY_BUFFER, VBO_);
         glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
+
+        glGenBuffers(1, &EBO_);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO_);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3*sizeof(float), (const GLvoid*)0);
+        glEnableVertexAttribArray(0);
+
+
+
+glBindVertexArray(0);
+
+        GT_Shader(VShader, FShader);
+
+glBindVertexArray(VAO_);
+        int b= 0;
         while (!glfwWindowShouldClose(windowPtr_))
         {
+            b++;
             glfwPollEvents();
             /////////////////////    rendering    //////////////////
 
-            glClearColor(0.2f, 0.0f, 0.0f, 1.0f);
+            glClearColor(0.0, 0.15f, 0.1f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            glDrawElements(GL_TRIANGLES, 6,GL_UNSIGNED_INT, 0);
 
 
 
             ////////////////////////////////////////////////////////
             glfwSwapBuffers(windowPtr_);
         }
-
+glBindVertexArray(0);
         glfwTerminate();
         return true;
     }
@@ -110,15 +137,29 @@ private:
         {
             glfwSetWindowShouldClose(window, GL_TRUE);
         }
+
+        if (key == GLFW_KEY_SPACE && action == GLFW_PRESS)
+        {
+            glDrawArrays(GL_TRIANGLES, 0, 3);
+        }
     }
 
-    GLfloat vertices[9] = {-0.5f, -0.5f, 0.0f,
-                           0.5f, -0.5f, 0.0f,
-                           0.0f, 0.5f, 0.0f};
+    GLfloat vertices[12] = {
+    0.5f, 0.5f, 0.0f, // Top Right
+    0.5f, -0.5f, 0.0f, // Bottom Right
+    -0.5f, -0.5f, 0.0f, // Bottom Left
+    -0.5f, 0.5f, 0.0f // Top Left
+    };
+
+
+    GLuint indices[6] = { 0, 1, 3,
+                         1, 2, 3};
 
 //class private members
 private:
     GLuint VBO_;
+    GLuint VAO_;
+    GLuint EBO_;
     GLFWwindow* windowPtr_;
 };
 
