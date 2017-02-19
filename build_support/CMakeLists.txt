@@ -1,0 +1,31 @@
+cmake_minimum_required(VERSION 2.8)
+project(GLFWTraining)
+
+set(INC_DIR .)
+set(INC_DIR ../Include ${INC_DIR})
+
+include_directories(${INC_DIR})
+
+set(LIBS libglut.so)
+set(LIBS libGL.so ${LIBS})
+set(LIBS libGLEW.so ${LIBS})
+set(LIBS libglfw.so.3 ${LIBS})
+set(LIBS libopengl.so ${LIBS})
+set(LIBS libcommon.a ${LIBS})
+set(LIBS libSOIL.a ${LIBS}) 
+
+set(LIBS_DIR /home/duvnjakk/workspace/GlfwTraining/Lib)
+link_directories( ${LIBS_DIR} )
+
+file(GLOB SOURCES "../Source/*.cpp")
+file(GLOB SHADERS "./*.fs" "./*.vs")
+#set(SOURCES "../Src/main.cpp")
+
+
+set ( CMAKE_CXX_FLAGS "-std=c++11")
+
+add_executable(glfwtraining ${SOURCES})
+
+target_link_libraries(glfwtraining ${LIBS})
+
+
