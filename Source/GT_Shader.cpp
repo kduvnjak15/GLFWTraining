@@ -1,6 +1,6 @@
 #include <GT_Shader.h>
 #include <iostream>
-#include <string.h>
+#include <sstream>
 #include <fstream>
 
 
@@ -8,22 +8,32 @@
 GT_Shader::GT_Shader(const char* vsFileName, const char* fsFileName)
 {
 
-    if (!ReadShader(vsFileName, vertexShaderSource))
-        std::cout<< " Vertex Shader File invalid! "<<std::endl;
-    if (!ReadShader(fsFileName, fragmentShaderSource))
-        std::cout<< " Fragment Shader File invalid! "<<std::endl;
+    std::ifstream vShaderFile;
+    std::ifstream fShaderFile;
+
+    vShaderFile.open(vsFileName);
+    fShaderFile.open(fsFileName);
+
+    std::stringstream vShaderStream, fShaderStream;
+
+    vShaderStream << vShaderFile.rdbuf();
+    fShaderStream << fShaderFile.rdbuf();
+
+    vShaderFile.close();
+    fShaderFile.close();
+
+    vertexShaderSource = vShaderStream.str();
+    fragmentShaderSource = fShaderStream.str();
+
+    const GLchar* vertexShaderCode = vertexShaderSource.c_str();
+    const GLchar* fragmentShaderCode = fragmentShaderSource.c_str();
 
 
     ///////////////////     vertex shader    //////////////////////////////////
     vertexShader_ = glCreateShader(GL_VERTEX_SHADER);
 
-    const GLchar* p[1];
-    p[0] = vertexShaderSource.c_str();
-    GLint Lengths[1];
-    Lengths[0]= strlen( p[0] );
 
-
-    glShaderSource(vertexShader_, 1, p, Lengths);
+    glShaderSource(vertexShader_, 1, &vertexShaderCode, NULL);
     glCompileShader(vertexShader_);
 
     GLint success;
@@ -39,10 +49,8 @@ GT_Shader::GT_Shader(const char* vsFileName, const char* fsFileName)
     /////////////////////    fragment shader    ////////////////////////////////
     fragmentShader_ = glCreateShader(GL_FRAGMENT_SHADER);
 
-    p[0] = fragmentShaderSource.c_str();
-    Lengths[0]= strlen( p[0] );
 
-    glShaderSource(fragmentShader_, 1, p, Lengths);
+    glShaderSource(fragmentShader_, 1, &fragmentShaderCode, NULL);
     glCompileShader(fragmentShader_);
 
     glGetShaderiv(fragmentShader_, GL_COMPILE_STATUS, &success);
@@ -54,25 +62,26 @@ GT_Shader::GT_Shader(const char* vsFileName, const char* fsFileName)
 
 
     ///////////////////////     shader program    //////////////////////////////
-    shaderProgram_ = glCreateProgram();
-    glAttachShader(shaderProgram_, vertexShader_);
-    glAttachShader(shaderProgram_, fragmentShader_);
-    glLinkProgram(shaderProgram_);
+    this->shaderProgram_ =  glCreateProgram();
+    glAttachShader(this->shaderProgram_, vertexShader_);
+    glAttachShader(this->shaderProgram_, fragmentShader_);
+    glLinkProgram(this->shaderProgram_);
 
-    glGetProgramiv(shaderProgram_, GL_LINK_STATUS, &success);
+    glGetProgramiv(this->shaderProgram_, GL_LINK_STATUS, &success);
     if (!success)
     {
-        glGetProgramInfoLog(shaderProgram_, 512, NULL, infoLog);
+        glGetProgramInfoLog(this->shaderProgram_, 512, NULL, infoLog);
         std::cout<< "ERROR:: FRAGMENT_SHADER_COMPILE_FAILED! "<<infoLog<<std::endl;
     }
 
-    glUseProgram(shaderProgram_);
-
     glDeleteShader(vertexShader_);
     glDeleteShader(fragmentShader_);
-
 }
 
+void GT_Shader::Use()
+{
+    glUseProgram(this->shaderProgram_);
+}
 
 bool GT_Shader::ReadShader(const char* shaderFileName, std::string& outFile )
 {

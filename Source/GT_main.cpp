@@ -95,13 +95,18 @@ public:
 
 glBindVertexArray(0);
 
-        GT_Shader(VShader, FShader);
+        shader_ = new GT_Shader(VShader, FShader);
+        shader_->Use();
+
+        GLfloat uniformInt = glGetUniformLocation(shader_->shaderProgram_, "katarina");
+
 
 glBindVertexArray(VAO_);
-        int b= 0;
+
+
         while (!glfwWindowShouldClose(windowPtr_))
         {
-            b++;
+
             glfwPollEvents();
             /////////////////////    rendering    //////////////////
 
@@ -109,7 +114,7 @@ glBindVertexArray(VAO_);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             glDrawElements(GL_TRIANGLES, 6,GL_UNSIGNED_INT, 0);
 
-
+            glUniform1f(uniformInt, rgbc);
 
             ////////////////////////////////////////////////////////
             glfwSwapBuffers(windowPtr_);
@@ -140,7 +145,8 @@ private:
 
         if (key == GLFW_KEY_SPACE && action == GLFW_PRESS)
         {
-            glDrawArrays(GL_TRIANGLES, 0, 3);
+            std::cout<<rgbc<<std::endl;
+            rgbc = sin(glfwGetTime());
         }
     }
 
@@ -161,6 +167,10 @@ private:
     GLuint VAO_;
     GLuint EBO_;
     GLFWwindow* windowPtr_;
+
+    GT_Shader* shader_;
+    GLfloat rgbc;
+
 };
 
 
