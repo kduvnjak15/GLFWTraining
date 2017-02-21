@@ -1,15 +1,13 @@
 #version 330 core
 
+in vec2 texCoord; 
+uniform sampler2D texSampler; 
 
-uniform float katarina; 
 
-in vec4 ccolor; 
 out vec4 color; 
-
 void main()
 {
-	color = vec4(katarina, 0.0f, 0.0f, 1.0f);
-
+	color = texture(texSampler, texCoord); 
 }
 
 

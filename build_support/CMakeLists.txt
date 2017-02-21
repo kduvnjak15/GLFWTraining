@@ -12,7 +12,7 @@ set(LIBS libGLEW.so ${LIBS})
 set(LIBS libglfw.so.3 ${LIBS})
 set(LIBS libopengl.so ${LIBS})
 set(LIBS libcommon.a ${LIBS})
-set(LIBS libSOIL.a ${LIBS}) 
+set(LIBS libSOIL.so ${LIBS}) 
 
 set(LIBS_DIR /home/duvnjakk/workspace/GlfwTraining/Lib)
 link_directories( ${LIBS_DIR} )
