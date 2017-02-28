@@ -27,8 +27,8 @@ GT_Texture::GT_Texture(const char* textureImagePath)
 }
 
 
-void GT_Texture::Bind()
+void GT_Texture::Bind(GLuint textureUnit)
 {
-    glActiveTexture(GL_TEXTURE0);
+    glActiveTexture(textureUnit);
     glBindTexture(GL_TEXTURE_2D, texture_);
 }

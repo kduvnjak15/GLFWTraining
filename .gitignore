@@ -2,3 +2,9 @@ build_support/CMakeLists.txt.user
 qtbuild/
 Shaders/*~
 .gitignore~
+build_support/CMakeCache.txt
+build_support/CMakeFiles/
+build_support/GLFWTraining.cbp
+build_support/Makefile
+build_support/cmake_install.cmake
+build_support/glfwtraining

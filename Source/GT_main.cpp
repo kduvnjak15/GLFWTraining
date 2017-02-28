@@ -1,16 +1,27 @@
 #include <iostream>
 #include <cmath>
+
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
+
 #include "GT_Shader.h"
 #include "GT_Texture.h"
+#include "GT_Camera.h"
 
-#define WINDOW_WIDTH  800
-#define WINDOW_HEIGHT 600
+//#include "GT_Skybox.h"
+
+const GLuint window_width = 800;
+const GLuint window_height = 600;
 
 #define VShader "../Shaders/shader.vs"
 #define FShader "../Shaders/shader.fs"
+
+
+bool keys[1024];
+GLfloat deltaTime = 0.0f;
+GLfloat lastFrame = 0.0f;
+
 
 class initialCallbacks
 {
@@ -28,13 +39,10 @@ static void KeyboardCB(GLFWwindow* window, int key, int scancode, int action, in
 }
 
 
-
-
-
 class GAME : public initialCallbacks
 {
 public:
-    GAME() : s(0)
+    GAME() : s_(0)
 
     {
         gamePointer = this;
@@ -52,7 +60,7 @@ public:
         glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 
         // CreateWindow
-        windowPtr_ = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "GLFWTraining", NULL, NULL);
+        windowPtr_ = glfwCreateWindow(window_width, window_height, "GLFWTraining", NULL, NULL);
         if (windowPtr_ == NULL)
         {
             std::cout<<"Failed to create GLFW window"<<std::endl;
@@ -106,9 +114,11 @@ glBindVertexArray(0);
         shader_ = new GT_Shader(VShader, FShader);
         shader_->Use();
 
+        texture1 = new GT_Texture("../Content/bricks.jpg");
+        texture2 = new GT_Texture("../Content/sun.jpg");
 
-        texture_ = new GT_Texture("../Content/bricks.jpg");
-        texture_->Bind();
+        texture1->Bind(GL_TEXTURE0);
+        texture2->Bind(GL_TEXTURE1);
 
         GLint uniformInt = glGetUniformLocation(shader_->shaderProgram_, "texSampler");
         glUniform1i(uniformInt, 0);
@@ -117,16 +127,46 @@ glBindVertexArray(0);
 
 glBindVertexArray(VAO_);
 
-
         while (!glfwWindowShouldClose(windowPtr_))
         {
+            GLfloat currentFrame;
 
             glfwPollEvents();
+            do_movement();
+            /////////////////////      time       //////////////////
+            // Set frame time
+
+             currentFrame = glfwGetTime();
+             deltaTime = currentFrame - lastFrame;
+             lastFrame = currentFrame;
+
+            std::cout<<1.0/deltaTime<<std::endl;
+
+            //////////////////    camera movement    ///////////////
+            glm::mat4 view = camera_->GetViewMatrix();
+            glm::mat4 projection = glm::perspective(ZOOM, (window_width*1.0f)/window_height, 0.1f, 1000.0f);
+            // Get the uniform locations
+            GLint modelLoc = glGetUniformLocation(shader_->shaderProgram_, "model");
+            GLint viewLoc = glGetUniformLocation(shader_->shaderProgram_, "view");
+            GLint projLoc = glGetUniformLocation(shader_->shaderProgram_, "projection");
+            // Pass the matrices to the shader
+            glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+            glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
+
+            glm::mat4 model;
+            model = glm::translate(model, camera_->getCameraPos());
+            model = glm::mat4(1.0f);
+
+            std::cout<<camera_->getCameraPos().x<<", "<<camera_->getCameraPos().y<<std::endl;
+
+            glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+
             /////////////////////    rendering    //////////////////
 
             glClearColor(0.0, 0.15f, 0.1f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+            glUniform1i(uniformInt, s_);
 
             glDrawElements(GL_TRIANGLES, 6,GL_UNSIGNED_INT, 0);
 
@@ -142,7 +182,20 @@ private:
 //class private function members
     void initSceneContext()
     {
-        glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
+        glViewport(0, 0, window_width, window_height);
+    }
+
+    void do_movement()
+    {
+        // Camera controls
+        if (keys[GLFW_KEY_W])
+            camera_->keyboardHandler(FORWARD, deltaTime);
+        if (keys[GLFW_KEY_S])
+            camera_->keyboardHandler(BACKWARD, deltaTime);
+        if (keys[GLFW_KEY_A])
+            camera_->keyboardHandler(LEFT, deltaTime);
+        if (keys[GLFW_KEY_D])
+            camera_->keyboardHandler(RIGHT, deltaTime);
     }
 
     void initializeCallbacks()
@@ -159,8 +212,17 @@ private:
 
         if (key == GLFW_KEY_SPACE && action == GLFW_PRESS)
         {
-            s+=0.02f;
+            if (s_ == 0)
+                s_ = 1;
+            else if (s_ == 1)
+                s_ = 0;
         }
+
+        if(action == GLFW_PRESS)
+            keys[key] = true;
+        else if(action == GLFW_RELEASE)
+            keys[key] = false;
+
     }
 
     GLfloat vertices[12] = {
@@ -173,7 +235,7 @@ private:
 
     GLuint indices[6] = { 2, 1, 0, 2, 3, 0};
 
-    GLfloat texCoord[12] = {0.0f, 0.0f,    1.0f, 0.0f,    1.0f, 1.0f,    0.0f, 0.0f,     1.0f, 1.0f,     1.0f, 1.0f};
+    GLfloat texCoord[8] = {1.0f, 1.0f,    1.0f, 0.0f,    0.0f, 0.0f,    0.0f, 1.0f};
 
 
 //class private members
@@ -185,9 +247,11 @@ private:
     GLFWwindow* windowPtr_;
 
     GT_Shader* shader_;
-    GT_Texture* texture_;
+    GT_Texture* texture1;
+    GT_Texture* texture2;
+    GT_Camera* camera_;
 
-    GLfloat s;
+    GLint s_;
 
 };
 
