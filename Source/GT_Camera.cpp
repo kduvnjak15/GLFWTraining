@@ -5,6 +5,7 @@ GT_Camera::GT_Camera()
     : cameraPos(0.0f, 0.0f, 0.5f),
       cameraFront(0.0f, 0.0f, -1.0f),
       cameraUp(0.0f, 1.0f, 0.0f),
+      cameraWorldUp(0.0f, 1.0f, 0.0f),
 
       yaw(YAW),
       pitch(PITCH),
@@ -26,9 +27,15 @@ void GT_Camera::updateCameraVectors()
     front.z = sin(glm::radians(this->yaw))*cos(glm::radians(this->pitch));
     this->cameraFront = glm::normalize(front);
 
+
+    std::cout<<cameraFront.x<<", "<<cameraFront.y<<", "<<cameraFront.z<<std::endl;
+
+
     //Also recalculate Right and Up vector
     this->cameraRight = glm::normalize( glm::cross(this->cameraFront, this->cameraWorldUp));
     this->cameraUp    = glm::normalize( glm::cross(this->cameraRight, this->cameraFront));
+
+    std::cout<<this->cameraRight.x<<std::endl;
 }
 
 
@@ -45,6 +52,7 @@ void GT_Camera::keyboardHandler(Camera_Movement direction, GLfloat deltaTime)
     if (direction == Camera_Movement::RIGHT)
         this->cameraPos += this->cameraRight * deltaSpace;
 
+    this->updateCameraVectors();
 }
 
 

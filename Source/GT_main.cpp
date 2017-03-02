@@ -129,18 +129,15 @@ glBindVertexArray(VAO_);
 
         while (!glfwWindowShouldClose(windowPtr_))
         {
-            GLfloat currentFrame;
+
+            //////////////////////   timer ////////////////////////
+            GLfloat currentFrame = glfwGetTime();
+            deltaTime = currentFrame - lastFrame;
+            lastFrame = currentFrame;
+            ///////////////////////////////////////////////////////
 
             glfwPollEvents();
             do_movement();
-            /////////////////////      time       //////////////////
-            // Set frame time
-
-             currentFrame = glfwGetTime();
-             deltaTime = currentFrame - lastFrame;
-             lastFrame = currentFrame;
-
-            std::cout<<1.0/deltaTime<<std::endl;
 
             //////////////////    camera movement    ///////////////
             glm::mat4 view = camera_->GetViewMatrix();
@@ -150,16 +147,17 @@ glBindVertexArray(VAO_);
             GLint viewLoc = glGetUniformLocation(shader_->shaderProgram_, "view");
             GLint projLoc = glGetUniformLocation(shader_->shaderProgram_, "projection");
             // Pass the matrices to the shader
+
+
+            glm::mat4 model = glm::mat4(1.0f);
+            view = glm::mat4(1.0f);
+            projection = glm::mat4(1.0f);
+
+            glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
             glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
             glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
-            glm::mat4 model;
-            model = glm::translate(model, camera_->getCameraPos());
-            model = glm::mat4(1.0f);
-
-            std::cout<<camera_->getCameraPos().x<<", "<<camera_->getCameraPos().y<<std::endl;
-
-            glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+           // std::cout<<camera_->getCameraPos().x<<", "<<camera_->getCameraPos().y<<", "<<camera_->getCameraPos().z<<"; "<<std::endl;
 
             /////////////////////    rendering    //////////////////
 
