@@ -12,7 +12,6 @@ GT_Camera::GT_Camera()
       MovementSpeed(SPEED),
       MouseSensitivity(SENSITIVITY),
       Zoom(ZOOM)
-
 {
     this->updateCameraVectors();
 }
@@ -28,21 +27,21 @@ void GT_Camera::updateCameraVectors()
     this->cameraFront = glm::normalize(front);
 
 
-    std::cout<<cameraFront.x<<", "<<cameraFront.y<<", "<<cameraFront.z<<std::endl;
-
+    std::cout<<cameraFront.x<<", "<<cameraFront.y<<", "<<cameraFront.z<<"; "<<cameraWorldUp.x<<", "<<cameraWorldUp.y<<", "<<cameraWorldUp.z<<";"<<cameraPos.x<<", "<<cameraPos.y<<", "<<cameraPos.z<<std::endl;
 
     //Also recalculate Right and Up vector
     this->cameraRight = glm::normalize( glm::cross(this->cameraFront, this->cameraWorldUp));
     this->cameraUp    = glm::normalize( glm::cross(this->cameraRight, this->cameraFront));
 
-    std::cout<<this->cameraRight.x<<std::endl;
 }
 
 
 void GT_Camera::keyboardHandler(Camera_Movement direction, GLfloat deltaTime)
 {
 
+
     GLfloat deltaSpace = SPEED * deltaTime;
+    std::cout<<deltaSpace<<std::endl;
     if (direction == Camera_Movement::FORWARD)
         this->cameraPos += this->cameraFront * deltaSpace;
     if (direction == Camera_Movement::BACKWARD)
@@ -51,6 +50,26 @@ void GT_Camera::keyboardHandler(Camera_Movement direction, GLfloat deltaTime)
         this->cameraPos -= this->cameraRight * deltaSpace;
     if (direction == Camera_Movement::RIGHT)
         this->cameraPos += this->cameraRight * deltaSpace;
+
+    this->updateCameraVectors();
+}
+
+
+void GT_Camera::mouseHandler(GLfloat xoffset, GLfloat yoffset, GLboolean constrainPitch  )
+{
+    xoffset *= this->MouseSensitivity;
+    yoffset *= this->MouseSensitivity;
+
+    this->yaw   +=xoffset;
+    this->pitch +=yoffset;
+
+    if (constrainPitch)
+    {
+        if (this->pitch > 89.0f)
+            this->pitch > 89.0f;
+        if (this->pitch < -89.0f)
+            this->pitch = -89.0f;
+    }
 
     this->updateCameraVectors();
 }

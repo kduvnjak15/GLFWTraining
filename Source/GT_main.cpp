@@ -19,14 +19,17 @@ const GLuint window_height = 600;
 
 
 bool keys[1024];
+bool firstMouse = true;
+GLfloat lastX = window_width/2, lastY = window_height/2;
+
 GLfloat deltaTime = 0.0f;
 GLfloat lastFrame = 0.0f;
-
 
 class initialCallbacks
 {
 public:
     virtual void KeyboardCallback(GLFWwindow* window, int key, int scancode, int action, int mode) = 0;
+    virtual void MouseCallback(GLFWwindow* window, double xpos, double ypos) = 0;
 };
 
 initialCallbacks* gamePointer = NULL;
@@ -36,6 +39,11 @@ initialCallbacks* gamePointer = NULL;
 static void KeyboardCB(GLFWwindow* window, int key, int scancode, int action, int mode)
 {
     gamePointer->KeyboardCallback( window, key, scancode, action, mode );
+}
+
+static void MouseCB(GLFWwindow* window, double xpos, double ypos)
+{
+    gamePointer->MouseCallback(window, xpos, ypos);
 }
 
 
@@ -110,6 +118,7 @@ public:
 
 glBindVertexArray(0);
 
+        camera_ = new GT_Camera();
 
         shader_ = new GT_Shader(VShader, FShader);
         shader_->Use();
@@ -148,10 +157,7 @@ glBindVertexArray(VAO_);
             GLint projLoc = glGetUniformLocation(shader_->shaderProgram_, "projection");
             // Pass the matrices to the shader
 
-
             glm::mat4 model = glm::mat4(1.0f);
-            view = glm::mat4(1.0f);
-            projection = glm::mat4(1.0f);
 
             glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
             glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
@@ -199,6 +205,7 @@ private:
     void initializeCallbacks()
     {
         glfwSetKeyCallback(windowPtr_, KeyboardCB);
+        glfwSetCursorPosCallback(windowPtr_, MouseCB);
     }
 
     void KeyboardCallback(GLFWwindow* window, int key, int scancode, int action, int mode)
@@ -221,6 +228,24 @@ private:
         else if(action == GLFW_RELEASE)
             keys[key] = false;
 
+    }
+
+    void MouseCallback(GLFWwindow* window, double xpos, double ypos)
+    {
+        if (firstMouse)
+        {
+            lastX = xpos;
+            lastY = ypos;
+            firstMouse = false;
+        }
+
+        GLfloat xoffset = xpos -lastX;
+        GLfloat yoffset = ypos -lastY;
+
+        lastX = xpos;
+        lastY = ypos;
+
+        camera_->mouseHandler(xoffset, -yoffset);
     }
 
     GLfloat vertices[12] = {

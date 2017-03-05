@@ -28,7 +28,7 @@ class GT_Camera
 
 {
 public:
-    GT_Camera();
+    GT_Camera(); // c-tor
 
     glm::vec3 getCameraPos()        { return cameraPos; }
     glm::vec3 getCameraFront()      { return cameraFront; }
@@ -46,6 +46,7 @@ public:
     glm::mat4 GetViewMatrix();
 
     void keyboardHandler(Camera_Movement direction, GLfloat deltaTime);
+    void mouseHandler(GLfloat xoffset, GLfloat yoffset, GLboolean constrainPitch = false );
 
 private:
     //Camera Cartesian
