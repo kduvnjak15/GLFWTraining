@@ -3,6 +3,8 @@ project(GLFWTraining)
 
 set(INC_DIR .)
 set(INC_DIR ../Include ${INC_DIR})
+set(INC_DIR ../../assimp/include/ ${INC_DIR})
+
 
 include_directories(${INC_DIR})
 
@@ -13,8 +15,10 @@ set(LIBS libglfw.so.3 ${LIBS})
 set(LIBS libopengl.so ${LIBS})
 set(LIBS libcommon.a ${LIBS})
 set(LIBS libSOIL.so ${LIBS}) 
+set(LIBS libassimp.so.3 ${LIBS}) 
 
-set(LIBS_DIR /home/duvnjakk/workspace/GlfwTraining/Lib)
+set(LIBS_DIR /home/duvnjakk/workspace/GlfwTraining/Lib )
+set(LIBS_DIR /home/duvnjakk/workspace/assimp/lib ${LIBS_DIR})
 link_directories( ${LIBS_DIR} )
 
 file(GLOB SOURCES "../Source/*.cpp")

@@ -9,7 +9,11 @@
 #include "GT_Texture.h"
 #include "GT_Camera.h"
 
+#include "assimp/Importer.hpp"
+
 //#include "GT_Skybox.h"
+
+Assimp::Importer mm;
 
 const GLuint window_width = 800;
 const GLuint window_height = 600;
