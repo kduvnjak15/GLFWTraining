@@ -1,14 +1,17 @@
-#version 330 core
+#version 330 core 
 
-in vec2 texCoord;
+out vec4 color; 
 
-uniform sampler2D texSampler;
+uniform vec3 objectColor; 
+uniform vec3 lightColor; 
 
-out vec4 color;
+uniform float uniformS_; 
+
+
 
 void main()
 {
-        color = texture(texSampler,texCoord);
+	vec3 temp = vec3(uniformS_, uniformS_, uniformS_); 
+	
+	color = vec4(temp * objectColor, 1.0f); 
 }
-
-
