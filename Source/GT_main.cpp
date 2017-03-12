@@ -28,7 +28,7 @@ GLfloat lastX = window_width/2, lastY = window_height/2;
 GLfloat deltaTime = 0.0f;
 GLfloat lastFrame = 0.0f;
 
-glm::vec3 lightPos(5.0f, 5.0f, 5.0f);
+glm::vec3 lightPos(5.0f, 4.0f, 3.0f);
 
 
 class initialCallbacks
@@ -99,6 +99,11 @@ public:
 
     bool Run()
     {
+
+
+        // OpenGL options
+        glEnable(GL_DEPTH_TEST);
+
         /////////////////////            VAO bussiness       //////////////////////////
 
         glGenVertexArrays(1, &VAO_);
@@ -170,7 +175,7 @@ public:
             GLint viewPosLoc        = glGetUniformLocation(shader_->shaderProgram_, "viewPos");
 
             glUniform3f(objectColorLoc, 1.0f, 0.5f, 0.31f);
-            glUniform3f(lightColorLoc,  0.0f, 0.0f, 1.0f);
+            glUniform3f(lightColorLoc,  1.0f, 1.0f, 1.0f);
             glUniform3f(lightPosLoc, lightPos.x, lightPos.y, lightPos.z);
             glUniform3f(viewPosLoc,  camera_->getCameraPos().x, camera_->getCameraPos().y, camera_->getCameraPos().z );
 
