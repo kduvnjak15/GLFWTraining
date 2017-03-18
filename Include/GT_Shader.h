@@ -9,21 +9,24 @@
 class GT_Shader
 {
 public:
-    GT_Shader(const char* vsFileName, const char* fsFileName);
+    GT_Shader(const char* vsFileName = nullptr, const char* fsFileName = nullptr, const char* gsFileName = nullptr);
 
     void Use();
 
     GLuint shaderProgram_;
 
-private:
-
-    bool ReadShader(const char* shaderFileName, std::string& outFile );
 
 private:
+
+    void validateShaderProgram();
+
+    GLuint addShader(const char* shaderPath, GLenum shaderType);
+
+private:
+
     GLuint vertexShader_;
     GLuint fragmentShader_;
+    GLuint geometryShader_;
 
-    std::string vertexShaderSource;
-    std::string fragmentShaderSource;
 };
 
