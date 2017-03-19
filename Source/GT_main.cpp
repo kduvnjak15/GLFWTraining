@@ -4,10 +4,11 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
-
 #include "GT_Shader.h"
 #include "GT_Texture.h"
 #include "GT_Camera.h"
+#include "GT_Model.h"
+//#include "GT_Mesh.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
