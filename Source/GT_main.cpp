@@ -8,11 +8,13 @@
 #include "GT_Texture.h"
 #include "GT_Camera.h"
 #include "GT_Model.h"
-//#include "GT_Mesh.h"
+
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+
+#include <SOIL/SOIL.h>
 
 const GLuint window_width = 800;
 const GLuint window_height = 600;
@@ -139,6 +141,8 @@ public:
         lampShader_ = new GT_Shader(vLampShader, fLampShader);
         lampShader_->Use();
 
+        model_ = new GT_Model("/home/duvnjakk/workspace/LearnOpenGL-master/resources/objects/nanosuit/nanosuit.obj");
+
 
         texture1 = new GT_Texture("../Content/bricks.jpg");
         texture2 = new GT_Texture("../Content/sun.jpg");
@@ -198,6 +202,10 @@ public:
             glBindVertexArray(VAO_);
             glm::mat4 model;
             glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+
+            model_->Draw(*shader_);
+
+
             glDrawArrays(GL_TRIANGLES, 0, 36);
             glBindVertexArray(0);
 
@@ -213,6 +221,7 @@ public:
             model = glm::translate(model, lightPos);
             model = glm::scale(model, glm::vec3(0.1f));
             glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+
 
             glBindVertexArray(lightVAO);
             glDrawArrays(GL_TRIANGLES, 0, 36);
@@ -373,6 +382,7 @@ private:
     GT_Texture* texture2;
     GT_Camera* camera_;
 
+    GT_Model* model_;
 
     GLfloat s_;
 

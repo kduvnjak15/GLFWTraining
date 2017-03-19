@@ -6,7 +6,6 @@
 #include <iostream>
 #include <vector>
 
-using namespace std;
 
 #include <GL/glew.h>
 #include <glm/glm.hpp>
@@ -24,19 +23,19 @@ struct Vertex {
 
 struct Texture {
     GLuint id;
-    string type;
+    std::string type;
     aiString path;
 };
 
 class GT_Mesh
 {
 public:
-    vector<Vertex> vertices;
-    vector<GLuint> indices;
-    vector<Texture> textures;
+    std::vector<Vertex> vertices;
+    std::vector<GLuint> indices;
+    std::vector<Texture> textures;
     GLuint VAO_;
 
-    Mesh(vector<Vertex> vertices, vector<GLuint> indices, vector<Texture> textures)
+    GT_Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, std::vector<Texture> textures)
     {
         this->vertices = vertices;
         this->indices  = indices;
@@ -56,9 +55,9 @@ public:
         {
             glActiveTexture(GL_TEXTURE0 + i); //Active proper texture unit
             // Retrieve texture number (the N in diffuse_textureN)
-            stringstream ss;
-            string number;
-            string name = this->textures[i].type;
+            std::stringstream ss;
+            std::string number;
+            std::string name = this->textures[i].type;
 
             if (name == "texture_diffuse")
                 ss << diffuseNr++; // Transfer GLuint to stream
@@ -70,7 +69,7 @@ public:
                 ss << heightNr++;
             number = ss.str();
             // Now set the sampler to the correct texture unit
-            glUniform1i( glGetUniformLocation(shader_.shaderProgram, (name + number).c_str()), i);
+            glUniform1i( glGetUniformLocation(shader_.shaderProgram_, (name + number).c_str()), i);
             // And finally bind the texture
             glBindTexture(GL_TEXTURE_2D, this->textures[i].id);
         }
