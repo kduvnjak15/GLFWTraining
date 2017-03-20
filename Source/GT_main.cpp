@@ -59,7 +59,7 @@ static void MouseCB(GLFWwindow* window, double xpos, double ypos)
 class GAME : public initialCallbacks
 {
 public:
-    GAME() : s_(0)
+    GAME() : s_(0), rotate_(0)
 
     {
         gamePointer = this;
@@ -141,7 +141,7 @@ public:
         lampShader_ = new GT_Shader(vLampShader, fLampShader);
         lampShader_->Use();
 
-        model_ = new GT_Model("/home/duvnjakk/workspace/LearnOpenGL-master/resources/objects/nanosuit/nanosuit.obj");
+        model_ = new GT_Model("/home/duvnjakk/workspace/GlfwTraining/resource/CV - Essex class/essex_scb-125_generic.obj");
 
 
         texture1 = new GT_Texture("../Content/bricks.jpg");
@@ -197,10 +197,11 @@ public:
             glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
 
-
             // Draw cube container
             glBindVertexArray(VAO_);
             glm::mat4 model;
+            model = glm::scale(model, glm::vec3(1.0f));
+            model = glm::rotate(model, rotate_,  glm::vec3( 0.0f, 1.0f, 0.0f));
             glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 
             model_->Draw(*shader_);
@@ -219,7 +220,7 @@ public:
             glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
             model = glm::mat4();
             model = glm::translate(model, lightPos);
-            model = glm::scale(model, glm::vec3(0.1f));
+            model = glm::scale(model, glm::vec3(0.01f));
             glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 
 
@@ -254,9 +255,15 @@ private:
         if (keys[GLFW_KEY_S])
             camera_->keyboardHandler(BACKWARD, deltaTime);
         if (keys[GLFW_KEY_A])
+        {
             camera_->keyboardHandler(LEFT, deltaTime);
+            rotate_ += 0.05f;
+        }
         if (keys[GLFW_KEY_D])
+        {
             camera_->keyboardHandler(RIGHT, deltaTime);
+            rotate_ -= 0.05f;
+        }
     }
 
     void initializeCallbacks()
@@ -385,6 +392,7 @@ private:
     GT_Model* model_;
 
     GLfloat s_;
+    GLfloat rotate_;
 
 };
 

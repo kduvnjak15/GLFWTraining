@@ -8,3 +8,4 @@ build_support/GLFWTraining.cbp
 build_support/Makefile
 build_support/cmake_install.cmake
 build_support/glfwtraining
+resource/Eurofighter
