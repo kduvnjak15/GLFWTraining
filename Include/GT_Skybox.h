@@ -10,7 +10,6 @@ class GT_Skybox
         GT_Skybox();
         ~GT_Skybox();
 
-        GLuint cubeVAO;
         GLuint skyboxVAO;
 
         GLuint skyboxTexID;
@@ -20,7 +19,7 @@ class GT_Skybox
         void loadCubeMaps();
         void createSkybox();
 
-        std::vector<const char*> cubemaps;
+        std::vector<std::string> cubemaps;
 
         GLuint cubeVBO;
         GLuint skyboxVBO;

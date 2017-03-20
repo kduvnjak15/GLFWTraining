@@ -24,6 +24,8 @@ const GLuint window_height = 600;
 #define FShader "../Shaders/shader.fs"
 #define vLampShader  "../Shaders/vLampShader.vs"
 #define fLampShader  "../Shaders/fLampShader.fs"
+#define vsSkyboxShader "../Shaders/skybox.vs"
+#define fsSkyboxShader "../Shaders/skybox.fs"
 
 bool keys[1024];
 bool firstMouse = true;
@@ -143,11 +145,9 @@ public:
         lampShader_->Use();
 
         skybox_ = new GT_Skybox();
-
-
+        skyboxShader_ = new GT_Shader(vsSkyboxShader, fsSkyboxShader);
 
         model_ = new GT_Model("/home/duvnjakk/workspace/GlfwTraining/resource/CV_carrier/essex_scb-125_generic.obj");
-
 
         texture1 = new GT_Texture("../Content/bricks.jpg");
         texture2 = new GT_Texture("../Content/sun.jpg");
@@ -234,6 +234,28 @@ public:
             glBindVertexArray(lightVAO);
             glDrawArrays(GL_TRIANGLES, 0, 36);
             glBindVertexArray(0);
+
+
+            // skybox
+            glDepthFunc(GL_LEQUAL);
+            skyboxShader_->Use();
+            viewLoc  = glGetUniformLocation(skyboxShader_->shaderProgram_, "view");
+            projLoc  = glGetUniformLocation(skyboxShader_->shaderProgram_, "projection");
+
+            view = glm::mat4(glm::mat3(camera_->GetViewMatrix()));
+            projection = glm::perspective(ZOOM, (window_width*1.0f)/window_height, 0.1f, 1000.0f);
+            glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+            glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
+
+            glBindVertexArray(skybox_->skyboxVAO);
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_CUBE_MAP, skybox_->skyboxTexID);
+            glDrawArrays(GL_TRIANGLES, 0, 36);
+            glBindVertexArray(0);
+            glDepthFunc(GL_LESS);
+
+
+
 
             /////////////////////    rendering    //////////////////
 
