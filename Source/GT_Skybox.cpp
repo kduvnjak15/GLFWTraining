@@ -30,22 +30,50 @@ GT_Skybox::GT_Skybox()
 
     glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 
+    createSkybox();
+
+    std::cout<<"skybox defined"<<std::endl;
+
 }
 
-void  GT_Skybox::createSkyboxVAO()
+
+void  GT_Skybox::createSkybox()
 {
+    // Setup cube VAO
+    glGenVertexArrays(1, &cubeVAO);
+
+    glGenBuffers(1, &cubeVBO);
+    glBindVertexArray(cubeVAO);
+    glBindBuffer(GL_ARRAY_BUFFER, cubeVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertices), &cubeVertices, GL_STATIC_DRAW);
+
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid*)0);
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid*)0);
+
+    glBindVertexArray(0);
+
+
+    // Setup skybox VAO
     glGenVertexArrays(1, &skyboxVAO);
+
+    glGenBuffers(1, &skyboxVBO);
     glBindVertexArray(skyboxVAO);
+    glBindBuffer(GL_ARRAY_BUFFER, skyboxVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(skyboxVertices), &skyboxVertices, GL_STATIC_DRAW );
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
 
+    glBindVertexArray(0);
 
-
-glBindVertexArray(0);
 
 }
 
 
 void GT_Skybox::loadCubeMaps()
 {
+
     cubemaps.push_back("../Content/Skybox/right.jpg");
     cubemaps.push_back("../Content/Skybox/left.jpg");
     cubemaps.push_back("../Content/Skybox/top.jpg");

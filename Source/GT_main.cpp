@@ -8,6 +8,7 @@
 #include "GT_Texture.h"
 #include "GT_Camera.h"
 #include "GT_Model.h"
+#include "GT_Skybox.h"
 
 
 #include <glm/glm.hpp>
@@ -141,11 +142,16 @@ public:
         lampShader_ = new GT_Shader(vLampShader, fLampShader);
         lampShader_->Use();
 
-        model_ = new GT_Model("/home/duvnjakk/workspace/GlfwTraining/resource/CV - Essex class/essex_scb-125_generic.obj");
+        skybox_ = new GT_Skybox();
+
+
+
+        model_ = new GT_Model("/home/duvnjakk/workspace/GlfwTraining/resource/CV_carrier/essex_scb-125_generic.obj");
 
 
         texture1 = new GT_Texture("../Content/bricks.jpg");
         texture2 = new GT_Texture("../Content/sun.jpg");
+
 
         texture1->Bind(GL_TEXTURE0);
         texture2->Bind(GL_TEXTURE1);
@@ -173,6 +179,7 @@ public:
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
             ///////////////////////////////////////////////////////
+
             shader_->Use();
             GLint objectColorLoc    = glGetUniformLocation(shader_->shaderProgram_, "objectColor");
             GLint lightColorLoc     = glGetUniformLocation(shader_->shaderProgram_, "lightColor");
@@ -220,7 +227,7 @@ public:
             glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
             model = glm::mat4();
             model = glm::translate(model, lightPos);
-            model = glm::scale(model, glm::vec3(0.01f));
+            model = glm::scale(model, glm::vec3(0.001f));
             glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 
 
@@ -257,12 +264,12 @@ private:
         if (keys[GLFW_KEY_A])
         {
             camera_->keyboardHandler(LEFT, deltaTime);
-            rotate_ += 0.05f;
+            rotate_ += 0.005f;
         }
         if (keys[GLFW_KEY_D])
         {
             camera_->keyboardHandler(RIGHT, deltaTime);
-            rotate_ -= 0.05f;
+            rotate_ -= 0.005f;
         }
     }
 
@@ -383,13 +390,17 @@ private:
 
     GT_Shader* shader_;
     GT_Shader* lampShader_;
+    GT_Shader* cubemapShader_;
+    GT_Shader* skyboxShader_;
 
 
     GT_Texture* texture1;
     GT_Texture* texture2;
     GT_Camera* camera_;
+    GT_Skybox* skybox_;
 
     GT_Model* model_;
+
 
     GLfloat s_;
     GLfloat rotate_;
