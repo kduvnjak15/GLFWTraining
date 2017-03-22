@@ -9,7 +9,7 @@
 #include "GT_Camera.h"
 #include "GT_Model.h"
 #include "GT_Skybox.h"
-
+#include "GT_Alphabet.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
