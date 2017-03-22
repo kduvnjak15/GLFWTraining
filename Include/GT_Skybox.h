@@ -8,7 +8,7 @@ class GT_Skybox
 {
     public:
         GT_Skybox();
-        ~GT_Skybox();
+        ~GT_Skybox() = default;
 
         GLuint skyboxVAO;
 

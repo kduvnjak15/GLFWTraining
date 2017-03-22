@@ -283,7 +283,7 @@ public:
             fontShader_->Use();
             glUniformMatrix4fv(glGetUniformLocation(fontShader_->shaderProgram_, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
             font_->RenderText(*fontShader_, "This is sample text", 25.0f, 25.0f, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
-            font_->RenderText(*fontShader_, "KATARINA <3 KRESIMIR", window_width/3, window_height/2 , .8f, glm::vec3(1.0, 0.0f, 0.0f));
+            font_->RenderText(*fontShader_, "KATARINA <3 KRESIMIR", window_width/3, window_height/2 , .8qqf, glm::vec3(1.0, 0.0f, 0.0f));
 
 
 
