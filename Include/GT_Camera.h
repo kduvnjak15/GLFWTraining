@@ -13,16 +13,22 @@ enum Camera_Movement {
     FORWARD,
     BACKWARD,
     LEFT,
-    RIGHT
+    RIGHT,
+    PITCH_D,
+    PITCH_U,
+    YAW_L,
+    YAW_R,
+    ROLL_R,
+    ROLL_L
 };
 
 // Default camera values
 const GLfloat YAW        = -90.0f;
 const GLfloat PITCH      =  0.0f;
-const GLfloat SPEED      =  3.0f;
+const GLfloat SPEED      =  0.50f;
 const GLfloat SENSITIVITY =  0.25f;
 const GLfloat ZOOM       =  45.0f;
-
+const GLfloat rollSensitivity = 1;
 
 class GT_Camera
 
@@ -47,6 +53,11 @@ public:
 
     void keyboardHandler(Camera_Movement direction, GLfloat deltaTime);
     void mouseHandler(GLfloat xoffset, GLfloat yoffset, GLboolean constrainPitch = false );
+    void flightControl(Camera_Movement direction, GLfloat deltaSpace);
+
+    void pitchControl(Camera_Movement controlDirection, GLfloat deltaSpace);
+    void rollControl(Camera_Movement controlDirection, GLfloat deltaSpace);
+    void yawControl(Camera_Movement controlDirection, GLfloat deltaSpace);
 
 private:
     //Camera Cartesian
@@ -63,8 +74,14 @@ private:
     GLfloat MouseSensitivity;
     GLfloat Zoom;
 
+    GLfloat a, b, c;
+    GLfloat x, y, z;
+    GLfloat u, v, w;
+    GLfloat th;
+    GLfloat L;
 
-    void updateCameraVectors();
+
+    glm::vec3 getRotatedVector();
 
 
 };

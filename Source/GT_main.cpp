@@ -15,6 +15,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include "tinyxml2.h"
+
 #include <SOIL/SOIL.h>
 
 const GLuint window_width = 800;
@@ -180,6 +182,8 @@ public:
 
 
 
+
+
         GLint uniformInt = glGetUniformLocation(shader_->shaderProgram_, "uniformS_");
         glUniform1f(uniformInt, s_);
 
@@ -278,17 +282,11 @@ public:
             glBindVertexArray(0);
             glDepthFunc(GL_LESS);
 
-
             projection = glm::ortho(0.0f, static_cast<GLfloat>(window_width), 0.0f, static_cast<GLfloat>(window_height));
             fontShader_->Use();
             glUniformMatrix4fv(glGetUniformLocation(fontShader_->shaderProgram_, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
-            font_->RenderText(*fontShader_, "This is sample text", 25.0f, 25.0f, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
-            font_->RenderText(*fontShader_, "KATARINA <3 KRESIMIR", window_width/3, window_height/2 , .8qqf, glm::vec3(1.0, 0.0f, 0.0f));
-
-
-
-
-
+            font_->RenderText(*fontShader_, std::to_string(currentFrame), 25.0f, 25.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
+            font_->RenderText(*fontShader_, std::to_string(1/deltaTime), 2.0f, 2.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
 
             /////////////////////    rendering    //////////////////
 
@@ -311,6 +309,7 @@ private:
 
     void do_movement()
     {
+#ifdef oldcode
         // Camera controls
         if (keys[GLFW_KEY_W])
             camera_->keyboardHandler(FORWARD, deltaTime);
@@ -326,6 +325,24 @@ private:
             camera_->keyboardHandler(RIGHT, deltaTime);
             rotate_ -= 0.005f;
         }
+#else
+    if (fly_)
+        camera_->keyboardHandler(FORWARD, deltaTime);
+    if (keys[GLFW_KEY_W])
+        camera_->keyboardHandler(PITCH_D, deltaTime);
+    if (keys[GLFW_KEY_S])
+        camera_->keyboardHandler(PITCH_U, deltaTime);
+    if (keys[GLFW_KEY_A])
+        camera_->keyboardHandler(ROLL_L, deltaTime);
+    if (keys[GLFW_KEY_D])
+        camera_->keyboardHandler(ROLL_R, deltaTime);
+    if (keys[GLFW_KEY_Q])
+        camera_->keyboardHandler(YAW_L, deltaTime);
+    if (keys[GLFW_KEY_E])
+        camera_->keyboardHandler(YAW_R, deltaTime);
+#endif
+
+
     }
 
     void initializeCallbacks()
@@ -336,13 +353,15 @@ private:
 
     void KeyboardCallback(GLFWwindow* window, int key, int scancode, int action, int mode)
     {
-        if (key == GLFW_KEY_ESCAPE || key == GLFW_KEY_Q  && action == GLFW_PRESS)
+        if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
         {
             glfwSetWindowShouldClose(window, GL_TRUE);
         }
 
         if (key == GLFW_KEY_SPACE && action == GLFW_PRESS)
         {
+            fly_ = !fly_;
+
             if (s_ == 0)
                 s_ = 1;
             else if (s_ == 1)
@@ -367,8 +386,7 @@ private:
             keys[key] = true;
         else if(action == GLFW_RELEASE)
             keys[key] = false;
-        std::cout<<s_<<std::endl;
-    }
+     }
 
     void MouseCallback(GLFWwindow* window, double xpos, double ypos)
     {
@@ -385,7 +403,7 @@ private:
         lastX = xpos;
         lastY = ypos;
 
-        camera_->mouseHandler(xoffset, -yoffset);
+        //camera_->mouseHandler(xoffset, -yoffset);
     }
 
     GLfloat vertices[216] = {
@@ -460,6 +478,7 @@ private:
 
 
     GLfloat s_;
+    GLboolean fly_;
     GLfloat rotate_;
 
 };

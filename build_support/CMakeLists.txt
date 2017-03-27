@@ -18,6 +18,7 @@ set(LIBS libcommon.a ${LIBS})
 set(LIBS libSOIL.so ${LIBS}) 
 set(LIBS libassimp.so.3 ${LIBS}) 
 set(LIBS libfreetype.so ${LIBS})
+set(LIBS libtinyxml2.so ${LIBS})
 
 set(LIBS_DIR /home/duvnjakk/workspace/GlfwTraining/Lib )
 set(LIBS_DIR /home/duvnjakk/workspace/assimp/lib ${LIBS_DIR})
