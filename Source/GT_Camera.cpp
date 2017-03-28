@@ -67,12 +67,12 @@ void GT_Camera::pitchControl(Camera_Movement controlDirection, GLfloat deltaSpac
 
 void GT_Camera::rollControl(Camera_Movement controlDirection, GLfloat deltaSpace)
 {
-    th = deltaSpace;
-    L = u*u + v*v + w*w;
-
-    a = cameraPos.x; b = cameraPos.y; c = cameraPos.z;       // pivot point
+    a = 0.0; b =0.0; c = 0.0;       // pivot point
     u = cameraFront.x; v = cameraFront.y; w = cameraFront.z; // axis
     x = cameraUp.x; y = cameraUp.y; z = cameraUp.z; // subject point
+
+    th = deltaSpace;
+    L = u*u + v*v + w*w;
 
     cameraUp = getRotatedVector();
 
@@ -83,12 +83,12 @@ void GT_Camera::rollControl(Camera_Movement controlDirection, GLfloat deltaSpace
 }
 void GT_Camera::yawControl(Camera_Movement controlDirection, GLfloat deltaSpace)
 {
-    th = deltaSpace;
-    L = u*u + v*v + w*w;
-
-    a = cameraPos.x; b = cameraPos.y; c = cameraPos.z;       // pivot point
+    a = 0.0; b =0.0; c = 0.0;       // pivot point
     u = cameraUp.x; v = cameraUp.y; w = cameraUp.z; // axis
     x = cameraFront.x; y = cameraFront.y; z = cameraFront.z; // subject point
+
+    th = deltaSpace;
+    L = u*u + v*v + w*w;
 
     cameraFront = getRotatedVector();
 
