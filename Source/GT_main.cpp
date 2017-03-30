@@ -168,7 +168,7 @@ public:
         skybox_ = new GT_Skybox();
         skyboxShader_ = new GT_Shader(vsSkyboxShader, fsSkyboxShader);
 
-        model_ = new GT_Model("/home/duvnjakk/workspace/GlfwTraining/resource/CV_carrier/essex_scb-125_generic.obj");
+        model_ = new GT_Model("/home/duvnjakk/workspace/GlfwTraining/Content/FA-18_RC/FA-18_RC.obj");
 
         texture1 = new GT_Texture("../Content/bricks.jpg");
         texture2 = new GT_Texture("../Content/sun.jpg");
