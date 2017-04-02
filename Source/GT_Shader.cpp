@@ -14,6 +14,7 @@ GLuint GT_Shader::addShader(const char* shaderPath, GLenum shaderType)
     if (!shaderFile.is_open())
     {
         std::cout<<" SHADER PATH "<<shaderPath<<" NOT FOUND!"<<std::endl;
+        std::cout<<shaderTag_<<std::endl;
         return 99;
     }
 
@@ -69,13 +70,21 @@ void GT_Shader::validateShaderProgram()
 
 }
 
-GT_Shader::GT_Shader(const char* vsFileName, const char* fsFileName, const char* gsFileName)
+GT_Shader::GT_Shader(const char* shaderName, const char* vsFileName, const char* fsFileName, const char* gsFileName)
     :
       vertexShader_(0),
       fragmentShader_(0),
-      geometryShader_(0)
+      geometryShader_(0),
+      shaderTag_(shaderName)
 
 {
+
+    if (shaderTag_ == "")
+    {
+        std::cout<< "CATASTROPHIC ERROR:: SHADER_NAME_TAG_MISSING! "<<std::endl;
+        return ;
+    }
+
     //////////////////////      shader files      ////////////////////////
     vertexShader_ = addShader(vsFileName, GL_VERTEX_SHADER);
     fragmentShader_ = addShader(fsFileName, GL_FRAGMENT_SHADER);
@@ -97,4 +106,9 @@ GT_Shader::GT_Shader(const char* vsFileName, const char* fsFileName, const char*
 void GT_Shader::Use()
 {
     glUseProgram(this->shaderProgram_);
+}
+
+const char* GT_Shader::getShaderTag()
+{
+    return shaderTag_;
 }

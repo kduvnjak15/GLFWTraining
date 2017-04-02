@@ -4,16 +4,17 @@
 #include <GLFW/glfw3.h>
 
 #include <iostream>
-#include <string.h>
 
 class GT_Shader
 {
 public:
-    GT_Shader(const char* vsFileName = nullptr, const char* fsFileName = nullptr, const char* gsFileName = nullptr);
+    GT_Shader(const char* shaderName , const char* vsFileName = nullptr, const char* fsFileName = nullptr, const char* gsFileName = nullptr);
 
     void Use();
 
     GLuint shaderProgram_;
+
+    const char* getShaderTag();
 
 
 private:
@@ -23,6 +24,8 @@ private:
     GLuint addShader(const char* shaderPath, GLenum shaderType);
 
 private:
+
+    const char* shaderTag_;
 
     GLuint vertexShader_;
     GLuint fragmentShader_;
