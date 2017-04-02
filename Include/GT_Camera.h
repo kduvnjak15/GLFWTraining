@@ -31,6 +31,7 @@ const GLfloat SPEED      =  0.0050f;
 const GLfloat SENSITIVITY =  0.25f;
 const GLfloat ZOOM       =  45.0f;
 const GLfloat rollSensitivity = .5;
+const GLfloat cameraOffset = 25;
 
 class GT_Camera
 

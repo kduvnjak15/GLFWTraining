@@ -11,6 +11,7 @@
 #include "GT_Skybox.h"
 #include "GT_Alphabet.h"
 #include "GT_Rocket.h"
+#include "GT_Enemy.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -24,6 +25,10 @@
 #define fsSkyboxShader "../Shaders/skybox.fs"
 #define vsFontShader "../Shaders/fontShader.vs"
 #define fsFontShader "../Shaders/fontShader.fs"
+#define vsEnemyShader "../Shaders/enemyShader.vs"
+#define fsEnemyShader "../Shaders/enemyShader.fs"
+#define gsEnemyShader "../Shaders/enemyShader.gs"
+
 
 bool keys[1024];
 bool firstMouse = true;
@@ -130,19 +135,9 @@ public:
     bool Run()
     {
 
-        camera_ = new GT_Camera();
-        shader_ = new GT_Shader("modelShader", VmodelShader, FmodelShader);
-        skybox_ = new GT_Skybox();
-        skyboxShader_ = new GT_Shader("skyboxShader", vsSkyboxShader, fsSkyboxShader);
-        fontShader_ = new GT_Shader("fontshader", vsFontShader, fsFontShader);
+        loadGame();
+        loadActors();
 
-        font_ = new GT_Alphabet();
-
-        actors_.push_back(new GT_Model("../Content/FA-22_Raptor/FA-22_Raptor.obj"));
-        actors_.push_back(new GT_Model("../Content/CV - Essex class/essex_scb-125_generic.obj"));
-        actors_.push_back(new GT_Model("../Content/FA-18_RC/FA-18_RC.obj"));
-        actors_.push_back(new GT_Rocket("../Content/AVMT300/AVMT300.3ds"));
-        actors_.push_back(new GT_Rocket("../Content/AVMT300/AVMT300.3ds"));
 
 
         while (!glfwWindowShouldClose(windowPtr_))
@@ -159,7 +154,6 @@ public:
             }
                 lastFrame = currentFrame;
 
-
             ///////////////////////////////////////////////////////
 
             glfwPollEvents();
@@ -174,77 +168,79 @@ public:
 
             gameRules();
 
+
             target_ = nullptr;
-            aimed(actors_[1]);
-            aimed(actors_[0]);
+            for (int i = 0; i < enemies_.size(); i++)
+            {
+                aimed(enemies_[i]);
+            }
 
             updateRockets();
 
-
             //////////////////    camera movement    ///////////////
 
-            model_ = actors_[1]; // uss Carrier
-            model_->modelPos = glm::vec3(-1000.0f, -10.0f, -2500);
-            shader_->Use();
-            GLuint modelLoc  = glGetUniformLocation(shader_->shaderProgram_, "model");
-            GLuint viewLoc  = glGetUniformLocation(shader_->shaderProgram_, "view");
-            GLuint projLoc  = glGetUniformLocation(shader_->shaderProgram_, "projection");
-            glm::mat4 model = glm::mat4(1.0f);
+            enemy_ = enemies_[0]; // uss Carrier
+            enemy_->modelPos = glm::vec3(-1000.0f, -10.0f, -2500);
+            enemyShader_->Use();
 
-            model = glm::translate(model, model_->modelPos);
+            GLuint modelLoc  = glGetUniformLocation(enemyShader_->shaderProgram_, "model");
+            GLuint viewLoc  = glGetUniformLocation(enemyShader_->shaderProgram_, "view");
+            GLuint projLoc  = glGetUniformLocation(enemyShader_->shaderProgram_, "projection");
+            glm::mat4 model = glm::mat4(1.0f);
+            model = glm::translate(model, enemy_->modelPos);
             model = glm::scale(model, glm::vec3(1000.0f));
             glm::mat4 view = camera_->GetViewMatrix();
-
             glm::mat4 projection = glm::perspective(ZOOM, (window_width*1.0f)/window_height, 0.1f, horizon);
             glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
             glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
             glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
-            model_->Draw(*shader_);
+            enemy_->Draw(*(enemyShader_)); // wrong shader
 
             /****************************************************************/
 
-            model_ = actors_[2]; // Fighter
-            model_->modelPos = camera_->getCameraPos() +  glm::vec3(0.0f, -5.0f, -25.0f);
-            shader_->Use();
-            modelLoc  = glGetUniformLocation(shader_->shaderProgram_, "model");
-            viewLoc  = glGetUniformLocation(shader_->shaderProgram_, "view");
-            projLoc  = glGetUniformLocation(shader_->shaderProgram_, "projection");
+            enemy_ = enemies_[1]; // F22- raptor
+            enemy_->modelPos = glm::vec3(3000.0f, -10.0f, -2500);
+            enemyShader_->Use();
+            modelLoc  = glGetUniformLocation(enemyShader_->shaderProgram_, "model");
+            viewLoc  = glGetUniformLocation(enemyShader_->shaderProgram_, "view");
+            projLoc  = glGetUniformLocation(enemyShader_->shaderProgram_, "projection");
             model = glm::mat4(1.0f);
-            model = glm::translate(model, glm::vec3(0.0f, -5.0f, -25.0f));
-            model = glm::rotate(model,(GLfloat)-3.14159/2.0f,  glm::vec3(1.0f, 0.0f, 0.0f));
-
-            view = glm::mat4(1.0f);
+            model = glm::translate(model, enemy_->modelPos);
+            model = glm::scale(model, glm::vec3(100.0f));
+            view = camera_->GetViewMatrix();
             projection = glm::perspective(ZOOM, (window_width*1.0f)/window_height, 0.1f, horizon);
             glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
             glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
             glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
-            model_->Draw(*shader_);
+            enemy_->Draw(*(enemyShader_)); // wrong shader
 
-            /****************************************************************/
+            /********************************************************************/
 
-            model_ = actors_[0]; // Enemy
-            model_->modelPos = glm::vec3(5000,500,-2600);
+            // Fighter
+            fighter_->modelPos = camera_->getCameraPos(); // +  glm::vec3(0.0f, -5.0f, -25.0f);
+            fighter_->attitude_.modelFront = camera_->getCameraFront();
+            fighter_->attitude_.modelUp = camera_->getCameraUp();
+
             shader_->Use();
             modelLoc  = glGetUniformLocation(shader_->shaderProgram_, "model");
             viewLoc  = glGetUniformLocation(shader_->shaderProgram_, "view");
             projLoc  = glGetUniformLocation(shader_->shaderProgram_, "projection");
             model = glm::mat4(1.0f);
-            model = glm::translate(model, model_->modelPos);
+
+            model = alignModel(fighter_);
+            model = glm::translate(model, fighter_->modelPos);
             model = glm::rotate(model,(GLfloat)-3.14159/2.0f,  glm::vec3(1.0f, 0.0f, 0.0f));
 
-            model = glm::scale(model, glm::vec3(2.0f));
-
             view = camera_->GetViewMatrix();
-            projection = glm::perspective(ZOOM, (window_width*1.0f)/window_height, 0.1f, 10000.0f);
+            projection = glm::perspective(ZOOM, (window_width*1.0f)/window_height, 0.1f, horizon);
             glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
             glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
             glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
-            model_->Draw(*shader_);
+            fighter_->Draw(*shader_);
 
+            /**************************************************************************/
 
-            /****************************************************************/
-
-            model_ = actors_[3]; // Missile
+            missile_ = rockets_[0]; // Missile 0
             shader_->Use();
             modelLoc  = glGetUniformLocation(shader_->shaderProgram_, "model");
             viewLoc  = glGetUniformLocation(shader_->shaderProgram_, "view");
@@ -252,17 +248,16 @@ public:
 
             model = glm::mat4(1.0f);
 
-
-            if (model_->isFired())
+            view = camera_->GetViewMatrix();
+            if (missile_->isFired())
             {
-                view = camera_->GetViewMatrix();
-                model = glm::translate(model, actors_[3]->modelPos);
+                model = glm::translate(model, missile_->modelPos);
             }
             else
             {
-                model = glm::translate(model, glm::vec3(-7.0f, -5.0f, -35.0f));
-                actors_[3]->modelPos = camera_->getCameraPos() + glm::vec3(-7.0f, -5.0f, -35.0f);
-                view = glm::mat4(1.0f);
+                missile_->modelPos = fighter_->modelPos + glm::vec3(-5.0f, -2.0f, 0.0f);
+                model = glm::translate(model, missile_->modelPos);
+
             }
 
 
@@ -272,33 +267,37 @@ public:
             glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
             glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
             glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
-            model_->Draw(*shader_);
+            missile_->Draw(*shader_);
 
 
-            model_ = actors_[4]; // Missile
+            missile_ = rockets_[1]; // Missile 1
+            shader_->Use();
+            modelLoc  = glGetUniformLocation(shader_->shaderProgram_, "model");
+            viewLoc  = glGetUniformLocation(shader_->shaderProgram_, "view");
+            projLoc  = glGetUniformLocation(shader_->shaderProgram_, "projection");
+
             model = glm::mat4(1.0f);
-            if (model_->isFired())
+
+            view = camera_->GetViewMatrix();
+            if (missile_->isFired())
             {
-                view = camera_->GetViewMatrix();
-                model = glm::translate(model, actors_[4]->modelPos);
+                model = glm::translate(model, missile_->modelPos);
             }
             else
             {
-                model = glm::translate(model,glm::vec3(12.0f, -5.0f, -35.0f));
-                actors_[4]->modelPos = camera_->getCameraPos() + glm::vec3(12.0f, -5.0f, -35.0f);
-                view = glm::mat4(1.0f);
+                missile_->modelPos = fighter_->modelPos + glm::vec3(-5.0f, -2.0f, 0.0f);
+                model = glm::translate(model, missile_->modelPos);
+
             }
 
 
             model = glm::scale(model, glm::vec3(0.3f));
             model = glm::rotate(model,(GLfloat)-3.14159/2.0f,  glm::vec3(0.0f, 1.0f, 0.0f));
-
-
             projection = glm::perspective(ZOOM, (window_width*1.0f)/window_height, 0.1f, 10000.0f);
             glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
             glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
             glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
-            model_->Draw(*shader_);
+            missile_->Draw(*shader_);
 
             ///////////////////////////////////////////////////////////////////////////////////////
             // skybox
@@ -357,10 +356,10 @@ glBindVertexArray(0);
 
     void updateRockets()
     {
-        if (actors_[3]->isFired())
-            actors_[3]->move();
-        if (actors_[4]->isFired())
-            actors_[4]->move();
+        if (rockets_[0]->isFired())
+            rockets_[0]->move();
+        if (rockets_[1]->isFired())
+            rockets_[1]->move();
     }
 
     void handleCrash()
@@ -373,16 +372,71 @@ glBindVertexArray(0);
 
     }
 
+    void loadGame()
+    {
+        camera_ = new GT_Camera();
+        shader_ = new GT_Shader(modelShader, VmodelShader, FmodelShader);
+        enemyShader_ = new GT_Shader(shaderTag::enemyShader, vsEnemyShader, fsEnemyShader);
+
+        skybox_ = new GT_Skybox();
+        skyboxShader_ = new GT_Shader(skyboxShader, vsSkyboxShader, fsSkyboxShader);
+        font_ = new GT_Alphabet();
+        fontShader_ = new GT_Shader(fontShader, vsFontShader, fsFontShader);
+
+    }
+
+    void loadActors()
+    {
+        enemies_.push_back(new GT_Enemy("../Content/CV - Essex class/essex_scb-125_generic.obj", enemyShader_));
+        enemies_.push_back(new GT_Enemy("../Content/FA-22_Raptor/FA-22_Raptor.obj", enemyShader_));
+
+        fighter_ = new GT_Model("../Content/FA-18_RC/FA-18_RC.obj");
+
+        rockets_.push_back(new GT_Rocket("../Content/AVMT300/AVMT300.3ds"));
+        rockets_.push_back(new GT_Rocket("../Content/AVMT300/AVMT300.3ds"));
+
+        actors_.push_back(fighter_);
+
+        actors_.push_back(rockets_[0]);
+        actors_.push_back(rockets_[1]);
+
+        actors_.push_back(enemies_[0]);
+        actors_.push_back(enemies_[1]);
+    }
+
+    glm::mat4 alignModel(GT_Model* model)
+    {
+        glm::mat4 temp;
+        glm::vec3 right;
+
+        right = glm::cross(model->attitude_.modelFront, model->attitude_.modelUp);
+        glm::normalize(right);
+
+        temp[0][0] = model->attitude_.modelFront.x;
+        temp[1][0] = model->attitude_.modelFront.y;
+        temp[2][0] = model->attitude_.modelFront.z;
+
+        temp[0][1] = model->attitude_.modelUp.x;
+        temp[1][1] = model->attitude_.modelUp.y;
+        temp[2][1] = model->attitude_.modelUp.z;
+
+        temp[0][2] = right.x;
+        temp[1][2] = right.y;
+        temp[2][2] = right.z;
+
+        return camera_->GetViewMatrix()*glm::inverse(temp);
+}
+
     void gameRules()
     {
 
     }
 
 
-    void aimed(GT_Model* target)
+    void aimed(GT_Enemy* target)
     {
         glm::vec3 enemyPos = target->modelPos;
-        glm::vec3 fighterPos = actors_[2]->modelPos;
+        glm::vec3 fighterPos = actors_[0]->modelPos;
         glm::vec3 diagonal =  glm::normalize( enemyPos - fighterPos );
 
         // enemy pos
@@ -396,7 +450,7 @@ glBindVertexArray(0);
         {
             font_->RenderText(*fontShader_, "AIMED!!!", 700.0f, 100.0f, 1.0f, glm::vec3(1.0, 0.0f, .4f));
             if (sin(glfwGetTime()*6) >0)
-                if (actors_[3]->isFired() && actors_[4]->isFired())
+                if (rockets_[0]->isFired() && rockets_[1]->isFired())
                     font_->RenderText(*fontShader_, "OUT OF MISSILES!!!", 630.0f, 65.0f, 0.8f, glm::vec3(1.0, 0.0f, .4f));
                 else
                     font_->RenderText(*fontShader_, "FIRE!!!", 710.0f, 65.0f, 0.8f, glm::vec3(1.0, 0.0f, .4f));
@@ -488,10 +542,10 @@ private:
             std::cout<<(target_ == nullptr)<<std::endl;
             if (target_ != nullptr)
             {
-                if (!actors_[3]->isFired())
-                    actors_[3]->Fire(target_);
-                else if (!actors_[4]->isFired())
-                    actors_[4]->Fire(target_);
+                if (!rockets_[0]->isFired())
+                    rockets_[0]->Fire(target_);
+                else if (!rockets_[1]->isFired())
+                    rockets_[1]->Fire(target_);
             }
         }
 
@@ -527,6 +581,7 @@ private:
     // shaders
     std::map<std::string, GT_Shader> shaders_;
     GT_Shader* shader_;
+    GT_Shader* enemyShader_;
     GT_Shader* lightShader_;
     GT_Shader* cubemapShader_;
     GT_Shader* skyboxShader_;
@@ -540,14 +595,18 @@ private:
 
     // Models
     std::vector<GT_Model*> actors_;
-    GT_Model* model_;
+    std::vector<GT_Enemy*> enemies_;
+    std::vector<GT_Rocket*> rockets_;
+    GT_Model* fighter_;
+    GT_Rocket* missile_;
+    GT_Enemy* enemy_;
 
     // uniforms
     GLfloat s_;
     GLboolean fly_;
     GLboolean toggle_;
     GLboolean aimed_;
-    GT_Model* target_ ;
+    GT_Enemy* target_ ;
     GLfloat rotate_;
 
     GLfloat blinker_ ;

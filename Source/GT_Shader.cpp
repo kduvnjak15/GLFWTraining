@@ -70,20 +70,14 @@ void GT_Shader::validateShaderProgram()
 
 }
 
-GT_Shader::GT_Shader(const char* shaderName, const char* vsFileName, const char* fsFileName, const char* gsFileName)
+GT_Shader::GT_Shader(shaderTag shadesTypeTag, const char* vsFileName, const char* fsFileName, const char* gsFileName)
     :
       vertexShader_(0),
       fragmentShader_(0),
       geometryShader_(0),
-      shaderTag_(shaderName)
+      shaderTag_(shadesTypeTag)
 
 {
-
-    if (shaderTag_ == "")
-    {
-        std::cout<< "CATASTROPHIC ERROR:: SHADER_NAME_TAG_MISSING! "<<std::endl;
-        return ;
-    }
 
     //////////////////////      shader files      ////////////////////////
     vertexShader_ = addShader(vsFileName, GL_VERTEX_SHADER);
@@ -108,7 +102,7 @@ void GT_Shader::Use()
     glUseProgram(this->shaderProgram_);
 }
 
-const char* GT_Shader::getShaderTag()
+shaderTag GT_Shader::getShaderTag()
 {
     return shaderTag_;
 }

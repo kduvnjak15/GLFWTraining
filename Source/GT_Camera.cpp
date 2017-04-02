@@ -2,7 +2,7 @@
 #include <GL/glew.h>
 
 GT_Camera::GT_Camera()
-    : cameraPos(0.0f, 0.0f, 0.5f),
+    : cameraPos(0.0f, 0.0f, 25.5f),
       cameraFront(0.0f, 0.0f, -1.0f),
       cameraUp(0.0f, 1.0f, 0.0f),
       cameraWorldUp(0.0f, 1.0f, 0.0f),
@@ -127,6 +127,5 @@ void GT_Camera::mouseHandler(GLfloat xoffset, GLfloat yoffset, GLboolean constra
 
 glm::mat4 GT_Camera::GetViewMatrix()
 {
-
-    return glm::lookAt(this->cameraPos, this->cameraPos + this->cameraFront, this->cameraUp );
+    return glm::lookAt(this->cameraPos-(this->cameraFront*cameraOffset), this->cameraPos + this->cameraFront, this->cameraUp );
 }

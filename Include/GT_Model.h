@@ -20,6 +20,8 @@
 #include "GT_Mesh.h"
 #include "GT_Shader.h"
 
+
+
 class GT_Model
 {
 
@@ -37,15 +39,13 @@ public:
         this->loadModel(path);
     }
 
-    virtual void move()
+    struct Orientation
     {
-    }
-    virtual GLboolean isFired()
-    {
-    }
-    virtual void Fire(GT_Model* target)
-    {
-    }
+        glm::vec3 modelFront;
+        glm::vec3 modelUp;
+    };
+
+    Orientation attitude_;
 
     GT_Model* reference()
     {

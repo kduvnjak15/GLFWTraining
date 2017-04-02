@@ -5,16 +5,24 @@
 
 #include <iostream>
 
+enum shaderTag
+{
+    enemyShader,
+    modelShader,
+    fontShader,
+    skyboxShader
+};
+
 class GT_Shader
 {
 public:
-    GT_Shader(const char* shaderName , const char* vsFileName = nullptr, const char* fsFileName = nullptr, const char* gsFileName = nullptr);
+    GT_Shader(shaderTag shaderTypeTag , const char* vsFileName = nullptr, const char* fsFileName = nullptr, const char* gsFileName = nullptr);
 
     void Use();
 
     GLuint shaderProgram_;
 
-    const char* getShaderTag();
+    shaderTag getShaderTag();
 
 
 private:
@@ -25,7 +33,7 @@ private:
 
 private:
 
-    const char* shaderTag_;
+    shaderTag shaderTag_;
 
     GLuint vertexShader_;
     GLuint fragmentShader_;
