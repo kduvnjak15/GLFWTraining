@@ -60,17 +60,15 @@ void  GT_Skybox::createSkybox()
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
 
     glBindVertexArray(0);
-
-
 }
 
 
 void GT_Skybox::loadCubeMaps()
 {
-    cubemaps.push_back("/home/duvnjakk/workspace/GlfwTraining/Content/Skybox/right.jpg");
-    cubemaps.push_back("/home/duvnjakk/workspace/GlfwTraining/Content/Skybox/left.jpg");
-    cubemaps.push_back("/home/duvnjakk/workspace/GlfwTraining/Content/Skybox/top.jpg");
-    cubemaps.push_back("/home/duvnjakk/workspace/GlfwTraining/Content/Skybox/bottom.jpg");
-    cubemaps.push_back("/home/duvnjakk/workspace/GlfwTraining/Content/Skybox/back.jpg");
-    cubemaps.push_back("/home/duvnjakk/workspace/GlfwTraining/Content/Skybox/front.jpg");
+    cubemaps.push_back("../Content/Skybox/right.jpg");
+    cubemaps.push_back("../Content/Skybox/left.jpg");
+    cubemaps.push_back("../Content/Skybox/top.jpg");
+    cubemaps.push_back("../Content/Skybox/bottom.jpg");
+    cubemaps.push_back("../Content/Skybox/back.jpg");
+    cubemaps.push_back("../Content/Skybox/front.jpg");
 }
