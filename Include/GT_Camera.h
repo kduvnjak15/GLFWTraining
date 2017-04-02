@@ -19,16 +19,18 @@ enum Camera_Movement {
     YAW_L,
     YAW_R,
     ROLL_R,
-    ROLL_L
+    ROLL_L,
+    ACCELERATE,
+    DECELERATE
 };
 
 // Default camera values
 const GLfloat YAW        = -90.0f;
 const GLfloat PITCH      =  0.0f;
-const GLfloat SPEED      =  0.50f;
+const GLfloat SPEED      =  0.0050f;
 const GLfloat SENSITIVITY =  0.25f;
 const GLfloat ZOOM       =  45.0f;
-const GLfloat rollSensitivity = 1;
+const GLfloat rollSensitivity = .5;
 
 class GT_Camera
 
@@ -48,12 +50,12 @@ public:
     GLfloat getMovementSpeed()      { return MovementSpeed; }
     GLfloat getMouseSensitivity()   { return MouseSensitivity; }
     GLfloat getZoom()               { return Zoom; }
+    GLfloat getSpeed()              { return speed_; }
 
     glm::mat4 GetViewMatrix();
 
     void keyboardHandler(Camera_Movement direction, GLfloat deltaTime);
     void mouseHandler(GLfloat xoffset, GLfloat yoffset, GLboolean constrainPitch = false );
-    void flightControl(Camera_Movement direction, GLfloat deltaSpace);
 
     void pitchControl(Camera_Movement controlDirection, GLfloat deltaSpace);
     void rollControl(Camera_Movement controlDirection, GLfloat deltaSpace);
@@ -74,6 +76,7 @@ private:
     GLfloat MouseSensitivity;
     GLfloat Zoom;
 
+    // rotation constants
     GLfloat a, b, c;
     GLfloat x, y, z;
     GLfloat u, v, w;
@@ -81,9 +84,9 @@ private:
     GLfloat L;
 
 
+    GLfloat speed_;
+
     glm::vec3 getRotatedVector();
 
 
 };
-
-
