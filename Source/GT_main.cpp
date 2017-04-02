@@ -1,31 +1,25 @@
 #include <iostream>
 #include <cmath>
+#include <vector>
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
 #include "GT_Shader.h"
-#include "GT_Texture.h"
 #include "GT_Camera.h"
 #include "GT_Model.h"
 #include "GT_Skybox.h"
 #include "GT_Alphabet.h"
+#include "GT_Rocket.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include "tinyxml2.h"
-
-#include <SOIL/SOIL.h>
-
-const GLuint window_width = 800;
-const GLuint window_height = 600;
-
-#define VShader "../Shaders/shader.vs"
-#define FShader "../Shaders/shader.fs"
-#define vLampShader  "../Shaders/vLampShader.vs"
-#define fLampShader  "../Shaders/fLampShader.fs"
+#define VmodelShader "../Shaders/modelShader.vs"
+#define FmodelShader "../Shaders/modelShader.fs"
+#define vLightShader  "../Shaders/vLightShader.vs"
+#define fLightShader  "../Shaders/fLightShader.fs"
 #define vsSkyboxShader "../Shaders/skybox.vs"
 #define fsSkyboxShader "../Shaders/skybox.fs"
 #define vsFontShader "../Shaders/fontShader.vs"
@@ -33,13 +27,21 @@ const GLuint window_height = 600;
 
 bool keys[1024];
 bool firstMouse = true;
-GLfloat lastX = window_width/2, lastY = window_height/2;
 
+const GLuint window_width = 1024;
+const GLuint window_height = 600;
+GLfloat lastX = window_width/2, lastY = window_height/2;
+const GLfloat horizon = 50000;
+
+
+GLfloat runTime = 0.0f;
+GLfloat fps = 60.0f;
+
+GLfloat currentFrame = 0.0f;
 GLfloat deltaTime = 0.0f;
 GLfloat lastFrame = 0.0f;
 
 glm::vec3 lightPos(5.0f, 4.0f, 3.0f);
-
 
 class initialCallbacks
 {
@@ -66,7 +68,7 @@ static void MouseCB(GLFWwindow* window, double xpos, double ypos)
 class GAME : public initialCallbacks
 {
 public:
-    GAME() : s_(0), rotate_(0)
+    GAME() : s_(0), rotate_(0), aimed_(false)
 
     {
         gamePointer = this;
@@ -74,21 +76,16 @@ public:
     }
     virtual ~GAME()
     {
-        delete windowPtr_;
 
         delete shader_;
-        delete lampShader_;
+        delete lightShader_;
         delete cubemapShader_;
         delete skyboxShader_;
         delete fontShader_;
 
-
-        delete texture1;
-        delete texture2;
         delete camera_;
         delete skybox_;
-
-        delete model_;
+        delete windowPtr_;
     }
 
     bool initGAME()
@@ -121,81 +118,48 @@ public:
         initSceneContext();
         initializeCallbacks();
 
+        // OpenGL options
+        glEnable(GL_DEPTH_TEST);
+
+
         return true;
     }
+
+
 
     bool Run()
     {
 
-
-        // OpenGL options
-        glEnable(GL_DEPTH_TEST);
-
-        /////////////////////            VAO bussiness       //////////////////////////
-
-        glGenVertexArrays(1, &VAO_);
-
-        glGenBuffers(1, &VBO_);
-        glBindBuffer(GL_ARRAY_BUFFER, VBO_);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-        glBindVertexArray(VAO_);
-        // Position attribute
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6*sizeof(float), (const GLvoid*)0);
-        glEnableVertexAttribArray(0);
-        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid*)(sizeof(GLfloat)* 3));
-        glEnableVertexAttribArray(1);
-        glBindVertexArray(0);
-
-        ///////////////////////////////////////////////////////////////////////////////
-        glGenVertexArrays(1, &lightVAO);
-        glBindVertexArray(lightVAO);
-        // we only need to bind to the VBO
-        glBindBuffer(GL_ARRAY_BUFFER, VBO_);
-        // Set the vertex attributes (only position data for the lamp)
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (const GLvoid*)0);
-        glEnableVertexAttribArray(0);
-        glBindVertexArray(0);
-
-
         camera_ = new GT_Camera();
-
-        shader_ = new GT_Shader(VShader, FShader);
-        shader_->Use();
-        lampShader_ = new GT_Shader(vLampShader, fLampShader);
-        lampShader_->Use();
-
+        shader_ = new GT_Shader("modelShader", VmodelShader, FmodelShader);
         skybox_ = new GT_Skybox();
-        skyboxShader_ = new GT_Shader(vsSkyboxShader, fsSkyboxShader);
+        skyboxShader_ = new GT_Shader("skyboxShader", vsSkyboxShader, fsSkyboxShader);
+        fontShader_ = new GT_Shader("fontshader", vsFontShader, fsFontShader);
 
-        model_ = new GT_Model("/home/duvnjakk/workspace/GlfwTraining/Content/FA-18_RC/FA-18_RC.obj");
-
-        texture1 = new GT_Texture("../Content/bricks.jpg");
-        texture2 = new GT_Texture("../Content/sun.jpg");
-
-
-        texture1->Bind(GL_TEXTURE0);
-        texture2->Bind(GL_TEXTURE1);
-
-        fontShader_ = new GT_Shader(vsFontShader, fsFontShader);
         font_ = new GT_Alphabet();
 
-
-
-
-
-        GLint uniformInt = glGetUniformLocation(shader_->shaderProgram_, "uniformS_");
-        glUniform1f(uniformInt, s_);
-
+        actors_.push_back(new GT_Model("../Content/FA-22_Raptor/FA-22_Raptor.obj"));
+        actors_.push_back(new GT_Model("../Content/CV - Essex class/essex_scb-125_generic.obj"));
+        actors_.push_back(new GT_Model("../Content/FA-18_RC/FA-18_RC.obj"));
+        actors_.push_back(new GT_Rocket("../Content/AVMT300/AVMT300.3ds"));
+        actors_.push_back(new GT_Rocket("../Content/AVMT300/AVMT300.3ds"));
 
 
         while (!glfwWindowShouldClose(windowPtr_))
         {
 
+
             //////////////////////   timer ////////////////////////
-            GLfloat currentFrame = glfwGetTime();
-            deltaTime = currentFrame - lastFrame;
-            lastFrame = currentFrame;
+
+            deltaTime = 0.0f;
+            while (deltaTime < (1.0f/fps))
+            {
+                currentFrame = glfwGetTime();
+                deltaTime = currentFrame - lastFrame;
+            }
+                lastFrame = currentFrame;
+
+
             ///////////////////////////////////////////////////////
 
             glfwPollEvents();
@@ -203,75 +167,149 @@ public:
 
             /////////////////////   color buffer   ////////////////
 
-            glClearColor(0.0, 0.15f, 0.1f, 1.0f);
+            glClearColor(0.0, 0.15f, 0.2f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
             ///////////////////////////////////////////////////////
 
-            shader_->Use();
-            GLint objectColorLoc    = glGetUniformLocation(shader_->shaderProgram_, "objectColor");
-            GLint lightColorLoc     = glGetUniformLocation(shader_->shaderProgram_, "lightColor");
-            GLint lightPosLoc       = glGetUniformLocation(shader_->shaderProgram_, "lightPos");
-            GLint viewPosLoc        = glGetUniformLocation(shader_->shaderProgram_, "viewPos");
+            gameRules();
 
-            glUniform3f(objectColorLoc, 1.0f, 0.5f, 0.31f);
-            glUniform3f(lightColorLoc,  1.0f, 1.0f, 1.0f);
-            glUniform3f(lightPosLoc, lightPos.x, lightPos.y, lightPos.z);
-            glUniform3f(viewPosLoc,  camera_->getCameraPos().x, camera_->getCameraPos().y, camera_->getCameraPos().z );
+            target_ = nullptr;
+            aimed(actors_[1]);
+            aimed(actors_[0]);
+
+            updateRockets();
 
 
             //////////////////    camera movement    ///////////////
+
+            model_ = actors_[1]; // uss Carrier
+            model_->modelPos = glm::vec3(-1000.0f, -10.0f, -2500);
+            shader_->Use();
+            GLuint modelLoc  = glGetUniformLocation(shader_->shaderProgram_, "model");
+            GLuint viewLoc  = glGetUniformLocation(shader_->shaderProgram_, "view");
+            GLuint projLoc  = glGetUniformLocation(shader_->shaderProgram_, "projection");
+            glm::mat4 model = glm::mat4(1.0f);
+
+            model = glm::translate(model, model_->modelPos);
+            model = glm::scale(model, glm::vec3(1000.0f));
             glm::mat4 view = camera_->GetViewMatrix();
-            glm::mat4 projection = glm::perspective(ZOOM, (window_width*1.0f)/window_height, 0.1f, 1000.0f);
-            // Get the uniform locations
-            GLint modelLoc = glGetUniformLocation(shader_->shaderProgram_, "model");
-            GLint viewLoc = glGetUniformLocation(shader_->shaderProgram_, "view");
-            GLint projLoc = glGetUniformLocation(shader_->shaderProgram_, "projection");
-            // Pass the matrices to the shader
+
+            glm::mat4 projection = glm::perspective(ZOOM, (window_width*1.0f)/window_height, 0.1f, horizon);
+            glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
             glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
             glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
+            model_->Draw(*shader_);
 
+            /****************************************************************/
 
-            // Draw cube container
-            glBindVertexArray(VAO_);
-            glm::mat4 model;
-            model = glm::scale(model, glm::vec3(1.0f));
-            model = glm::rotate(model, rotate_,  glm::vec3( 0.0f, 1.0f, 0.0f));
+            model_ = actors_[2]; // Fighter
+            model_->modelPos = camera_->getCameraPos() +  glm::vec3(0.0f, -5.0f, -25.0f);
+            shader_->Use();
+            modelLoc  = glGetUniformLocation(shader_->shaderProgram_, "model");
+            viewLoc  = glGetUniformLocation(shader_->shaderProgram_, "view");
+            projLoc  = glGetUniformLocation(shader_->shaderProgram_, "projection");
+            model = glm::mat4(1.0f);
+            model = glm::translate(model, glm::vec3(0.0f, -5.0f, -25.0f));
+            model = glm::rotate(model,(GLfloat)-3.14159/2.0f,  glm::vec3(1.0f, 0.0f, 0.0f));
+
+            view = glm::mat4(1.0f);
+            projection = glm::perspective(ZOOM, (window_width*1.0f)/window_height, 0.1f, horizon);
             glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+            glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+            glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
+            model_->Draw(*shader_);
 
+            /****************************************************************/
+
+            model_ = actors_[0]; // Enemy
+            model_->modelPos = glm::vec3(5000,500,-2600);
+            shader_->Use();
+            modelLoc  = glGetUniformLocation(shader_->shaderProgram_, "model");
+            viewLoc  = glGetUniformLocation(shader_->shaderProgram_, "view");
+            projLoc  = glGetUniformLocation(shader_->shaderProgram_, "projection");
+            model = glm::mat4(1.0f);
+            model = glm::translate(model, model_->modelPos);
+            model = glm::rotate(model,(GLfloat)-3.14159/2.0f,  glm::vec3(1.0f, 0.0f, 0.0f));
+
+            model = glm::scale(model, glm::vec3(2.0f));
+
+            view = camera_->GetViewMatrix();
+            projection = glm::perspective(ZOOM, (window_width*1.0f)/window_height, 0.1f, 10000.0f);
+            glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+            glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+            glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
             model_->Draw(*shader_);
 
 
-            glDrawArrays(GL_TRIANGLES, 0, 36);
-            glBindVertexArray(0);
+            /****************************************************************/
 
-            // also draw light source
-            lampShader_->Use();
-            modelLoc = glGetUniformLocation(lampShader_->shaderProgram_, "model");
-            viewLoc  = glGetUniformLocation(lampShader_->shaderProgram_, "view");
-            projLoc  = glGetUniformLocation(lampShader_->shaderProgram_, "projection");
+            model_ = actors_[3]; // Missile
+            shader_->Use();
+            modelLoc  = glGetUniformLocation(shader_->shaderProgram_, "model");
+            viewLoc  = glGetUniformLocation(shader_->shaderProgram_, "view");
+            projLoc  = glGetUniformLocation(shader_->shaderProgram_, "projection");
 
+            model = glm::mat4(1.0f);
+
+
+            if (model_->isFired())
+            {
+                view = camera_->GetViewMatrix();
+                model = glm::translate(model, actors_[3]->modelPos);
+            }
+            else
+            {
+                model = glm::translate(model, glm::vec3(-7.0f, -5.0f, -35.0f));
+                actors_[3]->modelPos = camera_->getCameraPos() + glm::vec3(-7.0f, -5.0f, -35.0f);
+                view = glm::mat4(1.0f);
+            }
+
+
+            model = glm::scale(model, glm::vec3(0.3f));
+            model = glm::rotate(model,(GLfloat)-3.14159/2.0f,  glm::vec3(0.0f, 1.0f, 0.0f));
+            projection = glm::perspective(ZOOM, (window_width*1.0f)/window_height, 0.1f, 10000.0f);
+            glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
             glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
             glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
-            model = glm::mat4();
-            model = glm::translate(model, lightPos);
-            model = glm::scale(model, glm::vec3(0.001f));
+            model_->Draw(*shader_);
+
+
+            model_ = actors_[4]; // Missile
+            model = glm::mat4(1.0f);
+            if (model_->isFired())
+            {
+                view = camera_->GetViewMatrix();
+                model = glm::translate(model, actors_[4]->modelPos);
+            }
+            else
+            {
+                model = glm::translate(model,glm::vec3(12.0f, -5.0f, -35.0f));
+                actors_[4]->modelPos = camera_->getCameraPos() + glm::vec3(12.0f, -5.0f, -35.0f);
+                view = glm::mat4(1.0f);
+            }
+
+
+            model = glm::scale(model, glm::vec3(0.3f));
+            model = glm::rotate(model,(GLfloat)-3.14159/2.0f,  glm::vec3(0.0f, 1.0f, 0.0f));
+
+
+            projection = glm::perspective(ZOOM, (window_width*1.0f)/window_height, 0.1f, 10000.0f);
             glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+            glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+            glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
+            model_->Draw(*shader_);
 
-
-            glBindVertexArray(lightVAO);
-            glDrawArrays(GL_TRIANGLES, 0, 36);
-            glBindVertexArray(0);
-
-
+            ///////////////////////////////////////////////////////////////////////////////////////
             // skybox
             glDepthFunc(GL_LEQUAL);
             skyboxShader_->Use();
+
+
             viewLoc  = glGetUniformLocation(skyboxShader_->shaderProgram_, "view");
             projLoc  = glGetUniformLocation(skyboxShader_->shaderProgram_, "projection");
-
             view = glm::mat4(glm::mat3(camera_->GetViewMatrix()));
-            projection = glm::perspective(ZOOM, (window_width*1.0f)/window_height, 0.1f, 1000.0f);
+            projection = glm::perspective(ZOOM, (window_width*1.0f)/window_height, 0.1f, 10000.0f);
             glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
             glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
@@ -282,15 +320,31 @@ public:
             glBindVertexArray(0);
             glDepthFunc(GL_LESS);
 
+            // Fonts
             projection = glm::ortho(0.0f, static_cast<GLfloat>(window_width), 0.0f, static_cast<GLfloat>(window_height));
             fontShader_->Use();
             glUniformMatrix4fv(glGetUniformLocation(fontShader_->shaderProgram_, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
             font_->RenderText(*fontShader_, std::to_string(currentFrame), 25.0f, 25.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
             font_->RenderText(*fontShader_, std::to_string(1/deltaTime), 2.0f, 2.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
+            font_->RenderText(*fontShader_, std::to_string(camera_->getSpeed()), 50.0f, 50.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
+            font_->RenderText(*fontShader_, std::to_string(fly_), 10.0f, 60.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
+
+            // camera position
+            font_->RenderText(*fontShader_, std::to_string(camera_->getCameraPos().x), 5.0f, 500.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
+            font_->RenderText(*fontShader_, std::to_string(camera_->getCameraPos().y), 130.0f, 500.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
+            font_->RenderText(*fontShader_, std::to_string(camera_->getCameraPos().z), 240.0f, 500.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
+            // camera Front
+            font_->RenderText(*fontShader_, std::to_string(camera_->getCameraFront().x), 5.0f, 480.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
+            font_->RenderText(*fontShader_, std::to_string(camera_->getCameraFront().y), 130.0f, 480.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
+            font_->RenderText(*fontShader_, std::to_string(camera_->getCameraFront().z), 240.0f, 480.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
+            // enemy pos
+            font_->RenderText(*fontShader_, std::to_string(actors_[0]->modelPos.x), 5.0f, 460.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
+            font_->RenderText(*fontShader_, std::to_string(actors_[0]->modelPos.y), 130.0f, 460.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
+            font_->RenderText(*fontShader_, std::to_string(actors_[0]->modelPos.z), 240.0f, 460.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
 
             /////////////////////    rendering    //////////////////
 
-            glUniform1f(uniformInt, s_);
+
 
              ////////////////////////////////////////////////////////
             glfwSwapBuffers(windowPtr_);
@@ -298,6 +352,64 @@ public:
 glBindVertexArray(0);
         glfwTerminate();
         return true;
+    }
+
+
+    void updateRockets()
+    {
+        if (actors_[3]->isFired())
+            actors_[3]->move();
+        if (actors_[4]->isFired())
+            actors_[4]->move();
+    }
+
+    void handleCrash()
+    {
+
+
+        glfwWindowShouldClose(windowPtr_);
+
+        glfwTerminate();
+
+    }
+
+    void gameRules()
+    {
+
+    }
+
+
+    void aimed(GT_Model* target)
+    {
+        glm::vec3 enemyPos = target->modelPos;
+        glm::vec3 fighterPos = actors_[2]->modelPos;
+        glm::vec3 diagonal =  glm::normalize( enemyPos - fighterPos );
+
+        // enemy pos
+        font_->RenderText(*fontShader_, std::to_string(diagonal.x), 5.0f, 730.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
+        font_->RenderText(*fontShader_, std::to_string(diagonal.y), 130.0f, 730.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
+        font_->RenderText(*fontShader_, std::to_string(diagonal.z), 240.0f, 730.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
+
+
+        GLfloat tempDOT = glm::dot(camera_->getCameraFront(), diagonal );
+        if (tempDOT > 0.997 )
+        {
+            font_->RenderText(*fontShader_, "AIMED!!!", 700.0f, 100.0f, 1.0f, glm::vec3(1.0, 0.0f, .4f));
+            if (sin(glfwGetTime()*6) >0)
+                if (actors_[3]->isFired() && actors_[4]->isFired())
+                    font_->RenderText(*fontShader_, "OUT OF MISSILES!!!", 630.0f, 65.0f, 0.8f, glm::vec3(1.0, 0.0f, .4f));
+                else
+                    font_->RenderText(*fontShader_, "FIRE!!!", 710.0f, 65.0f, 0.8f, glm::vec3(1.0, 0.0f, .4f));
+            target_ = target;
+
+        }
+        else
+        {
+//            std::cout<<    glm::dot(camera_->getCameraFront(), diagonal )<<std::endl;
+
+        }
+
+
     }
 
 private:
@@ -340,9 +452,12 @@ private:
         camera_->keyboardHandler(YAW_L, deltaTime);
     if (keys[GLFW_KEY_E])
         camera_->keyboardHandler(YAW_R, deltaTime);
+    if (keys[GLFW_KEY_LEFT_CONTROL])
+        camera_->keyboardHandler(ACCELERATE, deltaTime);
+    if (keys[GLFW_KEY_LEFT_SHIFT])
+        camera_->keyboardHandler(DECELERATE, deltaTime);
+
 #endif
-
-
     }
 
     void initializeCallbacks()
@@ -361,25 +476,23 @@ private:
         if (key == GLFW_KEY_SPACE && action == GLFW_PRESS)
         {
             fly_ = !fly_;
-
-            if (s_ == 0)
-                s_ = 1;
-            else if (s_ == 1)
-                s_ = 0;
         }
 
-        if (key == GLFW_KEY_U )
+        if (key == GLFW_KEY_T )
         {
-            s_ += 0.05f;
-            if (s_ > 1)
-                s_ = 1.0f;
+            toggle_ = !toggle_;
         }
 
-        if (key == GLFW_KEY_I )
+        if (key == GLFW_KEY_ENTER && action == GLFW_PRESS)
         {
-            s_ -= 0.05f;
-            if (s_ < 0)
-                s_ = 0.0f;
+            std::cout<<(target_ == nullptr)<<std::endl;
+            if (target_ != nullptr)
+            {
+                if (!actors_[3]->isFired())
+                    actors_[3]->Fire(target_);
+                else if (!actors_[4]->isFired())
+                    actors_[4]->Fire(target_);
+            }
         }
 
         if(action == GLFW_PRESS)
@@ -406,80 +519,38 @@ private:
         //camera_->mouseHandler(xoffset, -yoffset);
     }
 
-    GLfloat vertices[216] = {
-        -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-         0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-         0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-         0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-        -0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-
-        -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
-         0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
-         0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
-         0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
-        -0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
-        -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
-
-        -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
-        -0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-        -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-        -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-        -0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
-        -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
-
-         0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
-         0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-         0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-         0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-         0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
-         0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
-
-        -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
-         0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
-         0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-         0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-        -0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
-
-        -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
-         0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
-         0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-         0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-        -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-        -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
-    };
-
-
 //class private members
 private:
-    GLuint VBO_;
-    GLuint lightVAO;
 
-    GLuint TBO_;
-    GLuint VAO_;
-    GLuint EBO_;
     GLFWwindow* windowPtr_;
 
+    // shaders
+    std::map<std::string, GT_Shader> shaders_;
     GT_Shader* shader_;
-    GT_Shader* lampShader_;
+    GT_Shader* lightShader_;
     GT_Shader* cubemapShader_;
     GT_Shader* skyboxShader_;
     GT_Shader* fontShader_;
 
 
-    GT_Texture* texture1;
-    GT_Texture* texture2;
+    // classes
     GT_Camera* camera_;
     GT_Skybox* skybox_;
     GT_Alphabet* font_;
 
+    // Models
+    std::vector<GT_Model*> actors_;
     GT_Model* model_;
 
-
+    // uniforms
     GLfloat s_;
     GLboolean fly_;
+    GLboolean toggle_;
+    GLboolean aimed_;
+    GT_Model* target_ ;
     GLfloat rotate_;
+
+    GLfloat blinker_ ;
 
 };
 
@@ -504,4 +575,3 @@ int main(int argc, char** argv)
     std::cout<<"GameOver"<<std::endl;
     return 0;
 }
-
