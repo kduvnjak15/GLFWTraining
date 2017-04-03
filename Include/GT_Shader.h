@@ -10,7 +10,9 @@ enum shaderTag
     enemyShader,
     modelShader,
     fontShader,
-    skyboxShader
+    skyboxShader,
+    terrainShader
+
 };
 
 class GT_Shader
