@@ -9,7 +9,6 @@ GLuint GT_Shader::addShader(const char* shaderPath, GLenum shaderType)
     /////////////////   preprocessing file   //////////////////////////
 
     std::ifstream shaderFile;
-
     shaderFile.open(shaderPath);
     if (!shaderFile.is_open())
     {
@@ -82,11 +81,15 @@ GT_Shader::GT_Shader(shaderTag shadesTypeTag, const char* vsFileName, const char
     //////////////////////      shader files      ////////////////////////
     vertexShader_ = addShader(vsFileName, GL_VERTEX_SHADER);
     fragmentShader_ = addShader(fsFileName, GL_FRAGMENT_SHADER);
+    if (gsFileName != nullptr)
+        geometryShader_ = addShader(gsFileName, GL_GEOMETRY_SHADER);
 
     ///////////////////////     shader program    //////////////////////////////
     this->shaderProgram_ =  glCreateProgram();
     glAttachShader(this->shaderProgram_, vertexShader_);
     glAttachShader(this->shaderProgram_, fragmentShader_);
+    if (gsFileName != "")
+        glAttachShader(this->shaderProgram_, geometryShader_);
     glLinkProgram(this->shaderProgram_);
 
     validateShaderProgram();

@@ -2,7 +2,7 @@
 #include <GL/glew.h>
 
 GT_Camera::GT_Camera()
-    : cameraPos(0.0f, 0.0f, 25.5f),
+    : cameraPos(0.0f, 400.0f, 25.5f),
       cameraFront(0.0f, 0.0f, -1.0f),
       cameraUp(0.0f, 1.0f, 0.0f),
       cameraWorldUp(0.0f, 1.0f, 0.0f),

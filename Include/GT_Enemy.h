@@ -11,11 +11,12 @@ public:
     GT_Enemy(const char* modelPath, GT_Shader* shaderPtr);
     ~GT_Enemy();
 
-    void isHit();
+    bool isHit();
     void explode();
 
     GT_Shader* getShader() { return enemyShader_; }
 
 private:
     GT_Shader* enemyShader_;
+    bool gotHit_;
 };

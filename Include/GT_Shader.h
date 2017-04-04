@@ -12,7 +12,6 @@ enum shaderTag
     fontShader,
     skyboxShader,
     terrainShader
-
 };
 
 class GT_Shader

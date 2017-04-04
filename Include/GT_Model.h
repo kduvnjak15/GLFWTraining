@@ -39,20 +39,15 @@ public:
         this->loadModel(path);
     }
 
-    struct Orientation
-    {
-        glm::vec3 modelFront;
-        glm::vec3 modelUp;
-    };
+    glm::vec3 modelPos;
+    glm::vec3 modelFront;
 
-    Orientation attitude_;
+    glm::vec3 modelUp;
 
     GT_Model* reference()
     {
         return this;
     }
-
-
 
     // Draws the model and thus all its meshes
     void Draw(GT_Shader shader_)
@@ -63,7 +58,6 @@ public:
         }
     }
 
-    glm::vec3 modelPos;
 
 private:
 
