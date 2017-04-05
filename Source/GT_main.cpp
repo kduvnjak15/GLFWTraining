@@ -47,7 +47,7 @@ GLfloat currentFrame = 0.0f;
 GLfloat deltaTime = 0.0f;
 GLfloat lastFrame = 0.0f;
 
-glm::vec3 lightPos(5.0f, 4.0f, 3.0f);
+glm::vec3 lightPos(-42000.0f, 54800.0f, -71700.0f);
 
 class initialCallbacks
 {
@@ -184,7 +184,7 @@ public:
 
 
             enemy_ = enemies_[0]; // uss Carrier
-            enemy_->modelPos = glm::vec3(-1000.0f, 200.0f, -2500);
+            enemy_->modelPos = glm::vec3(-1000.0f, 350.0f, -2500);
             enemyShader_->Use();
 
             GLuint modelLoc  = glGetUniformLocation(enemyShader_->shaderProgram_, "model");
@@ -231,6 +231,20 @@ public:
             modelLoc  = glGetUniformLocation(shader_->shaderProgram_, "model");
             viewLoc  = glGetUniformLocation(shader_->shaderProgram_, "view");
             projLoc  = glGetUniformLocation(shader_->shaderProgram_, "projection");
+            glUniform1i(glGetUniformLocation(shader_->shaderProgram_, "material.diffuse"),  0);
+            glUniform1i(glGetUniformLocation(shader_->shaderProgram_, "material.specular"), 1);
+            GLint lightPosLoc    = glGetUniformLocation(shader_->shaderProgram_, "light.position");
+            GLint viewPosLoc     = glGetUniformLocation(shader_->shaderProgram_, "viewPos");
+            glUniform3f(lightPosLoc,    lightPos.x, lightPos.y, lightPos.z);
+            glUniform3f(viewPosLoc,     camera_->getCameraPos().x, camera_->getCameraPos().y, camera_->getCameraPos().z);
+
+            // Set lights properties
+            glUniform3f(glGetUniformLocation(shader_->shaderProgram_, "light.ambient"),  1.0, 1.0f, 1.0f);
+            glUniform3f(glGetUniformLocation(shader_->shaderProgram_, "light.diffuse"),  1.0, 1.0f, 1.0f);
+            glUniform3f(glGetUniformLocation(shader_->shaderProgram_, "light.specular"), 0.00, 0.00f, 0.00f);
+            // Set material properties
+            glUniform1f(glGetUniformLocation(shader_->shaderProgram_, "material.shininess"), 1.0f);
+
             model = glm::mat4(1.0f);
 
             model = glm::translate(model, +  glm::vec3(0.0f, -5.0f, -25.0f ));
@@ -247,9 +261,9 @@ public:
             fighter_->Draw(*shader_);
 
             /**************************************************************************/
-            std::cout<<missile_<<" jj" <<std::endl;
+
             renderProjectiles();
-            std::cout<<missile_<<" jj" <<std::endl;
+
             ///////////////////////////////////////////////////////////////////////////////////////
             // skybox
             glDepthFunc(GL_LEQUAL);
@@ -323,7 +337,6 @@ glBindVertexArray(0);
 
     void renderProjectiles()
     {
-        std::cout<<missile_<<std::endl;
         glm::mat4 projection = glm::perspective(ZOOM, (window_width*1.0f)/window_height, 0.1f, horizon);
 
         for (int i = 0; i < rockets_.size(); i++)
@@ -350,7 +363,6 @@ glBindVertexArray(0);
 
                 align = glm::inverse(align);
 
-                std::cout<<glm::determinant(align)<<std::endl;
                 tran2 = align * tran2;
                 model = tran1 * tran2 * rot * scale;
 
@@ -385,8 +397,6 @@ glBindVertexArray(0);
             rockets_[0]->move();
         if (rockets_[1]->isFired() && !rockets_[1]->dead_)
             rockets_[1]->move();
-
-        std::cout<<" plauit"<<std::endl;
     }
 
     void handleCrash()
@@ -402,11 +412,8 @@ glBindVertexArray(0);
     void loadGame()
     {
         camera_ = new GT_Camera();
-        std::cout<<"brkovi"<<std::endl;
         shader_ = new GT_Shader(modelShader, VmodelShader, FmodelShader);
-        std::cout<<"brkovi"<<std::endl;
         enemyShader_ = new GT_Shader(shaderTag::enemyShader, vsEnemyShader, fsEnemyShader, gsEnemyShader);
-        std::cout<<"brkovi"<<std::endl;
 
         skybox_ = new GT_Skybox();
         skyboxShader_ = new GT_Shader(skyboxShader, vsSkyboxShader, fsSkyboxShader);
