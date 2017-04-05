@@ -29,6 +29,7 @@ bool GT_Enemy::isHit()
 
 void GT_Enemy::explode()
 {
+
     gotHit_ = true;
     glUniform1i(glGetUniformLocation(enemyShader_->shaderProgram_, "isHit"), 10);
     std::cout<<"EXPLOOODEEE!!"<<this<<std::endl;

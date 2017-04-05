@@ -27,7 +27,7 @@ enum Camera_Movement {
 // Default camera values
 const GLfloat YAW        = -90.0f;
 const GLfloat PITCH      =  0.0f;
-const GLfloat SPEED      =  0.0050f;
+const GLfloat SPEED      =  150.0f;
 const GLfloat SENSITIVITY =  0.25f;
 const GLfloat ZOOM       =  45.0f;
 const GLfloat rollSensitivity = .85;
@@ -61,6 +61,9 @@ public:
     void pitchControl(Camera_Movement controlDirection, GLfloat deltaSpace);
     void rollControl(Camera_Movement controlDirection, GLfloat deltaSpace);
     void yawControl(Camera_Movement controlDirection, GLfloat deltaSpace);
+
+    void bounceBBox() {cameraFront = - cameraFront; cameraRight = -cameraRight; }
+    void enforceGravity(GLfloat factor) { cameraPos += glm::vec3(0.0f, -1.0f, 0.0f)*factor;}
 
 private:
     //Camera Cartesian

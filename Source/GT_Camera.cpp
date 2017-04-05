@@ -2,7 +2,7 @@
 #include <GL/glew.h>
 
 GT_Camera::GT_Camera()
-    : cameraPos(0.0f, 400.0f, 25.5f),
+    : cameraPos(0.0f, 400.0f, 2500.5f),
       cameraFront(0.0f, 0.0f, -1.0f),
       cameraUp(0.0f, 1.0f, 0.0f),
       cameraWorldUp(0.0f, 1.0f, 0.0f),
@@ -16,8 +16,6 @@ GT_Camera::GT_Camera()
 
 {
     cameraRight = glm::normalize(glm::cross(cameraFront, cameraUp));
-    //this->updateCameraVectors();
-
 }
 
 
@@ -97,11 +95,16 @@ void GT_Camera::keyboardHandler(Camera_Movement direction, GLfloat deltaTime)
     if (direction == Camera_Movement::YAW_R)
         yawControl(PITCH_D, -flightOffset);
     if (direction == Camera_Movement::ACCELERATE)
-        speed_ += 2.f;
+    {
+        speed_ += 2.0f;
+        if (speed_ > 300) speed_ = 300.0f;
+    }
     if (direction == Camera_Movement::DECELERATE)
-        speed_ -= 2.1f;
+    {
+        speed_ -= 2.0f;
+        if (speed_ < 0) speed_ = 0.0f;
+    }
 
-//    this->updateCameraVectors();
 }
 
 
@@ -120,8 +123,6 @@ void GT_Camera::mouseHandler(GLfloat xoffset, GLfloat yoffset, GLboolean constra
         if (this->pitch < -89.0f)
             this->pitch = -89.0f;
     }
-
-//    this->updateCameraVectors();
 }
 
 

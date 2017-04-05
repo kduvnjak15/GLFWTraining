@@ -16,10 +16,10 @@ uniform int isHit;
 
 vec4 explode(vec4 position, vec3 normal)
 {
-    if (isHit)
+    if (isHit>0)
     {
         float magnitude = 200.0f;
-        vec3 direction = normal * ((sin(time) + 1.0f) / 2.0f) * magnitude; 
+        vec3 direction = normal * (-(time*time) ) * magnitude + vec3(0.0f, 0.0f, -1.0f * time); 
         return position + vec4(direction, 0.0f);
     }
     else

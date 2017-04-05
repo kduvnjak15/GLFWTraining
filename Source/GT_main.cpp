@@ -74,7 +74,7 @@ static void MouseCB(GLFWwindow* window, double xpos, double ypos)
 class GAME : public initialCallbacks
 {
 public:
-    GAME() : s_(0), rotate_(0), aimed_(false)
+    GAME() : s_(0), rotate_(0), aimed_(false), crashTime_(0.0), fly_(true)
 
     {
         gamePointer = this;
@@ -190,6 +190,7 @@ public:
             GLuint modelLoc  = glGetUniformLocation(enemyShader_->shaderProgram_, "model");
             GLuint viewLoc  = glGetUniformLocation(enemyShader_->shaderProgram_, "view");
             GLuint projLoc  = glGetUniformLocation(enemyShader_->shaderProgram_, "projection");
+            GLint isHit = glGetUniformLocation(enemyShader_->shaderProgram_, "isHit");
             glm::mat4 model = glm::mat4(1.0f);
             model = glm::translate(model, enemy_->modelPos);
             model = glm::scale(model, glm::vec3(1000.0f));
@@ -197,6 +198,7 @@ public:
             glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
             glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
             glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
+            glUniform1i(isHit, enemy_->isHit());
             enemy_->Draw(*(enemyShader_)); // wrong shader
 
             /****************************************************************/
@@ -207,19 +209,20 @@ public:
             modelLoc  = glGetUniformLocation(enemyShader_->shaderProgram_, "model");
             viewLoc  = glGetUniformLocation(enemyShader_->shaderProgram_, "view");
             projLoc  = glGetUniformLocation(enemyShader_->shaderProgram_, "projection");
+            isHit = glGetUniformLocation(enemyShader_->shaderProgram_, "isHit");
             model = glm::mat4(1.0f);
 
-            enemy_->modelPos.x += cos(glfwGetTime()*0.1)*400;
-            enemy_->modelPos.y += sin(glfwGetTime()*0.1)*100;
-            enemy_->modelPos.z += sin(glfwGetTime()*0.1)*400;
+            enemy_->modelPos.x += (cos(glfwGetTime()*0.1)+1)*400;
+            enemy_->modelPos.y += (sin(glfwGetTime()*0.1)+1)*100;
+            enemy_->modelPos.z += (sin(glfwGetTime()*0.1)+1)*400;
             model = glm::translate(model, enemy_->modelPos);
             model = glm::rotate(model, (GLfloat)-3.14159/2.0f, glm::vec3(1.0f, 0.0f, 0.0f));
             model = glm::scale(model, glm::vec3(1.0f));
             view = camera_->GetViewMatrix();
-
             glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
             glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
             glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
+            glUniform1i(isHit, enemy_->isHit());
             enemy_->Draw(*(enemyShader_)); // wrong shader
 
             /********************************************************************/
@@ -239,9 +242,9 @@ public:
             glUniform3f(viewPosLoc,     camera_->getCameraPos().x, camera_->getCameraPos().y, camera_->getCameraPos().z);
 
             // Set lights properties
-            glUniform3f(glGetUniformLocation(shader_->shaderProgram_, "light.ambient"),  1.0, 1.0f, 1.0f);
-            glUniform3f(glGetUniformLocation(shader_->shaderProgram_, "light.diffuse"),  1.0, 1.0f, 1.0f);
-            glUniform3f(glGetUniformLocation(shader_->shaderProgram_, "light.specular"), 0.00, 0.00f, 0.00f);
+            glUniform3f(glGetUniformLocation(shader_->shaderProgram_, "light.ambient"),  0.50, 0.50f, 0.50f);
+            glUniform3f(glGetUniformLocation(shader_->shaderProgram_, "light.diffuse"),  0.80, 0.80f, 0.80f);
+            glUniform3f(glGetUniformLocation(shader_->shaderProgram_, "light.specular"), 0.05, 0.05f, 0.05f);
             // Set material properties
             glUniform1f(glGetUniformLocation(shader_->shaderProgram_, "material.shininess"), 1.0f);
 
@@ -327,8 +330,18 @@ public:
 
 
 
-             ////////////////////////////////////////////////////////
-            glfwSwapBuffers(windowPtr_);
+            ////////////////////////////////////////////////////////
+
+            if (crashTime_  == 0.0f)
+            {
+                glfwSwapBuffers(windowPtr_);
+            }
+            else if (glfwGetTime() - crashTime_ > 2.0f)
+            {
+                handleCrash();
+            }
+
+
         }
 glBindVertexArray(0);
         glfwTerminate();
@@ -402,7 +415,6 @@ glBindVertexArray(0);
     void handleCrash()
     {
 
-
         glfwWindowShouldClose(windowPtr_);
 
         glfwTerminate();
@@ -468,18 +480,45 @@ glBindVertexArray(0);
         temp[1][0] = right.y;
         temp[2][0] = right.z;
 
-
-
-
         //temp = glm::lookAt(camera_->getCameraPos(), camera_->getCameraFront(), camera_->getCameraUp());
 
         return  glm::inverse(temp) ;
 
     }
 
-    void gameRules()
+    void bounceBBox()
     {
 
+        if (camera_->getCameraPos().x > 10000 || camera_->getCameraPos().x < -10000 || camera_->getCameraPos().y > 5000  || camera_->getCameraPos().z > 10000 || camera_->getCameraPos().z < -10000)
+        {
+            camera_->bounceBBox();
+        }
+
+        if (camera_->getCameraPos().y < 0)
+        {
+
+            std::cout << "Epic fail! You fly low as your moma's IQ "<< crashTime_ <<std::endl;
+
+            if (crashTime_ == 0.0)
+                crashTime_ = glfwGetTime();
+
+        }
+    }
+
+    void gravitySim()
+    {
+        if (camera_->getSpeed() < 100)
+        {
+
+            camera_->enforceGravity( 1.0f - camera_->getSpeed()/100.0f);
+        }
+    }
+
+
+    void gameRules()
+    {
+        gravitySim();
+        bounceBBox();
     }
 
     void aimed(GT_Enemy* target)
@@ -576,10 +615,10 @@ private:
             glfwSetWindowShouldClose(window, GL_TRUE);
         }
 
-        if (key == GLFW_KEY_SPACE && action == GLFW_PRESS)
-        {
-            fly_ = !fly_;
-        }
+//        if (key == GLFW_KEY_SPACE && action == GLFW_PRESS)
+//        {
+//            fly_ = !fly_;
+//        }
 
         if (key == GLFW_KEY_T )
         {
@@ -591,18 +630,25 @@ private:
             std::cout<<(target_ == nullptr)<<std::endl;
             if (target_ != nullptr)
             {
-                if (!rockets_[0]->isFired())
-                {
-                    rockets_[0]->modelFront = camera_->getCameraFront();
-                    rockets_[0]->modelUp = camera_->getCameraUp();
-                    rockets_[0]->Fire(target_);
-                }
-                else if (!rockets_[1]->isFired())
-                {
-                    rockets_[1]->modelFront = camera_->getCameraFront();
-                    rockets_[1]->modelUp = camera_->getCameraUp();
-                    rockets_[1]->Fire(target_);
-                }
+                if (rockets_.size() != 0)
+                    if ((*rockets_.begin())->isFired())
+                    {
+                        rockets_[0]->modelFront = camera_->getCameraFront();
+                        rockets_[0]->modelUp = camera_->getCameraUp();
+                        rockets_[0]->Fire(target_);
+                    }
+//                if (!rockets_[0]->isFired())
+//                {
+//                    rockets_[0]->modelFront = camera_->getCameraFront();
+//                    rockets_[0]->modelUp = camera_->getCameraUp();
+//                    rockets_[0]->Fire(target_);
+//                }
+//                else if (!rockets_[1]->isFired())
+//                {
+//                    rockets_[1]->modelFront = camera_->getCameraFront();
+//                    rockets_[1]->modelUp = camera_->getCameraUp();
+//                    rockets_[1]->Fire(target_);
+//                }
             }
         }
 
@@ -661,8 +707,10 @@ private:
 
     // uniforms
     GLfloat s_;
+    GLfloat crashTime_;
     GLboolean fly_;
     GLboolean toggle_;
+
     GLboolean aimed_;
     GT_Enemy* target_ ;
     GLfloat rotate_;
