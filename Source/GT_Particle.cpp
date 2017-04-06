@@ -1,23 +1,21 @@
-#include "GT_Terrain.h"
-
+#include "GT_Particle.h"
 #include "SOIL/SOIL.h"
-#include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"
 
-GT_Terrain::GT_Terrain()
-    :
-      position(glm::vec3(0.0, -50.0, -500.0))
 
+GT_Particle::GT_Particle()
 {
     initValues();
-    createTexture();
+    createParticle();
     createVAO();
     defineShader();
-    drawTerrain();
+
+
 }
 
-void GT_Terrain::initValues()
+
+void GT_Particle::initValues()
 {
 
 //    // left up
@@ -64,7 +62,7 @@ void GT_Terrain::initValues()
 //    vertices_[10] =  h;
 //    vertices_[11] = -a;
 
-    GLfloat a = 1000.0f;
+    GLfloat a = 10.0f;
     GLfloat h = 0.0f;
     // left up
     vertices_[0] = -a;
@@ -125,31 +123,31 @@ void GT_Terrain::initValues()
 
 }
 
-void GT_Terrain::createTexture()
+
+void GT_Particle::createParticle()
 {
     int width, height;
-    unsigned char* image = SOIL_load_image("../Content/ocean.jpg", &width, &height, 0, SOIL_LOAD_RGB);
+    unsigned char* image = SOIL_load_image("../Content/circle.png", &width, &height, 0, SOIL_LOAD_RGB);
 
-
-    glGenTextures(1, &terrainTexture_);
-    glBindTexture(GL_TEXTURE_2D, terrainTexture_);
+    glGenTextures(1, &particleTexture_);
+    glBindTexture(GL_TEXTURE_2D, particleTexture_);
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
     //Set texture filtering
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
     glGenerateMipmap(GL_TEXTURE_2D);
 
     SOIL_free_image_data(image);
     glBindTexture(GL_TEXTURE_2D, 0);
-
 }
 
-void GT_Terrain::createVAO()
+
+void GT_Particle::createVAO()
 {
     glGenVertexArrays(1, &VAO_);
     glGenBuffers(1, &VBO_);
@@ -178,31 +176,29 @@ void GT_Terrain::createVAO()
 
 }
 
-void GT_Terrain::defineShader()
-{
 
-    terrainShader_ = new GT_Shader(terrainShader, "../Shaders/terrainShader.vs", "../Shaders/terrainShader.fs");
+void GT_Particle::defineShader()
+{
+    particleShader_ = new GT_Shader(particleShader, "../Shaders/particleShader.vs", "../Shaders/particleShader.fs");
 }
 
-void GT_Terrain::drawTerrain()
+
+void GT_Particle::drawParticle()
 {
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, terrainTexture_);
 
-    GLuint modelLoc = glGetUniformLocation(terrainShader_->shaderProgram_, "model");
-
     glBindVertexArray(VAO_);
-    for (int i = -50; i < 50; i++)
-        for (int j = -50; j < 50; j++)
-        {
-            glm::mat4 model = glm::mat4(1.0f);
-            model = glm::translate(model,  glm::vec3(2*vertices_[7]*i, 0.0f, 2*vertices_[7]*j));
-            glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 
-            glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (const GLvoid*)0);
-        }
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (const GLvoid*)0);
 
     glBindVertexArray(0);
 
+}
+
+
+GT_Particle::~GT_Particle()
+{
+    delete particleShader_;
 }
 

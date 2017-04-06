@@ -127,7 +127,6 @@ public:
         // OpenGL options
         glEnable(GL_DEPTH_TEST);
 
-
         return true;
     }
 
@@ -135,25 +134,19 @@ public:
 
     bool Run()
     {
-
+        glfwSwapInterval(1);
         loadGame();
         loadActors();
-
-
 
         while (!glfwWindowShouldClose(windowPtr_))
         {
 
-
             //////////////////////   timer ////////////////////////
 
-            deltaTime = 0.0f;
-            while (deltaTime < (1.0f/fps))
-            {
-                currentFrame = glfwGetTime();
-                deltaTime = currentFrame - lastFrame;
-            }
-                lastFrame = currentFrame;
+            currentFrame = glfwGetTime();
+            deltaTime = currentFrame - lastFrame;
+
+            lastFrame = currentFrame;
 
             ///////////////////////////////////////////////////////
 
@@ -169,7 +162,6 @@ public:
 
             gameRules();
 
-
             target_ = nullptr;
             for (int i = 0; i < enemies_.size(); i++)
             {
@@ -177,7 +169,6 @@ public:
             }
 
             updateRockets();
-
 
             //////////////////    camera movement    ///////////////
             glm::mat4 projection = glm::perspective(ZOOM, (window_width*1.0f)/window_height, 0.1f, horizon);
@@ -401,8 +392,34 @@ glBindVertexArray(0);
             glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
             missile_->Draw(*shader_);
 
+                particleShader_->Use();
+                modelLoc  = glGetUniformLocation(particleShader_->shaderProgram_, "model");
+                viewLoc  = glGetUniformLocation(particleShader_->shaderProgram_, "view");
+                projLoc  = glGetUniformLocation(particleShader_->shaderProgram_, "projection");
+
+
+                std::vector<glm::vec3> container_ = missile_->getParticles();
+                for (int i = 0; i < container_.size(); i++)
+                {
+                    glm::mat4 tran1  = glm::translate(model, container_[i]);
+                    glm::mat4 rot   = glm::rotate(glm::mat4(1.0f), (GLfloat)-3.14159/2.0f, glm::vec3(1.0f, 1.0f, 0.0f));
+                    glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.3f));
+
+                    model =  tran1 * rot * scale;
+
+
+                    glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+                    glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+                    glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
+
+                    particle_->drawParticle();
+
+                }
+
+            }
+
         }
-    }
+
 
     void updateRockets()
     {
@@ -431,6 +448,8 @@ glBindVertexArray(0);
         skyboxShader_ = new GT_Shader(skyboxShader, vsSkyboxShader, fsSkyboxShader);
         font_ = new GT_Alphabet();
         fontShader_ = new GT_Shader(fontShader, vsFontShader, fsFontShader);
+        particle_ = new GT_Particle();
+        particleShader_ = new GT_Shader(particleShader, "../Shaders/particleShader.vs", "../Shaders/particleShader.fs");
         terrain_ = new GT_Terrain();
     }
 
@@ -494,14 +513,12 @@ glBindVertexArray(0);
             camera_->bounceBBox();
         }
 
-        if (camera_->getCameraPos().y < 0)
+        if (camera_->getCameraPos().y < 5)
         {
-
             std::cout << "Epic fail! You fly low as your moma's IQ "<< crashTime_ <<std::endl;
 
             if (crashTime_ == 0.0)
                 crashTime_ = glfwGetTime();
-
         }
     }
 
@@ -509,7 +526,6 @@ glBindVertexArray(0);
     {
         if (camera_->getSpeed() < 100)
         {
-
             camera_->enforceGravity( 1.0f - camera_->getSpeed()/100.0f);
         }
     }
@@ -630,25 +646,25 @@ private:
             std::cout<<(target_ == nullptr)<<std::endl;
             if (target_ != nullptr)
             {
-                if (rockets_.size() != 0)
-                    if ((*rockets_.begin())->isFired())
-                    {
-                        rockets_[0]->modelFront = camera_->getCameraFront();
-                        rockets_[0]->modelUp = camera_->getCameraUp();
-                        rockets_[0]->Fire(target_);
-                    }
-//                if (!rockets_[0]->isFired())
-//                {
-//                    rockets_[0]->modelFront = camera_->getCameraFront();
-//                    rockets_[0]->modelUp = camera_->getCameraUp();
-//                    rockets_[0]->Fire(target_);
-//                }
-//                else if (!rockets_[1]->isFired())
-//                {
-//                    rockets_[1]->modelFront = camera_->getCameraFront();
-//                    rockets_[1]->modelUp = camera_->getCameraUp();
-//                    rockets_[1]->Fire(target_);
-//                }
+//                if (rockets_.size() != 0)
+//                    if ((*rockets_.begin())->isFired())
+//                    {
+//                        rockets_[0]->modelFront = camera_->getCameraFront();
+//                        rockets_[0]->modelUp = camera_->getCameraUp();
+//                        rockets_[0]->Fire(target_);
+//                    }
+                if (!rockets_[0]->isFired())
+                {
+                    rockets_[0]->modelFront = camera_->getCameraFront();
+                    rockets_[0]->modelUp = camera_->getCameraUp();
+                    rockets_[0]->Fire(target_);
+                }
+                else if (!rockets_[1]->isFired())
+                {
+                    rockets_[1]->modelFront = camera_->getCameraFront();
+                    rockets_[1]->modelUp = camera_->getCameraUp();
+                    rockets_[1]->Fire(target_);
+                }
             }
         }
 
@@ -689,6 +705,7 @@ private:
     GT_Shader* cubemapShader_;
     GT_Shader* skyboxShader_;
     GT_Shader* fontShader_;
+    GT_Shader* particleShader_;
 
 
     // classes
@@ -702,6 +719,7 @@ private:
     std::vector<GT_Rocket*> rockets_;
     GT_Model* fighter_;
     GT_Rocket* missile_;
+    GT_Particle* particle_;
     GT_Enemy* enemy_;
     GT_Terrain* terrain_;
 

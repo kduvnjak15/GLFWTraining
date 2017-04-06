@@ -5,6 +5,7 @@
 
 #include "GT_Model.h"
 #include "GT_Enemy.h"
+#include "GT_Particle.h"
 
 const GLfloat MISSILE_LIFE = 5.0f;
 const GLfloat MISSILE_SPEED = 20.0f;
@@ -26,6 +27,8 @@ public:
 
     GLboolean dead_;
 
+    std::vector<glm::vec3> getParticles() { return particles_ ; }
+
 private:
 
     void destroy();
@@ -33,5 +36,8 @@ private:
     GLfloat birthday_;
     GT_Enemy* target_;
     GLboolean fired_;
+
+    std::vector<GT_Particle*> contrail_;
+    std::vector<glm::vec3> particles_;
 
 };
