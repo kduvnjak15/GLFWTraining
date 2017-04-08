@@ -299,23 +299,29 @@ public:
             projection = glm::ortho(0.0f, static_cast<GLfloat>(window_width), 0.0f, static_cast<GLfloat>(window_height));
             fontShader_->Use();
             glUniformMatrix4fv(glGetUniformLocation(fontShader_->shaderProgram_, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
-            font_->RenderText(*fontShader_, std::to_string(currentFrame), 25.0f, 25.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
-            font_->RenderText(*fontShader_, std::to_string(1/deltaTime), 2.0f, 2.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
-            font_->RenderText(*fontShader_, std::to_string(camera_->getSpeed()), 50.0f, 50.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
-            font_->RenderText(*fontShader_, std::to_string(fly_), 10.0f, 60.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
+            font_->RenderText(*fontShader_,"Time: ", 25.0f, 25.0f, .50f, glm::vec3(1.0, 0.1f, 0.1f));
+            font_->RenderText(*fontShader_, std::to_string(glfwGetTime()), 100.0f, 25.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
+            font_->RenderText(*fontShader_,"FPS: ", 25.0f, 50.0f, .50f, glm::vec3(1.0, 0.1f, 0.1f));
+            font_->RenderText(*fontShader_, std::to_string(1/deltaTime), 100.0f, 50.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
+            font_->RenderText(*fontShader_,"Speed: ", 25.0f, 75.0f, .50f, glm::vec3(1.0, 0.1f, 0.1f));
+            font_->RenderText(*fontShader_, std::to_string(camera_->getSpeed()), 100.0f, 75.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
+            font_->RenderText(*fontShader_,"Altitude: ", 25.0f, 100.0f, .50f, glm::vec3(1.0, 0.1f, 0.1f));
+            font_->RenderText(*fontShader_, std::to_string(camera_->getCameraPos().y), 100.0f, 100.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
 
-            // camera position
-            font_->RenderText(*fontShader_, std::to_string(camera_->getCameraPos().x), 5.0f, 500.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
-            font_->RenderText(*fontShader_, std::to_string(camera_->getCameraPos().y), 130.0f, 500.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
-            font_->RenderText(*fontShader_, std::to_string(camera_->getCameraPos().z), 240.0f, 500.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
-            // camera Front
-            font_->RenderText(*fontShader_, std::to_string(camera_->getCameraFront().x), 5.0f, 480.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
-            font_->RenderText(*fontShader_, std::to_string(camera_->getCameraFront().y), 130.0f, 480.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
-            font_->RenderText(*fontShader_, std::to_string(camera_->getCameraFront().z), 240.0f, 480.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
-            // enemy pos
-            font_->RenderText(*fontShader_, std::to_string(actors_[0]->modelPos.x), 5.0f, 460.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
-            font_->RenderText(*fontShader_, std::to_string(actors_[0]->modelPos.y), 130.0f, 460.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
-            font_->RenderText(*fontShader_, std::to_string(actors_[0]->modelPos.z), 240.0f, 460.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
+
+
+//            // camera position
+//            font_->RenderText(*fontShader_, std::to_string(camera_->getCameraPos().x), 5.0f, 500.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
+//            font_->RenderText(*fontShader_, std::to_string(camera_->getCameraPos().y), 130.0f, 500.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
+//            font_->RenderText(*fontShader_, std::to_string(camera_->getCameraPos().z), 240.0f, 500.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
+//            // camera Front
+//            font_->RenderText(*fontShader_, std::to_string(camera_->getCameraFront().x), 5.0f, 480.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
+//            font_->RenderText(*fontShader_, std::to_string(camera_->getCameraFront().y), 130.0f, 480.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
+//            font_->RenderText(*fontShader_, std::to_string(camera_->getCameraFront().z), 240.0f, 480.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
+//            // enemy pos
+//            font_->RenderText(*fontShader_, std::to_string(actors_[0]->modelPos.x), 5.0f, 460.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
+//            font_->RenderText(*fontShader_, std::to_string(actors_[0]->modelPos.y), 130.0f, 460.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
+//            font_->RenderText(*fontShader_, std::to_string(actors_[0]->modelPos.z), 240.0f, 460.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
 
             /////////////////////    rendering    //////////////////
 
@@ -530,11 +536,24 @@ glBindVertexArray(0);
         }
     }
 
+    void objectives()
+    {
+        for (int i = 0; i < enemies_.size(); i++)
+        {
+            if (!enemies_[i]->isHit())
+                return;
+        }
+        font_->RenderText(*fontShader_,": ", 25.0f, 100.0f, .50f, glm::vec3(1.0, 0.1f, 0.1f));
+        font_->RenderText(*fontShader_, std::to_string(camera_->getCameraPos().y), 100.0f, 100.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
+
+        handleCrash();
+    }
 
     void gameRules()
     {
         gravitySim();
         bounceBBox();
+        objectives();
     }
 
     void aimed(GT_Enemy* target)
@@ -542,12 +561,6 @@ glBindVertexArray(0);
         glm::vec3 enemyPos = target->modelPos;
         glm::vec3 fighterPos = actors_[0]->modelPos;
         glm::vec3 diagonal =  glm::normalize( enemyPos - fighterPos );
-
-        // enemy pos
-        font_->RenderText(*fontShader_, std::to_string(diagonal.x), 5.0f, 730.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
-        font_->RenderText(*fontShader_, std::to_string(diagonal.y), 130.0f, 730.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
-        font_->RenderText(*fontShader_, std::to_string(diagonal.z), 240.0f, 730.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
-
 
         GLfloat tempDOT = glm::dot(camera_->getCameraFront(), diagonal );
         if (tempDOT > 0.997 )

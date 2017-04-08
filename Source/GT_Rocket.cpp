@@ -62,7 +62,7 @@ void GT_Rocket::move()
 //    std::cout<<"dif : "<<sqrt(dif.x*dif.x + dif.y*dif.y + dif.z*dif.z) <<std::endl;
     glm::vec3 dir = glm::normalize(dif);
 
-    if (glm::dot(modelFront , dir) <0.99)
+    if (glm::dot(modelFront , dir) <0.999)
     {
         glm::vec3 temp = glm::normalize(glm::cross(modelFront, dir ));
         modelUp = glm::normalize(glm::cross(dir, temp));
