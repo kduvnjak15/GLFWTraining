@@ -2,21 +2,25 @@
 
 #include "GL/glew.h"
 #include "GT_Shader.h"
+#include "GT_Camera.h"
 
 class GT_Primitive
 {
 
 public:
-    GT_Primitive();
+    GT_Primitive(const char* textureImage);
 
-    virtual void initValues() = 0;
-    virtual void defineTexture() = 0 ;
-    virtual void defineVAO() = 0;
-    virtual void defineShader() = 0;
+    virtual void initValues();
+    virtual void defineTexture();
+    virtual void defineVAO();
+    virtual void defineShader();
 
-    virtual void draw() = 0 ;
+    virtual void draw(GT_Camera* tempCam);
 
     GT_Shader* primitiveShader_;
+    GLuint modelLoc_;
+    GLuint viewLoc_;
+    GLuint projLoc_;
 
 protected:
     GLuint VAO_;
@@ -30,8 +34,12 @@ protected:
     GLuint indices_[6];
     GLfloat texCoords_[8];
 
+    GLfloat sideA_;
+    GLfloat sideB_;
 
+    const char* texturePath_;
 
 
 
 };
+
