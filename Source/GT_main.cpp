@@ -201,12 +201,17 @@ public:
             //////////////////    camera movement    ///////////////
             glm::mat4 projection = glm::perspective(ZOOM, (window_width*1.0f)/window_height, 0.1f, horizon);
 
-            enemy_ = enemies_[0]; // uss Carrier
-            enemy_->Draw(camera_);
-            /****************************************************************/
+            for (int i = 0; i < enemies_.size(); i++)
+            {
+                enemies_[i]->Draw(camera_);
+            }
 
-            enemy_ = enemies_[1]; // F22- raptor
-            enemy_->Draw(camera_); // wrong shader
+//            enemy_ = enemies_[0]; // uss Carrier
+//            enemy_->Draw(camera_);
+//            /****************************************************************/
+
+//            enemy_ = enemies_[1]; // F22- raptor
+//            enemy_->Draw(camera_); // wrong shader
 
             /********************************************************************/
 
@@ -271,19 +276,6 @@ public:
             glDepthFunc(GL_LESS);
 
             /*****************************************************************************/
-#ifdef ocean
-            terrain_->primitiveShader_->Use();
-            modelLoc  = glGetUniformLocation(terrain_->primitiveShader_->shaderProgram_, "model");
-            viewLoc  = glGetUniformLocation(terrain_->primitiveShader_->shaderProgram_, "view");
-            projLoc  = glGetUniformLocation(terrain_->primitiveShader_->shaderProgram_, "projection");
-
-            model = glm::mat4(1.0f);
-            view = camera_->GetViewMatrix();
-            glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
-            glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
-
-            terrain_->draw();
-#else
 
             ocean_->primitiveShader_->Use();
             modelLoc  = glGetUniformLocation(ocean_->primitiveShader_->shaderProgram_, "model");
@@ -297,7 +289,6 @@ public:
 
 
             ocean_->draw();
-#endif
 
             /*****************************************************************************/
 
