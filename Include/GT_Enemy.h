@@ -13,10 +13,12 @@ public:
 
     bool isHit();
     void explode();
+    GLfloat explosionTime() { return glfwGetTime() - hitTime_ ;}
 
     GT_Shader* getShader() { return enemyShader_; }
 
 private:
     GT_Shader* enemyShader_;
     bool gotHit_;
+    GLfloat hitTime_;
 };
