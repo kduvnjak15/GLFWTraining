@@ -59,7 +59,6 @@ void GT_Rocket::move()
         }
         return;
     }
-//    std::cout<<"dif : "<<sqrt(dif.x*dif.x + dif.y*dif.y + dif.z*dif.z) <<std::endl;
     glm::vec3 dir = glm::normalize(dif);
 
     if (glm::dot(modelFront , dir) <0.999)
@@ -79,8 +78,8 @@ void GT_Rocket::move()
 
     this->modelPos += MISSILE_SPEED * this->modelFront;
     //contrail_.push_back(new GT_Particle(this->modelPos));
-    particles_.push_back(this->modelPos);
-    std::cout << particles_.size()<<", "<<particles_[particles_.size()-1].x<<", "<<particles_[particles_.size()-1].y <<std::endl;
-
-
+    contrail particleContrail_;
+    particleContrail_.birthday_ = glfwGetTime();
+    particleContrail_.position_ = this->modelPos;
+    particles_.push_back(particleContrail_);
 }

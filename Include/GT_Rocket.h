@@ -7,8 +7,14 @@
 #include "GT_Enemy.h"
 #include "GT_Particle.h"
 
-const GLfloat MISSILE_LIFE = 5.0f;
+const GLfloat MISSILE_LIFE = 15.0f;
 const GLfloat MISSILE_SPEED = 20.0f;
+
+struct contrail
+{
+    glm::vec3 position_;
+    GLfloat birthday_;
+};
 
 class GT_Rocket : public  GT_Model
 {
@@ -27,7 +33,7 @@ public:
 
     GLboolean dead_;
 
-    std::vector<glm::vec3> getParticles() { return particles_ ; }
+    std::vector<contrail> getParticles() { return particles_ ; }
 
 private:
 
@@ -38,6 +44,6 @@ private:
     GLboolean fired_;
 
     std::vector<GT_Particle*> contrail_;
-    std::vector<glm::vec3> particles_;
+    std::vector<contrail> particles_;
 
 };
