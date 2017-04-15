@@ -12,7 +12,9 @@
 #include "GT_Alphabet.h"
 #include "GT_Rocket.h"
 #include "GT_Enemy.h"
-#include "GT_Terrain.h"
+#include "GT_Ocean.h"
+#include "GT_Particle.h"
+
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -68,6 +70,36 @@ static void KeyboardCB(GLFWwindow* window, int key, int scancode, int action, in
 static void MouseCB(GLFWwindow* window, double xpos, double ypos)
 {
     gamePointer->MouseCallback(window, xpos, ypos);
+}
+
+static void glerror_output(GLenum source, GLenum type, GLuint eid, GLenum severity, GLsizei length, const char* message, void* ge)
+{
+    const char* typestr = (
+        (type == GL_DEBUG_TYPE_ERROR) ? "ERROR" : (
+        (type == GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR) ? "DEPRECATED" : (
+        (type == GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR) ? "UNDEFINED" : (
+        (type == GL_DEBUG_TYPE_PORTABILITY) ? "PORTABILITY" : (
+        (type == GL_DEBUG_TYPE_PERFORMANCE) ? "PERFORMANCE" : (
+        (type == GL_DEBUG_TYPE_OTHER) ? "OTHER" : (
+        (type == GL_DEBUG_TYPE_MARKER) ? "MARKER" : (
+        "UNKNOWN"
+    ))))))));
+    printf("GL %s from %04x, TYPE=%04x, ID=%04x, SEVERITY=%d, msg=%s", typestr, source, type, eid, severity, message);
+    if(message[length-1]!='\n') printf("\n");
+
+//    // nvidia performance warning when using glClear
+//    if(type==GL_DEBUG_TYPE_PERFORMANCE && eid==0x20092 && std::cout<<message <<" Shader is going to be recompiled because the shader key based on GL state mismatches"<<std::endl;
+//    return;
+
+//    // funky nvidia error when using nsight with quadro fx 580
+//    if(type==GL_DEBUG_TYPE_ERROR && eid==0x0500 &&  std::cout<< "GL_IMAGE_FORMAT_COMPATIBILITY_TYPE operation is invalid because a required extension (ARB_shader_image_load_store) is not supported"<<std::endl;)
+//    return;
+
+//    if(type != GL_DEBUG_TYPE_OTHER)
+//    {	eh_logf(ge, "GLDEBUG %s from %04x, TYPE=%04x, ID=%04x, SEVERITY=%d, msg=%s\n", typestr, source, type, eid, severity, message);
+//        DEBUG_BREAKPOINT();
+//    }
+    std::cout << typestr <<std::endl;
 }
 
 
@@ -181,6 +213,7 @@ public:
             GLuint modelLoc  = glGetUniformLocation(enemyShader_->shaderProgram_, "model");
             GLuint viewLoc  = glGetUniformLocation(enemyShader_->shaderProgram_, "view");
             GLuint projLoc  = glGetUniformLocation(enemyShader_->shaderProgram_, "projection");
+            GLfloat timeLoc = glGetUniformLocation(enemyShader_->shaderProgram_, "time");
             GLint isHit = glGetUniformLocation(enemyShader_->shaderProgram_, "isHit");
             glm::mat4 model = glm::mat4(1.0f);
             model = glm::translate(model, enemy_->modelPos);
@@ -189,7 +222,9 @@ public:
             glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
             glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
             glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
-            glUniform1i(isHit, enemy_->isHit());
+            if (enemy_->isHit())
+                glUniform1i(isHit, 10);
+            glUniform1f(timeLoc, enemy_->explosionTime());
             enemy_->Draw(*(enemyShader_)); // wrong shader
 
             /****************************************************************/
@@ -279,19 +314,33 @@ public:
             glDepthFunc(GL_LESS);
 
             /*****************************************************************************/
-            terrain_->terrainShader_->Use();
-            modelLoc  = glGetUniformLocation(terrain_->terrainShader_->shaderProgram_, "model");
-            viewLoc  = glGetUniformLocation(terrain_->terrainShader_->shaderProgram_, "view");
-            projLoc  = glGetUniformLocation(terrain_->terrainShader_->shaderProgram_, "projection");
+#ifdef ocean
+            terrain_->primitiveShader_->Use();
+            modelLoc  = glGetUniformLocation(terrain_->primitiveShader_->shaderProgram_, "model");
+            viewLoc  = glGetUniformLocation(terrain_->primitiveShader_->shaderProgram_, "view");
+            projLoc  = glGetUniformLocation(terrain_->primitiveShader_->shaderProgram_, "projection");
 
             model = glm::mat4(1.0f);
             view = camera_->GetViewMatrix();
-            projection = glm::perspective(ZOOM, (window_width*1.0f)/window_height, 0.1f, horizon);
-            glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
             glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
             glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
-            terrain_->drawTerrain();
+            terrain_->draw();
+#else
+
+            ocean_->primitiveShader_->Use();
+            modelLoc  = glGetUniformLocation(ocean_->primitiveShader_->shaderProgram_, "model");
+            viewLoc  = glGetUniformLocation(ocean_->primitiveShader_->shaderProgram_, "view");
+            projLoc  = glGetUniformLocation(ocean_->primitiveShader_->shaderProgram_, "projection");
+
+            model = glm::mat4(1.0f);
+            view = camera_->GetViewMatrix();
+            glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+            glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
+
+
+            ocean_->draw();
+#endif
 
             /*****************************************************************************/
 
@@ -398,28 +447,40 @@ glBindVertexArray(0);
             glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
             missile_->Draw(*shader_);
 
-                particleShader_->Use();
-                modelLoc  = glGetUniformLocation(particleShader_->shaderProgram_, "model");
-                viewLoc  = glGetUniformLocation(particleShader_->shaderProgram_, "view");
-                projLoc  = glGetUniformLocation(particleShader_->shaderProgram_, "projection");
+                particle_->primitiveShader_->Use();
+                modelLoc  = glGetUniformLocation(particle_->primitiveShader_->shaderProgram_, "model");
+                viewLoc  = glGetUniformLocation(particle_->primitiveShader_->shaderProgram_, "view");
+                projLoc  = glGetUniformLocation(particle_->primitiveShader_->shaderProgram_, "projection");
 
-
-                std::vector<glm::vec3> container_ = missile_->getParticles();
-                for (int i = 0; i < container_.size(); i++)
+                const GLfloat interpolateBias = 10;
+                std::vector<contrail> container_ = missile_->getParticles();
+                for (int i = 1; i < container_.size(); i++)
                 {
-                    glm::mat4 tran1  = glm::translate(model, container_[i]);
-                    glm::mat4 rot   = glm::rotate(glm::mat4(1.0f), (GLfloat)-3.14159/2.0f, glm::vec3(1.0f, 1.0f, 0.0f));
-                    glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.3f));
+                    if (container_[i].birthday_ - glfwGetTime() < -5 )
+                        continue;
 
-                    model =  tran1 * rot * scale;
+                    for (int j = 0; j< interpolateBias; j++)
+                    {
+                        model = glm::mat4(1.0f);
+                        glm::vec3 tempParticle = (container_[i].position_ - container_[i-1].position_)/interpolateBias;
 
+                        glm::mat4 tran1  = glm::translate(model, container_[i].position_+tempParticle*((GLfloat)j));
+                        glm::mat4 tran2  = glm::translate(glm::mat4(1.0f),  missile_->wingSlotOffset);
+                        glm::mat4 align = glm::lookAt(glm::vec3(0.0f), camera_->getCameraFront(), camera_->getCameraUp());
+                        glm::mat4 rot   = glm::rotate(glm::mat4(1.0f), (GLfloat)-3.14159/2.0f, glm::vec3(1.0f, 0.0f, 0.0f));
+                        glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 0.5f, 1.0f));
 
-                    glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-                    glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
-                    glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
+                        align = glm::inverse(align);
+                        tran2 = align * tran2;
+                        model = tran1 * tran2 * rot * scale;
 
-                    particle_->drawParticle();
+                        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+                        glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+                        glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
+                        particle_->draw();
+
+                    }
                 }
 
             }
@@ -455,8 +516,7 @@ glBindVertexArray(0);
         font_ = new GT_Alphabet();
         fontShader_ = new GT_Shader(fontShader, vsFontShader, fsFontShader);
         particle_ = new GT_Particle();
-        particleShader_ = new GT_Shader(particleShader, "../Shaders/particleShader.vs", "../Shaders/particleShader.fs");
-        terrain_ = new GT_Terrain();
+        ocean_ = new GT_Ocean();
     }
 
     void loadActors()
@@ -546,6 +606,10 @@ glBindVertexArray(0);
         font_->RenderText(*fontShader_,": ", 25.0f, 100.0f, .50f, glm::vec3(1.0, 0.1f, 0.1f));
         font_->RenderText(*fontShader_, std::to_string(camera_->getCameraPos().y), 100.0f, 100.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
 
+        GLfloat pause = glfwGetTime();
+        std::cout<<"grejsksess<"<<std::endl;
+        font_->RenderText(*fontShader_, "GREJTSKSES!!", window_width/4.0f,window_height/2.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
+
         handleCrash();
     }
 
@@ -633,8 +697,10 @@ private:
 
     void initializeCallbacks()
     {
+
         glfwSetKeyCallback(windowPtr_, KeyboardCB);
         glfwSetCursorPosCallback(windowPtr_, MouseCB);
+
     }
 
     void KeyboardCallback(GLFWwindow* window, int key, int scancode, int action, int mode)
@@ -718,7 +784,6 @@ private:
     GT_Shader* cubemapShader_;
     GT_Shader* skyboxShader_;
     GT_Shader* fontShader_;
-    GT_Shader* particleShader_;
 
 
     // classes
@@ -734,7 +799,7 @@ private:
     GT_Rocket* missile_;
     GT_Particle* particle_;
     GT_Enemy* enemy_;
-    GT_Terrain* terrain_;
+    GT_Ocean* ocean_;
 
     // uniforms
     GLfloat s_;
