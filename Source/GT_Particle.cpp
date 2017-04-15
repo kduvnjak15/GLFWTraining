@@ -7,62 +7,15 @@
 GT_Particle::GT_Particle()
 {
     initValues();
-    createParticle();
-    createVAO();
+    defineTexture();
+    defineVAO();
     defineShader();
-
-
 }
 
 
 void GT_Particle::initValues()
 {
-
-//    // left up
-//    vertices_[0] = -0.5f;
-//    vertices_[1] =  0.50f;
-//    vertices_[2] =  0.00f;
-
-//    // left down
-//    vertices_[3] = -0.50f;
-//    vertices_[4] = -0.50f;
-//    vertices_[5] =  0.0f;
-
-//    // right near
-//    vertices_[6] =  0.50f;
-//    vertices_[7] = -0.50f;
-//    vertices_[8] = -0.00f;
-
-//    // right far
-//    vertices_[9] = 0.50f;
-//    vertices_[10] = 0.50f;
-//    vertices_[11] = 0.00f;
-
-
-
-//    GLfloat a = 10.0f;
-//    GLfloat h = 0.0f;
-//    // left up
-//    vertices_[0] = -a;
-//    vertices_[1] =  h;
-//    vertices_[2] = -a;
-
-//    // left down
-//    vertices_[3] = -a;
-//    vertices_[4] =  h;
-//    vertices_[5] =  a;
-
-//    // right near
-//    vertices_[6] =  a;
-//    vertices_[7] =  h;
-//    vertices_[8] =  a;
-
-//    // right far
-//    vertices_[9]  =  a;
-//    vertices_[10] =  h;
-//    vertices_[11] = -a;
-
-    GLfloat a = 10.0f;
+    GLfloat a = 1.0f;
     GLfloat h = 0.0f;
     // left up
     vertices_[0] = -a;
@@ -124,13 +77,13 @@ void GT_Particle::initValues()
 }
 
 
-void GT_Particle::createParticle()
+void GT_Particle::defineTexture()
 {
     int width, height;
-    unsigned char* image = SOIL_load_image("../Content/circle.png", &width, &height, 0, SOIL_LOAD_RGB);
+    unsigned char* image = SOIL_load_image("../Content/circle.png", &width, &height, 0, SOIL_LOAD_RGBA);
 
-    glGenTextures(1, &particleTexture_);
-    glBindTexture(GL_TEXTURE_2D, particleTexture_);
+    glGenTextures(1, &primitiveTexture_);
+    glBindTexture(GL_TEXTURE_2D, primitiveTexture_);
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -139,7 +92,7 @@ void GT_Particle::createParticle()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
     glGenerateMipmap(GL_TEXTURE_2D);
 
     SOIL_free_image_data(image);
@@ -147,7 +100,7 @@ void GT_Particle::createParticle()
 }
 
 
-void GT_Particle::createVAO()
+void GT_Particle::defineVAO()
 {
     glGenVertexArrays(1, &VAO_);
     glGenBuffers(1, &VBO_);
@@ -171,7 +124,6 @@ void GT_Particle::createVAO()
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices_), indices_, GL_STATIC_DRAW);
 
 
-
     glBindVertexArray(0);
 
 }
@@ -179,26 +131,25 @@ void GT_Particle::createVAO()
 
 void GT_Particle::defineShader()
 {
-    particleShader_ = new GT_Shader(particleShader, "../Shaders/particleShader.vs", "../Shaders/particleShader.fs");
+    primitiveShader_ = new GT_Shader(particleShader, "../Shaders/particleShader.vs", "../Shaders/particleShader.fs");
 }
 
 
-void GT_Particle::drawParticle()
+void GT_Particle::draw()
 {
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, terrainTexture_);
+    glBindTexture(GL_TEXTURE_2D, primitiveTexture_);
 
     glBindVertexArray(VAO_);
 
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (const GLvoid*)0);
 
     glBindVertexArray(0);
-
 }
 
 
 GT_Particle::~GT_Particle()
 {
-    delete particleShader_;
+    delete primitiveShader_;
 }
 
