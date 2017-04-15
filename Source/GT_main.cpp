@@ -13,6 +13,8 @@
 #include "GT_Rocket.h"
 #include "GT_Enemy.h"
 #include "GT_Ocean.h"
+#include "GT_Raptor.h"
+#include "GT_USSCarrier.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -199,51 +201,12 @@ public:
             //////////////////    camera movement    ///////////////
             glm::mat4 projection = glm::perspective(ZOOM, (window_width*1.0f)/window_height, 0.1f, horizon);
 
-
             enemy_ = enemies_[0]; // uss Carrier
-            enemy_->modelPos = glm::vec3(-1000.0f, 350.0f, -2500);
-            enemyShader_->Use();
-
-            GLuint modelLoc  = glGetUniformLocation(enemyShader_->shaderProgram_, "model");
-            GLuint viewLoc  = glGetUniformLocation(enemyShader_->shaderProgram_, "view");
-            GLuint projLoc  = glGetUniformLocation(enemyShader_->shaderProgram_, "projection");
-            GLfloat timeLoc = glGetUniformLocation(enemyShader_->shaderProgram_, "time");
-            GLint isHit = glGetUniformLocation(enemyShader_->shaderProgram_, "isHit");
-            glm::mat4 model = glm::mat4(1.0f);
-            model = glm::translate(model, enemy_->modelPos);
-            model = glm::scale(model, glm::vec3(1000.0f));
-            glm::mat4 view = camera_->GetViewMatrix();
-            glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-            glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
-            glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
-            if (enemy_->isHit())
-                glUniform1i(isHit, 10);
-            glUniform1f(timeLoc, enemy_->explosionTime());
-            enemy_->Draw(*(enemyShader_)); // wrong shader
-
+            enemy_->Draw(camera_);
             /****************************************************************/
 
             enemy_ = enemies_[1]; // F22- raptor
-            enemy_->modelPos = glm::vec3(3000.0f, 500.0f, -2500);
-            enemyShader_->Use();
-            modelLoc  = glGetUniformLocation(enemyShader_->shaderProgram_, "model");
-            viewLoc  = glGetUniformLocation(enemyShader_->shaderProgram_, "view");
-            projLoc  = glGetUniformLocation(enemyShader_->shaderProgram_, "projection");
-            isHit = glGetUniformLocation(enemyShader_->shaderProgram_, "isHit");
-            model = glm::mat4(1.0f);
-
-            enemy_->modelPos.x += (cos(glfwGetTime()*0.1)+1)*400;
-            enemy_->modelPos.y += (sin(glfwGetTime()*0.1)+1)*100;
-            enemy_->modelPos.z += (sin(glfwGetTime()*0.1)+1)*400;
-            model = glm::translate(model, enemy_->modelPos);
-            model = glm::rotate(model, (GLfloat)-3.14159/2.0f, glm::vec3(1.0f, 0.0f, 0.0f));
-            model = glm::scale(model, glm::vec3(1.0f));
-            view = camera_->GetViewMatrix();
-            glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-            glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
-            glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
-            glUniform1i(isHit, enemy_->isHit());
-            enemy_->Draw(*(enemyShader_)); // wrong shader
+            enemy_->Draw(camera_); // wrong shader
 
             /********************************************************************/
 
@@ -251,9 +214,9 @@ public:
             fighter_->modelPos = camera_->getCameraPos();
 
             shader_->Use();
-            modelLoc  = glGetUniformLocation(shader_->shaderProgram_, "model");
-            viewLoc  = glGetUniformLocation(shader_->shaderProgram_, "view");
-            projLoc  = glGetUniformLocation(shader_->shaderProgram_, "projection");
+            GLuint modelLoc  = glGetUniformLocation(shader_->shaderProgram_, "model");
+            GLuint viewLoc  = glGetUniformLocation(shader_->shaderProgram_, "view");
+            GLuint projLoc  = glGetUniformLocation(shader_->shaderProgram_, "projection");
             glUniform1i(glGetUniformLocation(shader_->shaderProgram_, "material.diffuse"),  0);
             glUniform1i(glGetUniformLocation(shader_->shaderProgram_, "material.specular"), 1);
             GLint lightPosLoc    = glGetUniformLocation(shader_->shaderProgram_, "light.position");
@@ -268,7 +231,7 @@ public:
             // Set material properties
             glUniform1f(glGetUniformLocation(shader_->shaderProgram_, "material.shininess"), 1.0f);
 
-            model = glm::mat4(1.0f);
+            glm::mat4 model = glm::mat4(1.0f);
 
             model = glm::translate(model, +  glm::vec3(0.0f, -5.0f, -25.0f ));
 //            model =  glm::scale(model, glm::vec3(1.0f));
@@ -277,7 +240,7 @@ public:
 
 
 
-            view = camera_->GetViewMatrix();
+            glm::mat4 view = camera_->GetViewMatrix();
             glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
             glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
             glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
@@ -503,7 +466,6 @@ glBindVertexArray(0);
     {
         camera_ = new GT_Camera();
         shader_ = new GT_Shader(modelShader, VmodelShader, FmodelShader);
-        enemyShader_ = new GT_Shader(shaderTag::enemyShader, vsEnemyShader, fsEnemyShader, gsEnemyShader);
 
         skybox_ = new GT_Skybox();
         skyboxShader_ = new GT_Shader(skyboxShader, vsSkyboxShader, fsSkyboxShader);
@@ -515,8 +477,11 @@ glBindVertexArray(0);
 
     void loadActors()
     {
-        enemies_.push_back(new GT_Enemy("../Content/CV - Essex class/essex_scb-125_generic.obj", enemyShader_));
-        enemies_.push_back(new GT_Enemy("../Content/FA-22_Raptor/FA-22_Raptor.obj", enemyShader_));
+        enemies_.push_back(new GT_USSCarrier("../Content/CV - Essex class/essex_scb-125_generic.obj"));
+        enemies_[0]->modelPos = glm::vec3(-1000.0f, 350.0f, -2500);
+
+        enemies_.push_back(new GT_Raptor("../Content/FA-22_Raptor/FA-22_Raptor.obj"));
+        enemies_[1]->modelPos = glm::vec3(-1000.0f, 800.0f, -2500);
 
         fighter_ = new GT_Model("../Content/FA-18_RC/FA-18_RC.obj");
         fighter_->modelPos = glm::vec3(0.0f, 100.0f, -100.0f);
@@ -773,7 +738,6 @@ private:
     // shaders
     std::map<std::string, GT_Shader> shaders_;
     GT_Shader* shader_;
-    GT_Shader* enemyShader_;
     GT_Shader* lightShader_;
     GT_Shader* cubemapShader_;
     GT_Shader* skyboxShader_;

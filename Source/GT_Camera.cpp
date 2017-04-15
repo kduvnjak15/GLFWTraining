@@ -97,7 +97,7 @@ void GT_Camera::keyboardHandler(Camera_Movement direction, GLfloat deltaTime)
     if (direction == Camera_Movement::ACCELERATE)
     {
         speed_ += 2.0f;
-        if (speed_ > 300) speed_ = 300.0f;
+        if (speed_ > MAX_SPEED) speed_ = MAX_SPEED;
     }
     if (direction == Camera_Movement::DECELERATE)
     {

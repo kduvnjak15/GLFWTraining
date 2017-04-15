@@ -35,6 +35,7 @@ const GLfloat cameraOffset = 25;
 const GLuint window_width = 1024;
 const GLuint window_height = 600;
 const GLfloat horizon = 50000;
+const GLfloat MAX_SPEED = 500.0f;
 
 
 
@@ -60,6 +61,7 @@ public:
     GLfloat getSpeed()              { return speed_; }
 
     glm::mat4 GetViewMatrix();
+    glm::mat4 GetProjectionMatrix() {return glm::perspective(ZOOM, (window_width*1.0f)/window_height, 0.1f, horizon);}
 
     void keyboardHandler(Camera_Movement direction, GLfloat deltaTime);
     void mouseHandler(GLfloat xoffset, GLfloat yoffset, GLboolean constrainPitch = false );
@@ -71,7 +73,7 @@ public:
     void bounceBBox() {cameraFront = - cameraFront; cameraRight = -cameraRight; }
     void enforceGravity(GLfloat factor) { cameraPos += glm::vec3(0.0f, -1.0f, 0.0f)*factor;}
 
-    glm::mat4 getProjectionMatrix() {return glm::perspective(ZOOM, (window_width*1.0f)/window_height, 0.1f, horizon);}
+
 
 private:
     //Camera Cartesian

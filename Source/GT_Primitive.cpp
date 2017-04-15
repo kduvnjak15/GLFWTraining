@@ -143,7 +143,7 @@ void GT_Primitive::draw(GT_Camera *tempCam)
     this->primitiveShader_->Use();
     glm::mat4 model      = glm::mat4(1.0f);
     glm::mat4 view       = tempCam->GetViewMatrix();
-    glm::mat4 projection = tempCam->getProjectionMatrix();
+    glm::mat4 projection = tempCam->GetProjectionMatrix();
 
     glUniformMatrix4fv(modelLoc_, 1, GL_FALSE, glm::value_ptr(model));
     glUniformMatrix4fv(viewLoc_, 1, GL_FALSE, glm::value_ptr(view));

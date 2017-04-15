@@ -18,9 +18,9 @@ vec4 explode(vec4 position, vec3 normal)
 {
     if (isHit>0)
     {
-        float magnitude = 1.0f;
+        float magnitude = 10.0f;
         vec3 direction = normal * (-(time) ) * magnitude; 
-        return position + vec4(direction, 0.0f);
+        return position + vec4(direction, 0.0f) + vec4(0.0f, -1.0f * time*time*time, 0.0f , 0.0f);
     }
     else
     {

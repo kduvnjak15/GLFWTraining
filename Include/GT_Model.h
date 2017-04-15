@@ -41,16 +41,12 @@ public:
 
     glm::vec3 modelPos;
     glm::vec3 modelFront;
-
     glm::vec3 modelUp;
 
-    GT_Model* reference()
-    {
-        return this;
-    }
+    GT_Model* reference() { return this; }
 
     // Draws the model and thus all its meshes
-    void Draw(GT_Shader shader_)
+    virtual void Draw(GT_Shader shader_)
     {
         for (GLuint i = 0; i < this->meshes.size(); i++)
         {
@@ -58,6 +54,11 @@ public:
         }
     }
 
+protected:
+
+    GLuint modelLoc_;
+    GLuint viewLoc_;
+    GLuint projLoc_;
 
 private:
 
