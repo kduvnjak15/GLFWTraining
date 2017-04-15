@@ -32,6 +32,12 @@ const GLfloat SENSITIVITY =  0.25f;
 const GLfloat ZOOM       =  45.0f;
 const GLfloat rollSensitivity = .85;
 const GLfloat cameraOffset = 25;
+const GLuint window_width = 1024;
+const GLuint window_height = 600;
+const GLfloat horizon = 50000;
+
+
+
 
 class GT_Camera
 
@@ -65,6 +71,8 @@ public:
     void bounceBBox() {cameraFront = - cameraFront; cameraRight = -cameraRight; }
     void enforceGravity(GLfloat factor) { cameraPos += glm::vec3(0.0f, -1.0f, 0.0f)*factor;}
 
+    glm::mat4 getProjectionMatrix() {return glm::perspective(ZOOM, (window_width*1.0f)/window_height, 0.1f, horizon);}
+
 private:
     //Camera Cartesian
     glm::vec3 cameraPos;
@@ -91,6 +99,8 @@ private:
     GLfloat speed_;
 
     glm::vec3 getRotatedVector();
+
+
 
 
 };

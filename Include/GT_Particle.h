@@ -11,10 +11,7 @@ public:
 
     GT_Particle();
 
-    void initValues();
     void defineTexture();
-    void defineVAO();
-    void defineShader();
 
     void draw();
 

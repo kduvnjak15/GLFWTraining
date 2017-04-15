@@ -13,8 +13,6 @@
 #include "GT_Rocket.h"
 #include "GT_Enemy.h"
 #include "GT_Ocean.h"
-#include "GT_Particle.h"
-
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -36,18 +34,14 @@
 bool keys[1024];
 bool firstMouse = true;
 
-const GLuint window_width = 1024;
-const GLuint window_height = 600;
-GLfloat lastX = window_width/2, lastY = window_height/2;
-const GLfloat horizon = 50000;
-
-
 GLfloat runTime = 0.0f;
 GLfloat fps = 60.0f;
 
 GLfloat currentFrame = 0.0f;
 GLfloat deltaTime = 0.0f;
 GLfloat lastFrame = 0.0f;
+
+GLfloat lastX = window_width/2, lastY = window_height/2;
 
 glm::vec3 lightPos(-42000.0f, 54800.0f, -71700.0f);
 
