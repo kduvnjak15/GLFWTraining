@@ -3,30 +3,33 @@
 #include <GL/glew.h>
 #include "GT_Shader.h"
 #include "glm/glm.hpp"
+#include "GT_Primitive.h"
 
-class GT_Terrain
+class GT_Terrain : public GT_Primitive
 {
 public:
 
     GT_Terrain();
 
-    void drawTerrain();
+    void initValues();
+    void defineTexture();
+    void defineVAO();
+    void defineShader();
+
+    void draw();
 
 
 
 public:
     GLuint VAO_;
 
-    GT_Shader*  terrainShader_;
+    GT_Shader*  primitiveShader_;
 
     glm::vec3 position;
 
 private:
 
-    void initValues();
-    void createTexture();
-    void createVAO();
-    void defineShader();
+
 
     GLfloat vertices_[20];
     GLuint indices_[6];

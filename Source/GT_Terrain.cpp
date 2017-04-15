@@ -6,64 +6,19 @@
 #include "glm/gtc/type_ptr.hpp"
 
 GT_Terrain::GT_Terrain()
-    :
+    : GT_Primitive(),
       position(glm::vec3(0.0, -50.0, -500.0))
 
 {
     initValues();
-    createTexture();
-    createVAO();
+    defineTexture();
+    defineVAO();
     defineShader();
-    drawTerrain();
+    draw();
 }
 
 void GT_Terrain::initValues()
 {
-
-//    // left up
-//    vertices_[0] = -0.5f;
-//    vertices_[1] =  0.50f;
-//    vertices_[2] =  0.00f;
-
-//    // left down
-//    vertices_[3] = -0.50f;
-//    vertices_[4] = -0.50f;
-//    vertices_[5] =  0.0f;
-
-//    // right near
-//    vertices_[6] =  0.50f;
-//    vertices_[7] = -0.50f;
-//    vertices_[8] = -0.00f;
-
-//    // right far
-//    vertices_[9] = 0.50f;
-//    vertices_[10] = 0.50f;
-//    vertices_[11] = 0.00f;
-
-
-
-//    GLfloat a = 10.0f;
-//    GLfloat h = 0.0f;
-//    // left up
-//    vertices_[0] = -a;
-//    vertices_[1] =  h;
-//    vertices_[2] = -a;
-
-//    // left down
-//    vertices_[3] = -a;
-//    vertices_[4] =  h;
-//    vertices_[5] =  a;
-
-//    // right near
-//    vertices_[6] =  a;
-//    vertices_[7] =  h;
-//    vertices_[8] =  a;
-
-//    // right far
-//    vertices_[9]  =  a;
-//    vertices_[10] =  h;
-//    vertices_[11] = -a;
-
     GLfloat a = 1000.0f;
     GLfloat h = 0.0f;
     // left up
@@ -122,10 +77,9 @@ void GT_Terrain::initValues()
 
     texCoords_[6] = 0.0f;
     texCoords_[7] = 1.0f;
-
 }
 
-void GT_Terrain::createTexture()
+void GT_Terrain::defineTexture()
 {
     int width, height;
     unsigned char* image = SOIL_load_image("../Content/ocean.jpg", &width, &height, 0, SOIL_LOAD_RGB);
@@ -149,7 +103,7 @@ void GT_Terrain::createTexture()
 
 }
 
-void GT_Terrain::createVAO()
+void GT_Terrain::defineVAO()
 {
     glGenVertexArrays(1, &VAO_);
     glGenBuffers(1, &VBO_);
@@ -181,15 +135,15 @@ void GT_Terrain::createVAO()
 void GT_Terrain::defineShader()
 {
 
-    terrainShader_ = new GT_Shader(terrainShader, "../Shaders/terrainShader.vs", "../Shaders/terrainShader.fs");
+    primitiveShader_ = new GT_Shader(terrainShader, "../Shaders/terrainShader.vs", "../Shaders/terrainShader.fs");
 }
 
-void GT_Terrain::drawTerrain()
+void GT_Terrain::draw()
 {
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, terrainTexture_);
 
-    GLuint modelLoc = glGetUniformLocation(terrainShader_->shaderProgram_, "model");
+    GLuint modelLoc = glGetUniformLocation(primitiveShader_->shaderProgram_, "model");
 
     glBindVertexArray(VAO_);
     for (int i = -50; i < 50; i++)
