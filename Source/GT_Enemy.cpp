@@ -44,9 +44,4 @@ void GT_Enemy::defineEnemyShader()
     timeLoc_     = glGetUniformLocation(enemyShader_->shaderProgram_, "time");
 }
 
-void GT_Enemy::Draw(GT_Camera *tempCam)
-{
 
-
-
-}

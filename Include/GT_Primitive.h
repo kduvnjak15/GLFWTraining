@@ -8,6 +8,7 @@ class GT_Primitive
 {
 
 public:
+    GT_Primitive();
     GT_Primitive(const char* textureImage);
 
     virtual void initValues();
@@ -30,14 +31,17 @@ protected:
     GLuint TBO_;
     GLuint primitiveTexture_;
 
+
     GLfloat vertices_[20];
     GLuint indices_[6];
     GLfloat texCoords_[8];
+
 
     GLfloat sideA_;
     GLfloat sideB_;
 
     const char* texturePath_;
+    bool hasTexture_;
 
 
 

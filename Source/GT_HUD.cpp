@@ -1,146 +1,77 @@
-//#include "GT_HUD.h"
+#include "GT_HUD.h"
 
-//#include "SOIL/SOIL.h"
-//#include "glm/glm.hpp"
-//#include "glm/gtc/matrix_transform.hpp"
-//#include "glm/gtc/type_ptr.hpp"
+#include "SOIL/SOIL.h"
+#include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp"
+#include "glm/gtc/type_ptr.hpp"
 
-//GT_HUD::GT_HUD()
-//    : GT_Primitive()
-//{
-//    initValues();
-//    defineTexture();
-//    defineVAO();
-//    defineShader();
-//    draw();
-//}
+GT_HUD::GT_HUD()
+    : GT_Primitive()
+{
+    sideA_ = 1.0f;
+    sideB_ = sideA_;
 
-//void GT_HUD::initValues()
-//{
-//    GLfloat a = 0.5f;
-//    GLfloat h = 0.0f;
-//    // left up
-//    vertices_[0] = -a;
-//    vertices_[1] =  h;
-//    vertices_[2] = -a;
+    initValues();
+    defineVAO();
+    defineShader();
 
-//    vertices_[3] =  0.0f;
-//    vertices_[4] =  1.0f;
-
-//    // left down
-//    vertices_[5] = -a;
-//    vertices_[6] =  h;
-//    vertices_[7] =  a;
-
-//    vertices_[8] =  0.0f;
-//    vertices_[9] =  0.0f;
-
-//    // right near
-//    vertices_[10] =  a;
-//    vertices_[11] =  h;
-//    vertices_[12] =  a;
-
-//    vertices_[13] =  1.0f;
-//    vertices_[14] =  0.0f;
-
-//    // top right
-//    vertices_[15]  =  a;
-//    vertices_[16] =  h;
-//    vertices_[17] = -a;
-
-//    vertices_[18] =  1.0f;
-//    vertices_[19] =  1.0f;
+    definePanels();
+}
 
 
-//    /****************************/
+void GT_HUD::defineShader()
+{
+    primitiveShader_ = new GT_Shader(particleShader, "../Shaders/HUDShader.vs", "../Shaders/HUDShader.fs");
+    modelLoc_   =  glGetUniformLocation(primitiveShader_->shaderProgram_, "model");
+    viewLoc_    = glGetUniformLocation(primitiveShader_->shaderProgram_, "view");
+    projLoc_    = glGetUniformLocation(primitiveShader_->shaderProgram_, "projection");
+}
 
-//    indices_[0] = 0;
-//    indices_[1] = 1;
-//    indices_[2] = 2;
+void GT_HUD::definePanels()
+{
 
-//    indices_[3] = 2;
-//    indices_[4] = 3;
-//    indices_[5] = 0;
+    // Info
+    panel Info;
+    Info.position_  = glm::vec3(-0.70f, -0.35f, -1.0f);
+    Info.volume_    = glm::vec3(.22f, .2f, 1.0f);
 
-//    /****************************/
+    // Radar
+    panel Radar;
+    Radar.position_ = glm::vec3(0.7f, -0.0f, -1.0f);
+    Radar.volume_   = glm::vec3(.22f, .4f, 1.0f);
 
-//    texCoords_[0] = 1.0f;
-//    texCoords_[1] = 1.0f;
+    // Mission objectives
+    panel Objectives;
+    Objectives.position_ = glm::vec3(0.7f, 0.4f, -1.0f);
+    Objectives.volume_   = glm::vec3(.2f, .2f, 1.0f);
 
-//    texCoords_[2] = 1.0f;
-//    texCoords_[3] = 0.0f;
+    panelSettings_.push_back(Info);
+    panelSettings_.push_back(Radar);
+    panelSettings_.push_back(Objectives);
+}
 
-//    texCoords_[4] = 0.0f;
-//    texCoords_[5] = 0.0f;
+void GT_HUD::draw(GT_Camera *tempCam)
+{
+    primitiveShader_->Use();
+    for (int i = 0; i < panelSettings_.size(); i++)
+    {
+        glm::mat4 model = glm::mat4(1.0f);
+        model = glm::translate(model, panelSettings_[i].position_ );
+        model = glm::scale(model, panelSettings_[i].volume_);
+        model = glm::rotate(model, (GLfloat)-3.14159/2.0f, glm::vec3(1.0f, 0.0f, 0.0f));
 
-//    texCoords_[6] = 0.0f;
-//    texCoords_[7] = 1.0f;
-//}
+        glm::mat4 view = tempCam->GetViewMatrix();
+        model = glm::inverse(view) * model;
+        glm::mat4 projection = tempCam->GetProjectionMatrix();
+        glUniformMatrix4fv(modelLoc_, 1, GL_FALSE, glm::value_ptr(model));
+        glUniformMatrix4fv(viewLoc_, 1, GL_FALSE, glm::value_ptr(view));
+        glUniformMatrix4fv(projLoc_, 1, GL_FALSE, glm::value_ptr(projection));
 
-//void GT_HUD::defineTexture()
-//{
-//    int width, height;
-//    unsigned char* image = SOIL_load_image("../Content/ocean.jpg", &width, &height, 0, SOIL_LOAD_RGB);
+        glBindVertexArray(VAO_);
 
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (const GLvoid*)0);
 
-//    glGenTextures(1, &primitiveTexture_);
-//    glBindTexture(GL_TEXTURE_2D, primitiveTexture_);
+        glBindVertexArray(0);
+    }
 
-//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-//    //Set texture filtering
-//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-//    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
-//    glGenerateMipmap(GL_TEXTURE_2D);
-
-//    SOIL_free_image_data(image);
-//    glBindTexture(GL_TEXTURE_2D, 0);
-//}
-
-//void GT_HUD::defineVAO()
-//{
-//    glGenVertexArrays(1, &VAO_);
-//    glGenBuffers(1, &VBO_);
-//    glGenBuffers(1, &TBO_);
-//    glGenBuffers(1, &EBO_);
-
-//    glBindVertexArray(VAO_);
-
-//    glBindBuffer(GL_ARRAY_BUFFER, VBO_);
-//    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices_), vertices_, GL_STATIC_DRAW);
-//    // Position attribute
-
-//    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)0);
-//    glEnableVertexAttribArray(0);
-
-//    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)(3* sizeof(GLfloat)));
-//    glEnableVertexAttribArray(1);
-
-//    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO_);
-//    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices_), indices_, GL_STATIC_DRAW);
-
-//    glBindVertexArray(0);
-//}
-
-
-//void GT_HUD::defineShader()
-//{
-//    primitiveShader_ = new GT_Shader(particleShader, "../Shaders/particleShader.vs", "../Shaders/particleShader.fs");
-//}
-
-
-//void GT_HUD::draw()
-//{
-//    glActiveTexture(GL_TEXTURE0);
-//    glBindTexture(GL_TEXTURE_2D, primitiveTexture_);
-
-//    glBindVertexArray(VAO_);
-
-//    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (const GLvoid*)0);
-
-//    glBindVertexArray(0);
-//}
-
+}

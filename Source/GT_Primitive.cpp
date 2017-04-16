@@ -7,10 +7,20 @@
 
 #include <iostream>
 
+GT_Primitive::GT_Primitive()
+    : texturePath_(""),
+       sideA_(1.0f),
+       sideB_(1.0f),
+       hasTexture_(false)
+{
+    std::cout<<"Textureless primitive"<<this<<std::endl;
+}
+
 GT_Primitive::GT_Primitive(const char* textureImage)
     : texturePath_(textureImage),
       sideA_(1.0f),
-      sideB_(1.0f)
+      sideB_(1.0f),
+      hasTexture_(true)
 
 {
     std::cout<< "GT_Primitive ctor"<<this<<std::endl;

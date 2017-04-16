@@ -15,6 +15,7 @@
 #include "GT_Ocean.h"
 #include "GT_Raptor.h"
 #include "GT_USSCarrier.h"
+#include "GT_HUD.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -289,6 +290,10 @@ public:
 
 
             ocean_->draw();
+            /*****************************************************************************/
+
+            HUD_->draw(camera_);
+
 
             /*****************************************************************************/
 
@@ -464,6 +469,7 @@ glBindVertexArray(0);
         fontShader_ = new GT_Shader(fontShader, vsFontShader, fsFontShader);
         particle_ = new GT_Particle();
         ocean_ = new GT_Ocean();
+        HUD_ = new GT_HUD();
     }
 
     void loadActors()
@@ -740,6 +746,7 @@ private:
     GT_Skybox* skybox_;
     GT_Alphabet* font_;
 
+
     // Models
     std::vector<GT_Model*> actors_;
     std::vector<GT_Enemy*> enemies_;
@@ -749,6 +756,7 @@ private:
     GT_Particle* particle_;
     GT_Enemy* enemy_;
     GT_Ocean* ocean_;
+    GT_HUD* HUD_;
 
     // uniforms
     GLfloat s_;
