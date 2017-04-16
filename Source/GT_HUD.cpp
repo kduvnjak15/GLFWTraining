@@ -16,6 +16,7 @@ GT_HUD::GT_HUD()
     defineShader();
 
     definePanels();
+    installRadar();
 }
 
 
@@ -74,4 +75,12 @@ void GT_HUD::draw(GT_Camera *tempCam)
         glBindVertexArray(0);
     }
 
+    radar_->draw(tempCam);
+
+}
+
+void GT_HUD::installRadar()
+{
+    radar_ = new GT_Radar();
+    radar_->setScreenPos(panelSettings_[1].position_);
 }
