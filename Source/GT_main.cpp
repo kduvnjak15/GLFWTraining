@@ -302,13 +302,13 @@ public:
             fontShader_->Use();
             glUniformMatrix4fv(glGetUniformLocation(fontShader_->shaderProgram_, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
             font_->RenderText(*fontShader_,"Time: ", 25.0f, 25.0f, .50f, glm::vec3(1.0, 0.1f, 0.1f));
-            font_->RenderText(*fontShader_, std::to_string(glfwGetTime()), 100.0f, 25.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
+            font_->RenderText(*fontShader_, std::to_string(glfwGetTime()), 120.0f, 25.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
             font_->RenderText(*fontShader_,"FPS: ", 25.0f, 50.0f, .50f, glm::vec3(1.0, 0.1f, 0.1f));
-            font_->RenderText(*fontShader_, std::to_string(1/deltaTime), 100.0f, 50.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
+            font_->RenderText(*fontShader_, std::to_string(1/deltaTime), 120.0f, 50.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
             font_->RenderText(*fontShader_,"Speed: ", 25.0f, 75.0f, .50f, glm::vec3(1.0, 0.1f, 0.1f));
-            font_->RenderText(*fontShader_, std::to_string(camera_->getSpeed()), 100.0f, 75.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
+            font_->RenderText(*fontShader_, std::to_string(camera_->getSpeed()), 120.0f, 75.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
             font_->RenderText(*fontShader_,"Altitude: ", 25.0f, 100.0f, .50f, glm::vec3(1.0, 0.1f, 0.1f));
-            font_->RenderText(*fontShader_, std::to_string(camera_->getCameraPos().y), 100.0f, 100.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
+            font_->RenderText(*fontShader_, std::to_string(camera_->getCameraPos().y), 120.0f, 100.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
 
 
 
