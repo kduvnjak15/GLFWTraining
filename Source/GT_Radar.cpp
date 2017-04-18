@@ -6,6 +6,7 @@
 #include "GT_Rocket.h"
 
 #include "glm/gtx/vector_angle.hpp"
+#include "glm/trigonometric.hpp"
 
 
 GT_Radar::GT_Radar()
@@ -38,16 +39,19 @@ void GT_Radar::scanRadar(GT_Camera* tempCam)
     for (int i = 1; i < radarActorList_.size(); i++)
     {
         glm::vec3 dir = radarActorList_[i]->modelPos - tempCam->getCameraPos();
-        dir = glm::normalize(dir);
+        glm::vec3 front = tempCam->getCameraFront();
+        front.y = 0.0;
+        dir.y   = 0.0;
 
-        glm::vec2 dir2D = glm::vec2(dir.x, dir.z);
-        glm::vec2 front2D = glm::vec2(tempCam->getCameraFront().x, tempCam->getCameraFront().z);
+        GLfloat radius = glm::length(dir) / 10000.0f;
+        if (radius > 0.12)
+            radius = 0.12;
 
-        GLfloat angle = glm::angle(dir2D,front2D );
-        std::cout << angle<<" in radians" <<std::endl;
-        dir /=10.0f;
-        std::cout<<i << "-> "<<dir.x<<", "<<dir.z<<std::endl;
-        coordinates_.push_back(glm::vec2(dir.x, dir.z));
+
+        dir   = glm::normalize(dir);
+        front = glm::normalize(front);
+        GLfloat angle = glm::orientedAngle(front, dir, glm::vec3(0.0f, 1.0f, 0.0f));
+        coordinates_.push_back(glm::vec2(angle, radius));
     }
 }
 
@@ -85,7 +89,7 @@ void GT_Radar::draw(GT_Camera *tempCam)
         if (dynamic_cast<GT_Rocket*> (radarActorList_[i]) )
         {
             dinRocket = dynamic_cast<GT_Rocket*> (radarActorList_[i]);
-            if (dinRocket->isFired())
+            if (dinRocket->isFired() && !dinRocket->dead_)
                 enemyAvatarObj_.draw(tempCam, coordinates_[i].x, coordinates_[i].y, 1);
         }
         else if (dynamic_cast<GT_Raptor*> (radarActorList_[i]))

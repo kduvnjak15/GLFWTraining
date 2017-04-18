@@ -31,16 +31,20 @@ public:
 
     }
 
-    void draw(GT_Camera* tempCam, GLfloat xcoord, GLfloat zcoord, GLuint type)
+    void draw(GT_Camera* tempCam, GLfloat angle, GLfloat radius, GLuint type)
     {
-        std::cout << " unidje tajp "<< type<<"->"<< xcoord << ", "<< zcoord<< std::endl;
         this->primitiveShader_->Use();
 
         glm::mat4 model = glm::mat4(1.0f);
-        glm::vec3 corrDir = glm::vec3(xcoord, zcoord, 0 );
-        model = glm::translate(model, worldPos_ - glm::vec3(xcoord, zcoord, 0 ));
-        model = glm::scale(model, glm::vec3(.01f, .01f, 1.0f));
+        model = glm::translate(glm::mat4(1.0f), worldPos_);
+        model = glm::rotate(model, angle, glm::vec3(0.0f, 0.0f, 1.0f));
+        model = glm::translate(model, glm::vec3(0.0f, radius, 0));
+        if (type == 1)
+            model = glm::scale(model, glm::vec3(.005f, .005f, 1.0f));
+        else
+            model = glm::scale(model, glm::vec3(.01f, .01f, 1.0f));
         model = glm::rotate(model, (GLfloat)-3.14159/2.0f, glm::vec3(1.0f, 0.0f, 0.0f));
+
 
         glm::mat4 view = tempCam->GetViewMatrix();
         model = glm::inverse(view) * model;
