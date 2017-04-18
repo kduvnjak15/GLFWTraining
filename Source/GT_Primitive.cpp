@@ -11,7 +11,8 @@ GT_Primitive::GT_Primitive()
     : texturePath_(""),
        sideA_(1.0f),
        sideB_(1.0f),
-       hasTexture_(false)
+       hasTexture_(false),
+       transparent_(false)
 {
     std::cout<<"Textureless primitive"<<this<<std::endl;
 }
@@ -23,7 +24,8 @@ GT_Primitive::GT_Primitive(const char* textureImage)
       hasTexture_(true)
 
 {
-    std::cout<< "GT_Primitive ctor"<<this<<std::endl;
+    std::cout<< "GT_Primitive ctor "<<this<<" "<<textureImage<<std::endl;
+
 }
 
 void GT_Primitive::initValues()
@@ -90,7 +92,18 @@ void GT_Primitive::initValues()
 void GT_Primitive::defineTexture()
 {
     int width, height;
-    unsigned char* image = SOIL_load_image(texturePath_, &width, &height, 0, SOIL_LOAD_RGB);
+    GLenum alphaChannel, soilAlpha;
+    if (transparent_)
+    {
+        alphaChannel = GL_RGBA;
+        soilAlpha    = SOIL_LOAD_RGBA;
+    }
+    else
+    {
+        alphaChannel = GL_RGB;
+        soilAlpha    = SOIL_LOAD_RGB;
+    }
+    unsigned char* image = SOIL_load_image(texturePath_, &width, &height, 0, soilAlpha);
 
 
     glGenTextures(1, &primitiveTexture_);
@@ -103,7 +116,7 @@ void GT_Primitive::defineTexture()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
+    glTexImage2D(GL_TEXTURE_2D, 0, alphaChannel, width, height, 0, alphaChannel, GL_UNSIGNED_BYTE, image);
     glGenerateMipmap(GL_TEXTURE_2D);
 
     SOIL_free_image_data(image);

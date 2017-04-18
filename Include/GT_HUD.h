@@ -1,5 +1,6 @@
 #pragma once
 
+#include "GT_Model.h"
 #include "GT_Primitive.h"
 #include "GT_Radar.h"
 
@@ -8,16 +9,10 @@
 class GT_HUD : public GT_Primitive
 {
 public:
-    friend GT_Radar;
 
     GT_HUD();
 
-    void defineShader();
-
-    void definePanels();
-
-    void installRadar();
-
+    void introduceActors(std::vector<GT_Model*>& actorList) { radar_->setRadarActorList(actorList);}
 
     void draw(GT_Camera *tempCam);
 
@@ -30,8 +25,15 @@ public:
 private:
 
     std::vector<panel> panelSettings_;
-
+    std::vector<GT_Model*> actors_;
     GT_Radar* radar_;
+
+    void defineShader();
+
+    void definePanels();
+
+    void installRadar();
+
 };
 
 

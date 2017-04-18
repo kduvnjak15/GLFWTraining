@@ -155,11 +155,10 @@ public:
 
         // OpenGL options
         glEnable(GL_DEPTH_TEST);
-
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_DST_ALPHA, GL_ONE);
         return true;
     }
-
-
 
     bool Run()
     {
@@ -202,19 +201,14 @@ public:
             //////////////////    camera movement    ///////////////
             glm::mat4 projection = glm::perspective(ZOOM, (window_width*1.0f)/window_height, 0.1f, horizon);
 
+            /*************************** enemies ********************************/
             for (int i = 0; i < enemies_.size(); i++)
             {
                 enemies_[i]->Draw(camera_);
             }
+            /***********************************************************/
 
-//            enemy_ = enemies_[0]; // uss Carrier
-//            enemy_->Draw(camera_);
-//            /****************************************************************/
 
-//            enemy_ = enemies_[1]; // F22- raptor
-//            enemy_->Draw(camera_); // wrong shader
-
-            /********************************************************************/
 
             // Fighter
             fighter_->modelPos = camera_->getCameraPos();
@@ -309,8 +303,6 @@ public:
             font_->RenderText(*fontShader_, std::to_string(camera_->getSpeed()), 120.0f, 75.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
             font_->RenderText(*fontShader_,"Altitude: ", 25.0f, 100.0f, .50f, glm::vec3(1.0, 0.1f, 0.1f));
             font_->RenderText(*fontShader_, std::to_string(camera_->getCameraPos().y), 120.0f, 100.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
-
-
 
 //            // camera position
 //            font_->RenderText(*fontShader_, std::to_string(camera_->getCameraPos().x), 5.0f, 500.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
@@ -497,6 +489,8 @@ glBindVertexArray(0);
 
         actors_.push_back(enemies_[0]);
         actors_.push_back(enemies_[1]);
+
+        HUD_->introduceActors(actors_);
     }
 
     glm::mat4 alignModel(GT_Model& model)

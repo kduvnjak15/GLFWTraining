@@ -23,9 +23,11 @@ public:
     GLuint viewLoc_;
     GLuint projLoc_;
 
-protected:
-    GLuint VAO_;
 
+
+protected:
+
+    GLuint VAO_;
     GLuint VBO_;
     GLuint EBO_;
     GLuint TBO_;
@@ -42,6 +44,7 @@ protected:
 
     const char* texturePath_;
     bool hasTexture_;
+    bool transparent_;
 
 
 

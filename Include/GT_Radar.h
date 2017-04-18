@@ -1,18 +1,95 @@
 #pragma once 
 
+#include <glm/glm.hpp>
+#include <vector>
 #include "GT_Primitive.h"
+#include "GT_Model.h"
+
+class enemyAvatar : public GT_Primitive
+{
+public:
+    friend class GT_Radar;
+
+
+    enemyAvatar() : GT_Primitive()
+    {
+        initValues();
+        defineVAO();
+        defineShader();
+
+        worldPos_ = glm::vec3(0.7f, 0.4f, -0.999f);
+        std::cout << "Avatar spawned " << this << std::endl;
+    }
+
+    void defineShader()
+    {
+        primitiveShader_ = new GT_Shader(particleShader, "../Shaders/HUDShader.vs", "../Shaders/HUDShader.fs");
+        modelLoc_   =  glGetUniformLocation(primitiveShader_->shaderProgram_, "model");
+        viewLoc_    = glGetUniformLocation(primitiveShader_->shaderProgram_, "view");
+        projLoc_    = glGetUniformLocation(primitiveShader_->shaderProgram_, "projection");
+        colorLoc_    = glGetUniformLocation(primitiveShader_->shaderProgram_, "CPUcolor");
+
+    }
+
+    void draw(GT_Camera* tempCam, GLfloat xcoord, GLfloat zcoord, GLuint type)
+    {
+        std::cout << " unidje tajp "<< type<<"->"<< xcoord << ", "<< zcoord<< std::endl;
+        this->primitiveShader_->Use();
+
+        glm::mat4 model = glm::mat4(1.0f);
+        glm::vec3 corrDir = glm::vec3(xcoord, zcoord, 0 );
+        model = glm::translate(model, worldPos_ - glm::vec3(xcoord, zcoord, 0 ));
+        model = glm::scale(model, glm::vec3(.01f, .01f, 1.0f));
+        model = glm::rotate(model, (GLfloat)-3.14159/2.0f, glm::vec3(1.0f, 0.0f, 0.0f));
+
+        glm::mat4 view = tempCam->GetViewMatrix();
+        model = glm::inverse(view) * model;
+        glm::mat4 projection = tempCam->GetProjectionMatrix();
+        glUniformMatrix4fv(modelLoc_, 1, GL_FALSE, glm::value_ptr(model));
+        glUniformMatrix4fv(viewLoc_, 1, GL_FALSE, glm::value_ptr(view));
+        glUniformMatrix4fv(projLoc_, 1, GL_FALSE, glm::value_ptr(projection));
+        glUniform1i(colorLoc_, type);
+        glBindVertexArray(this->VAO_);
+
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (const GLvoid*)0);
+
+        glBindVertexArray(0);
+
+    }
+
+    glm::vec3 worldPos_;
+    GLuint colorLoc_;
+};
 
 class GT_Radar : public GT_Primitive
 {
 public:
 
+    friend class GT_HUD;
+
     GT_Radar();
 
-    void draw(GT_Camera* tempCam);
+    void scanRadar(GT_Camera *tempCam);
 
-    void setScreenPos(glm::vec3 radarPos) { screenPos_ = radarPos ;}
+    void draw(GT_Camera* tempCam);    
 
 private:
 
-    glm::vec3 screenPos_;
+
+    enemyAvatar enemyAvatarObj_;
+
+    std::vector<glm::vec2> coordinates_;
+
+    void setupAvatar();
+
+
+
+    void setRadarActorList(std::vector<GT_Model*>& actors) {radarActorList_ = actors;}
+
+    void drawAvatars(GT_Camera* tempCam);
+
+    std::vector<GT_Model*> radarActorList_;
+
+    glm::vec3 radarScreenPos_;
+
 };

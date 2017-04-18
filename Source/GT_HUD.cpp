@@ -11,6 +11,8 @@ GT_HUD::GT_HUD()
     sideA_ = 1.0f;
     sideB_ = sideA_;
 
+    transparent_ = true;
+
     initValues();
     defineVAO();
     defineShader();
@@ -38,8 +40,8 @@ void GT_HUD::definePanels()
 
     // Radar
     panel Radar;
-    Radar.position_ = glm::vec3(0.7f, -0.0f, -1.0f);
-    Radar.volume_   = glm::vec3(.22f, .4f, 1.0f);
+    Radar.position_ = glm::vec3(0.7f, -0.4f, -1.0f);
+    Radar.volume_   = glm::vec3(.2f, .4f, 1.0f);
 
     // Mission objectives
     panel Objectives;
@@ -56,6 +58,7 @@ void GT_HUD::draw(GT_Camera *tempCam)
     primitiveShader_->Use();
     for (int i = 0; i < panelSettings_.size(); i++)
     {
+
         glm::mat4 model = glm::mat4(1.0f);
         model = glm::translate(model, panelSettings_[i].position_ );
         model = glm::scale(model, panelSettings_[i].volume_);
@@ -75,6 +78,7 @@ void GT_HUD::draw(GT_Camera *tempCam)
         glBindVertexArray(0);
     }
 
+
     radar_->draw(tempCam);
 
 }
@@ -82,5 +86,4 @@ void GT_HUD::draw(GT_Camera *tempCam)
 void GT_HUD::installRadar()
 {
     radar_ = new GT_Radar();
-    radar_->setScreenPos(panelSettings_[1].position_);
 }
