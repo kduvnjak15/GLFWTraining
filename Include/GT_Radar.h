@@ -28,7 +28,6 @@ public:
         viewLoc_    = glGetUniformLocation(primitiveShader_->shaderProgram_, "view");
         projLoc_    = glGetUniformLocation(primitiveShader_->shaderProgram_, "projection");
         colorLoc_    = glGetUniformLocation(primitiveShader_->shaderProgram_, "CPUcolor");
-
     }
 
     void draw(GT_Camera* tempCam, GLfloat angle, GLfloat radius, GLuint type)
@@ -39,7 +38,7 @@ public:
         model = glm::translate(glm::mat4(1.0f), worldPos_);
         model = glm::rotate(model, angle, glm::vec3(0.0f, 0.0f, 1.0f));
         model = glm::translate(model, glm::vec3(0.0f, radius, 0));
-        if (type == 1)
+        if (type == 10)
             model = glm::scale(model, glm::vec3(.005f, .005f, 1.0f));
         else
             model = glm::scale(model, glm::vec3(.01f, .01f, 1.0f));
@@ -82,11 +81,7 @@ private:
 
     enemyAvatar enemyAvatarObj_;
 
-    std::vector<glm::vec2> coordinates_;
-
-    void setupAvatar();
-
-
+    std::vector<glm::vec3> coordinates_;
 
     void setRadarActorList(std::vector<GT_Model*>& actors) {radarActorList_ = actors;}
 

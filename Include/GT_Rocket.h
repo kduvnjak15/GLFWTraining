@@ -8,7 +8,7 @@
 #include "GT_Particle.h"
 
 const GLfloat MISSILE_LIFE = 15.0f;
-const GLfloat MISSILE_SPEED = 20.0f;
+const GLfloat MISSILE_SPEED = 40.0f;
 
 struct contrail
 {

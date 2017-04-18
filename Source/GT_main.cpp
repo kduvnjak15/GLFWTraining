@@ -196,7 +196,7 @@ public:
                 aimed(enemies_[i]);
             }
 
-            updateRockets();
+            updateActors();
 
             //////////////////    camera movement    ///////////////
             glm::mat4 projection = glm::perspective(ZOOM, (window_width*1.0f)/window_height, 0.1f, horizon);
@@ -433,12 +433,23 @@ glBindVertexArray(0);
         }
 
 
-    void updateRockets()
+    void updateActors()
     {
-        if (rockets_[0]->isFired() && !rockets_[0]->dead_)
-            rockets_[0]->move();
-        if (rockets_[1]->isFired() && !rockets_[1]->dead_)
-            rockets_[1]->move();
+        for (int i = 0; i < rockets_.size(); i++ )
+        {
+            if (rockets_[i]->isFired() && !rockets_[i]->dead_)
+                rockets_[i]->move();
+        }
+
+        for (int i = 0; i < enemies_.size(); i++)
+        {
+            if (enemies_[i]->isHit())
+                enemies_[i]->falloutMove();
+        }
+
+
+
+
     }
 
     void handleCrash()
@@ -579,12 +590,12 @@ glBindVertexArray(0);
         GLfloat tempDOT = glm::dot(camera_->getCameraFront(), diagonal );
         if (tempDOT > 0.997 )
         {
-            font_->RenderText(*fontShader_, "AIMED!!!", 700.0f, 100.0f, 1.0f, glm::vec3(1.0, 0.0f, .4f));
+            font_->RenderText(*fontShader_, "LOCKED!!!", 700.0f, 100.0f, 1.0f, glm::vec3(1.0, 0.0f, .4f));
             if (sin(glfwGetTime()*6) >0)
                 if (rockets_[0]->isFired() && rockets_[1]->isFired())
                     font_->RenderText(*fontShader_, "OUT OF MISSILES!!!", 630.0f, 65.0f, 0.8f, glm::vec3(1.0, 0.0f, .4f));
                 else
-                    font_->RenderText(*fontShader_, "FIRE!!!", 710.0f, 65.0f, 0.8f, glm::vec3(1.0, 0.0f, .4f));
+                    font_->RenderText(*fontShader_, "ENTER to FIRE!!!", 680.0f, 65.0f, 0.8f, glm::vec3(1.0, 0.0f, .4f));
             target_ = target;
 
         }

@@ -1,5 +1,5 @@
 #include "GT_Enemy.h"
-
+#include "GLFW/glfw3.h"
 
 GT_Enemy::GT_Enemy(const char* modelPath)
     : GT_Model(modelPath), gotHit_(false)
@@ -33,6 +33,14 @@ void GT_Enemy::explode()
     hitTime_ = glfwGetTime();
 }
 
+void GT_Enemy::falloutMove()
+{
+     if (isHit())
+     {
+         std::cout << "muvam" << this <<std::endl;
+         modelPos += glm::vec3(0.0f, -.1f * glfwGetTime()*glfwGetTime(), 0.0f );
+     }
+}
 
 void GT_Enemy::defineEnemyShader()
 {

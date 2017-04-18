@@ -10,11 +10,12 @@ void GT_Raptor::Draw(GT_Camera *tempCam)
 {
     enemyShader_->Use();
 
-    modelPos = glm::vec3(-1000.0f, 800.0f, -2500);
-
-    modelPos.x += (cos(glfwGetTime()*0.1)+1)*400;
-    modelPos.y += (sin(glfwGetTime()*0.1)+1)*100;
-    modelPos.z += (sin(glfwGetTime()*0.1)+1)*400;
+    if (!isHit())
+    {
+        modelPos.x = (cos(glfwGetTime()*0.1))*400;
+        modelPos.y = (sin(glfwGetTime()*0.1)+1)*100 + 1000;
+        modelPos.z = (sin(glfwGetTime()*0.1))*400;
+    }
 
     glm::mat4 model = glm::mat4(1.0f);
     model = glm::translate(model, modelPos);

@@ -21,6 +21,8 @@ public:
     GLuint hitLoc_;
     GLuint timeLoc_;
 
+    void falloutMove(); // after hit
+
     virtual void Draw(GT_Camera* tempCam) = 0;
 
 protected:
