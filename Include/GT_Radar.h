@@ -38,7 +38,7 @@ public:
         model = glm::translate(glm::mat4(1.0f), worldPos_);
         model = glm::rotate(model, angle, glm::vec3(0.0f, 0.0f, 1.0f));
         model = glm::translate(model, glm::vec3(0.0f, radius, 0));
-        if (type == 10)
+        if (type == 1)
             model = glm::scale(model, glm::vec3(.005f, .005f, 1.0f));
         else
             model = glm::scale(model, glm::vec3(.01f, .01f, 1.0f));
