@@ -28,7 +28,6 @@ bool GT_Enemy::isHit()
 void GT_Enemy::explode()
 {
     gotHit_ = true;
-
     std::cout<<"EXPLOOODEEE!!"<<this<<std::endl;
     hitTime_ = glfwGetTime();
 }
@@ -37,8 +36,7 @@ void GT_Enemy::falloutMove()
 {
      if (isHit())
      {
-         std::cout << "muvam" << this <<std::endl;
-         modelPos += glm::vec3(0.0f, -.1f * glfwGetTime()*glfwGetTime(), 0.0f );
+         modelPos += glm::vec3(0.0f, -.05f * glfwGetTime()*glfwGetTime(), 0.0f );
      }
 }
 
