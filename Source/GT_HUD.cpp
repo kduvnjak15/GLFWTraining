@@ -32,21 +32,20 @@ void GT_HUD::defineShader()
 
 void GT_HUD::definePanels()
 {
-
     // Info
     panel Info;
-    Info.position_  = glm::vec3(-0.70f, -0.35f, -1.0f);
-    Info.volume_    = glm::vec3(.22f, .2f, 1.0f);
-
-    // Radar
-    panel Radar;
-    Radar.position_ = glm::vec3(0.7f, -0.4f, -1.0f);
-    Radar.volume_   = glm::vec3(.2f, .4f, 1.0f);
+    Info.position_  = glm::vec3(-0.70f, -0.3f, -1.0f);
+    Info.volume_    = glm::vec3(.22f, .22f, 1.0f);
 
     // Mission objectives
     panel Objectives;
-    Objectives.position_ = glm::vec3(0.7f, 0.4f, -1.0f);
-    Objectives.volume_   = glm::vec3(.2f, .2f, 1.0f);
+    Objectives.position_ = glm::vec3(0.7f, -0.25f, -1.0f);
+    Objectives.volume_   = glm::vec3(.2f, .25f, 1.0f);
+
+    // Radar
+    panel Radar;
+    Radar.position_ = glm::vec3(0.7f, 0.4f, -1.0f);
+    Radar.volume_   = glm::vec3(.17f, .17f, 1.0f);
 
     panelSettings_.push_back(Info);
     panelSettings_.push_back(Radar);
@@ -58,7 +57,6 @@ void GT_HUD::draw(GT_Camera *tempCam)
     primitiveShader_->Use();
     for (int i = 0; i < panelSettings_.size(); i++)
     {
-
         glm::mat4 model = glm::mat4(1.0f);
         model = glm::translate(model, panelSettings_[i].position_ );
         model = glm::scale(model, panelSettings_[i].volume_);

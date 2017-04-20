@@ -66,10 +66,6 @@ void GT_Radar::scanRadar(GT_Camera* tempCam)
             else
                 coordinates_.push_back(glm::vec3(angle, radius, -3));
         }
-
-        std::cout << i <<" -> "<<  coordinates_[i].x<<", "<<coordinates_[i].y << std::endl;
-        std::cout << radarActorList_[i]->directory<< ", "<<radarActorList_[i]->modelPos.y<<std::endl;
-
     }
 }
 
