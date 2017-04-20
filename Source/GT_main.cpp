@@ -16,6 +16,7 @@
 #include "GT_Raptor.h"
 #include "GT_USSCarrier.h"
 #include "GT_HUD.h"
+#include "GT_Objectives.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -103,7 +104,7 @@ static void glerror_output(GLenum source, GLenum type, GLuint eid, GLenum severi
 class GAME : public initialCallbacks
 {
 public:
-    GAME() : s_(0), rotate_(0), aimed_(false), crashTime_(0.0), fly_(true)
+    GAME() : s_(0), rotate_(0), aimed_(false), crashTime_(0.0), fly_(true), currLevel_(0), levelPassed_(-1.0f)
 
     {
         gamePointer = this;
@@ -189,13 +190,6 @@ public:
             ///////////////////////////////////////////////////////
 
             gameRules();
-
-            target_ = nullptr;
-            for (int i = 0; i < enemies_.size(); i++)
-            {
-                aimed(enemies_[i]);
-            }
-
             updateActors();
 
             //////////////////    camera movement    ///////////////
@@ -207,8 +201,6 @@ public:
                 enemies_[i]->Draw(camera_);
             }
             /***********************************************************/
-
-
 
             // Fighter
             fighter_->modelPos = camera_->getCameraPos();
@@ -303,6 +295,19 @@ public:
             font_->RenderText(*fontShader_, std::to_string(camera_->getSpeed()), 120.0f, 75.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
             font_->RenderText(*fontShader_,"Altitude: ", 25.0f, 100.0f, .50f, glm::vec3(1.0, 0.1f, 0.1f));
             font_->RenderText(*fontShader_, std::to_string(camera_->getCameraPos().y), 120.0f, 100.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
+            font_->RenderText(*fontShader_,"Missiles: ", 25.0f, 125.0f, .50f, glm::vec3(1.0, 0.1f, 0.1f));
+            font_->RenderText(*fontShader_, std::to_string(missilesLeft()), 120.0f, 125.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
+            font_->RenderText(*fontShader_,"Enemies: ", 25.0f, 150.0f, .50f, glm::vec3(1.0, 0.1f, 0.1f));
+            font_->RenderText(*fontShader_, std::to_string(bogiesLeft()), 120.0f, 150.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
+
+            // mision objectives
+            font_->RenderText(*fontShader_,schedule_->currentLevelHeadline_, 790.0f, 280.0f, .50f, glm::vec3(0.5, 0.5f, .50f));
+            for (int i = 0; i < schedule_->currentLevelObjective_.size(); i++)
+            {
+                font_->RenderText(*fontShader_,schedule_->currentLevelObjective_[i], 800.0f, 260.0f - 20*i, .30f, glm::vec3(1.0, 0.1f, 0.5f));
+                std::cout << i <<" "<< schedule_->currentLevelObjective_.size()<<std::endl;
+            }
+
 
 //            // camera position
 //            font_->RenderText(*fontShader_, std::to_string(camera_->getCameraPos().x), 5.0f, 500.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
@@ -432,13 +437,40 @@ glBindVertexArray(0);
 
         }
 
+    int bogiesLeft()
+    {
+        int a = 0;
+        for (int i = 0; i < enemies_.size(); i++)
+        {
+            if (!enemies_[i]->isHit())
+                a++;
+        }
+        if ( currLevel_ == 0)
+            return a - 1 ;
+        else if (currLevel_ == 1)
+            return a;
+    }
+
+    int missilesLeft()
+    {
+        int a = 0;
+        for (int i = 0; i < rockets_.size(); i++)
+        {
+            if (!rockets_[i]->isFired())
+                a++;
+        }
+        return a;
+    }
 
     void updateActors()
     {
-        for (int i = 0; i < rockets_.size(); i++ )
+        for (std::vector<GT_Rocket*>::iterator rit = rockets_.begin(); rit != rockets_.end(); rit++ )
         {
-            if (rockets_[i]->isFired() && !rockets_[i]->dead_)
-                rockets_[i]->move();
+            if ((*rit)->dead_)
+                rockets_.erase(rit);
+
+            if ((*rit)->isFired() && !(*rit)->dead_)
+                (*rit)->move();
         }
 
         for (int i = 0; i < enemies_.size(); i++)
@@ -473,63 +505,65 @@ glBindVertexArray(0);
         particle_ = new GT_Particle();
         ocean_ = new GT_Ocean();
         HUD_ = new GT_HUD();
+        schedule_ = new GT_Objective();
+        schedule_->defineLevel(currLevel_);
+
+
     }
 
     void loadActors()
     {
+
+        if (currLevel_ == 0 )
+        {
+            numOfBogies_ = 1;
+            numOfMissiles_= 4;
+        }
+        else if (currLevel_ == 1)
+        {
+            numOfBogies_ = 2;
+            numOfMissiles_ = 15;
+        }
+
+        enemies_.clear();
+
         enemies_.push_back(new GT_USSCarrier("../Content/CV - Essex class/essex_scb-125_generic.obj"));
         enemies_[0]->modelPos = glm::vec3(-1000.0f, 350.0f, -2500);
 
-        enemies_.push_back(new GT_Raptor("../Content/FA-22_Raptor/FA-22_Raptor.obj"));
-        enemies_[1]->modelPos = glm::vec3(-1000.0f, 800.0f, -2500);
+        for (int i = 0; i < numOfBogies_; i++)
+        {
+            enemies_.push_back(new GT_Raptor("../Content/FA-22_Raptor/FA-22_Raptor.obj"));
+            enemies_[i+1]->modelPos = glm::vec3(-2500.0f+500.0f*i, 800.0f, -2500);
+        }
 
         fighter_ = new GT_Model("../Content/FA-18_RC/FA-18_RC.obj");
         fighter_->modelPos = glm::vec3(0.0f, 100.0f, -100.0f);
         fighter_->modelFront = camera_->getCameraFront();
         fighter_->modelUp = camera_->getCameraUp();
 
-        rockets_.push_back(new GT_Rocket("../Content/AVMT300/AVMT300.3ds"));
-        rockets_[0]->wingSlotOffset = glm::vec3(-3.0f, -3.0f, 0.0f);
-        rockets_.push_back(new GT_Rocket("../Content/AVMT300/AVMT300.3ds"));
-        rockets_[1]->wingSlotOffset = glm::vec3( 8.0f, -3.0f, 0.0f);
 
+        rockets_.clear();
+        for (int i = 0; i < numOfMissiles_; i++)
+        {
+            rockets_.push_back(new GT_Rocket("../Content/AVMT300/AVMT300.3ds"));
+            rockets_[i]->wingSlotOffset = glm::vec3(i%2 == 0 ? 8.0f : -3.0f, -3.0f, 0.0f);
+
+        }
+
+        actors_.clear();
         actors_.push_back(fighter_);
+        for ( int i = 0 ; i < rockets_.size(); i++)
+        {
+            actors_.push_back(rockets_[i]);
+        }
 
-        actors_.push_back(rockets_[0]);
-        actors_.push_back(rockets_[1]);
 
-        actors_.push_back(enemies_[0]);
-        actors_.push_back(enemies_[1]);
+        for ( int i = 0 ; i < enemies_.size(); i++)
+        {
+            actors_.push_back(enemies_[i]);
+        }
 
         HUD_->introduceActors(actors_);
-    }
-
-    glm::mat4 alignModel(GT_Model& model)
-    {
-        glm::mat4 temp(1.0f);
-        glm::mat4 initRot = glm::rotate(glm::mat4(1.0f), (GLfloat)-3.14159/2.0f, glm::vec3(1.0f, 0.0f, 0.0f));
-
-        glm::vec3 right;
-
-        right = glm::cross(model.modelFront, model.modelUp);
-        glm::normalize(right);
-
-        temp[0][2] = -model.modelFront.x;
-        temp[1][2] = -model.modelFront.y;
-        temp[2][2] = -model.modelFront.z;
-
-        temp[0][1] = model.modelUp.x;
-        temp[1][1] = model.modelUp.y;
-        temp[2][1] = model.modelUp.z;
-
-        temp[0][0] = right.x;
-        temp[1][0] = right.y;
-        temp[2][0] = right.z;
-
-        //temp = glm::lookAt(camera_->getCameraPos(), camera_->getCameraFront(), camera_->getCameraUp());
-
-        return  glm::inverse(temp) ;
-
     }
 
     void bounceBBox()
@@ -559,19 +593,66 @@ glBindVertexArray(0);
 
     void objectives()
     {
-        for (int i = 0; i < enemies_.size(); i++)
+
+        if (currLevel_ == 0 )
         {
-            if (!enemies_[i]->isHit())
-                return;
+            target_ = nullptr;
+            for (int i = 1; i < enemies_.size(); i++)
+            {
+                aimed(enemies_[i]);
+            }
+
+            for (int i = 1; i < enemies_.size(); i++)
+            {
+                if (!enemies_[i]->isHit())
+                    return;
+            }
+
+            if (levelPassed_ < 0 )
+                levelPassed_ = glfwGetTime();
+            font_->RenderText(*fontShader_, "GREJTSKSES!! Level 1 Completed!", window_width/4.0f,window_height/2.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
+
+            if (glfwGetTime() - levelPassed_ > 2.0f)
+            {
+                currLevel_++;
+                font_->RenderText(*fontShader_, "Loading Level 2 ...", window_width/4.0f,window_height/2.0f+20 , .50f, glm::vec3(0.5, 0.8f, 0.2f));
+                loadActors();
+                schedule_->defineLevel(currLevel_);
+                levelPassed_ *= -1.0f;
+            }
+
         }
-        font_->RenderText(*fontShader_,": ", 25.0f, 100.0f, .50f, glm::vec3(1.0, 0.1f, 0.1f));
-        font_->RenderText(*fontShader_, std::to_string(camera_->getCameraPos().y), 100.0f, 100.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
+        else if ( currLevel_ == 1)
+        {
 
-        GLfloat pause = glfwGetTime();
-        std::cout<<"grejsksess<"<<std::endl;
-        font_->RenderText(*fontShader_, "GREJTSKSES!!", window_width/4.0f,window_height/2.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
+            target_ = nullptr;
+            for (int i = 0; i < enemies_.size(); i++)
+            {
+                aimed(enemies_[i]);
+            }
 
-        handleCrash();
+            for (int i = 1; i < enemies_.size(); i++)
+            {
+                if (!enemies_[i]->isHit())
+                    return;
+            }
+
+            if (levelPassed_ < 0 )
+                levelPassed_ = glfwGetTime();
+            font_->RenderText(*fontShader_, "GREJTSKSES!! Level 2 Completed!", window_width/4.0f,window_height/2.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
+            font_->RenderText(*fontShader_, "YOU BAD ASS MOTHERFUCKER!!!", window_width/4.0f,window_height/2.0f+20.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
+
+            if (glfwGetTime() - levelPassed_ > 2.0f)
+            {
+                currLevel_++;
+
+                handleCrash();
+            }
+
+        }
+
+
+        //handleCrash();
     }
 
     void gameRules()
@@ -579,6 +660,7 @@ glBindVertexArray(0);
         gravitySim();
         bounceBBox();
         objectives();
+
     }
 
     void aimed(GT_Enemy* target)
@@ -686,25 +768,28 @@ private:
             std::cout<<(target_ == nullptr)<<std::endl;
             if (target_ != nullptr)
             {
-//                if (rockets_.size() != 0)
-//                    if ((*rockets_.begin())->isFired())
-//                    {
-//                        rockets_[0]->modelFront = camera_->getCameraFront();
-//                        rockets_[0]->modelUp = camera_->getCameraUp();
-//                        rockets_[0]->Fire(target_);
-//                    }
-                if (!rockets_[0]->isFired())
-                {
-                    rockets_[0]->modelFront = camera_->getCameraFront();
-                    rockets_[0]->modelUp = camera_->getCameraUp();
-                    rockets_[0]->Fire(target_);
-                }
-                else if (!rockets_[1]->isFired())
-                {
-                    rockets_[1]->modelFront = camera_->getCameraFront();
-                    rockets_[1]->modelUp = camera_->getCameraUp();
-                    rockets_[1]->Fire(target_);
-                }
+                    for (int i = 0; i < rockets_.size(); i++)
+                    {
+                        if (!rockets_[i]->isFired())
+                        {
+                            rockets_[i]->modelFront = camera_->getCameraFront();
+                            rockets_[i]->modelUp = camera_->getCameraUp();
+                            rockets_[i]->Fire(target_);
+                            break ;
+                        }
+                    }
+//                if (!rockets_[0]->isFired())
+//                {
+//                    rockets_[0]->modelFront = camera_->getCameraFront();
+//                    rockets_[0]->modelUp = camera_->getCameraUp();
+//                    rockets_[0]->Fire(target_);
+//                }
+//                else if (!rockets_[1]->isFired())
+//                {
+//                    rockets_[1]->modelFront = camera_->getCameraFront();
+//                    rockets_[1]->modelUp = camera_->getCameraUp();
+//                    rockets_[1]->Fire(target_);
+//                }
             }
         }
 
@@ -762,6 +847,7 @@ private:
     GT_Enemy* enemy_;
     GT_Ocean* ocean_;
     GT_HUD* HUD_;
+    GT_Objective* schedule_;
 
     // uniforms
     GLfloat s_;
@@ -774,6 +860,12 @@ private:
     GLfloat rotate_;
 
     GLfloat blinker_ ;
+
+    // level setting
+    GLfloat levelPassed_;
+    GLuint currLevel_;
+    GLuint numOfMissiles_;
+    GLuint numOfBogies_;
 
 };
 
