@@ -9,16 +9,15 @@ set(INC_DIR ../Include/freetype  ${INC_DIR})
 
 include_directories(${INC_DIR})
 
-set(LIBS libglut.so)
 set(LIBS libGL.so ${LIBS})
 set(LIBS libGLEW.so ${LIBS})
 set(LIBS libglfw.so.3 ${LIBS})
-set(LIBS libopengl.so ${LIBS})
+
 set(LIBS libSOIL.so ${LIBS}) 
 set(LIBS libfreetype.so ${LIBS})
 set(LIBS libassimp.so.3 ${LIBS})
 
-set(LIBS_DIR /home/duvnjakk/workspace/GlfwTraining/Lib )
+set(LIBS_DIR /home/duvnjakk/workspace/GLFWTraining/Lib )
 link_directories( ${LIBS_DIR} )
 
 file(GLOB SOURCES "../Source/*.cpp")

@@ -1,7 +1,7 @@
 #include <GT_Texture.h>
 #include <GL/glew.h>
 
-#include "SOIL/SOIL.h"
+#include "SOIL/src/SOIL.h"
 
 GT_Texture::GT_Texture(const char* textureImagePath)
 {

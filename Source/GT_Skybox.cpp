@@ -4,7 +4,7 @@
 
 #include <string>
 
-#include "SOIL/SOIL.h"
+#include "SOIL/src/SOIL.h"
 #include "GT_Skybox.h"
 
 GT_Skybox::GT_Skybox()
