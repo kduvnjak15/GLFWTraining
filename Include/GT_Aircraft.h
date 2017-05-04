@@ -1,22 +1,29 @@
 #pragma once
 
-#include <GT_Model.h>
+
+#include <GT_Actor.h>
 #include <glm/glm.hpp>
 
-class GT_Aircraft
+
+enum AIRCRAFT
+{
+    F18,
+    F22,
+    AIM,
+    USS
+};
+
+class GT_Aircraft : public GT_Actor
 {
 public:
-    GT_Aircraft();
+
+    GT_Aircraft(GT_Model* aircraftModel);
     ~GT_Aircraft();
 
     void Draw();
+    void Integrate(GLfloat DX_);
 
 private:
 
-    glm::vec3 position_;
-    glm::vec3 front_;
-    glm::vec3 up_;
-
-    GT_Model* model_;
     GT_Shader* aircraftShader_;
 };

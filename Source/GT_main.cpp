@@ -1,11 +1,13 @@
 #include <iostream>
 #include <cmath>
 #include <vector>
+#include <map>
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
 #include "GT_Shader.h"
+#include "GT_Scene.h"
 #include "GT_Camera.h"
 #include "GT_Model.h"
 #include "GT_Skybox.h"
@@ -17,6 +19,7 @@
 #include "GT_USSCarrier.h"
 #include "GT_HUD.h"
 #include "GT_Objectives.h"
+#include "GT_Aircraft.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -493,9 +496,34 @@ glBindVertexArray(0);
 
     }
 
+    void loadModels()
+    {
+        models_.push_back(new GT_Model("../Content/CV - Essex class/essex_scb-125_generic.obj"));
+        modelMap_.insert(std::pair<AIRCRAFT, GT_Model*>(USS, models_[0]));
+        models_.push_back(new GT_Model("../Content/FA-22_Raptor/FA-22_Raptor.obj"));
+        modelMap_.insert(std::pair<AIRCRAFT, GT_Model*>(F22, models_[1]));
+        models_.push_back(new GT_Model("../Content/FA-18_RC/FA-18_RC.obj"));
+        modelMap_.insert(std::pair<AIRCRAFT, GT_Model*>(F18, models_[2]));
+        models_.push_back(new GT_Model("../Content/AVMT300/AVMT300.3ds"));
+        modelMap_.insert(std::pair<AIRCRAFT, GT_Model*>(AIM, models_[3]));
+    }
+
+    void defineActors()
+    {
+        aircafts_.push_back(new GT_Aircraft(modelMap_[F18]));
+        aircafts_.push_back(new GT_Aircraft(modelMap_[USS]));
+        for (int i = 0; i < numOfBogies_; i++)
+            aircafts_.push_back(new GT_Aircraft(modelMap_[F22]));
+    }
+
     void loadGame()
     {
+        loadModels();
+        defineActors();
+
         camera_ = new GT_Camera();
+        scenes_ .push_back(new GT_Scene());
+
         shader_ = new GT_Shader(modelShader, VmodelShader, FmodelShader);
 
         skybox_ = new GT_Skybox();
@@ -830,6 +858,7 @@ private:
     GT_Shader* skyboxShader_;
     GT_Shader* fontShader_;
 
+    std::vector<GT_Scene*> scenes_;
 
     // classes
     GT_Camera* camera_;
@@ -838,6 +867,10 @@ private:
 
 
     // Models
+    std::vector<GT_Model*> models_;
+    std::map< AIRCRAFT, GT_Model*> modelMap_;
+
+    std::vector<GT_Aircraft*> aircafts_;
     std::vector<GT_Model*> actors_;
     std::vector<GT_Enemy*> enemies_;
     std::vector<GT_Rocket*> rockets_;
