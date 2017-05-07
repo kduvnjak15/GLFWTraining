@@ -6,7 +6,10 @@
 #include "glm/gtc/type_ptr.hpp"
 
 GT_Ocean::GT_Ocean()
-    : GT_Primitive("../Content/ocean.jpg")
+    : GT_Primitive("../Content/ocean.jpg"),
+      modelLoc_( glGetUniformLocation(this->primitiveShader_->shaderProgram_, "model")),
+      viewLoc_( glGetUniformLocation(this->primitiveShader_->shaderProgram_, "view")),
+      projLoc_( glGetUniformLocation(this->primitiveShader_->shaderProgram_, "proj"))
 {
     sideA_ = 1000.0f;
     sideB_ = sideA_;
@@ -14,11 +17,14 @@ GT_Ocean::GT_Ocean()
     defineTexture();
     defineVAO();
     defineShader();
-    draw();
+
 }
 
 GT_Ocean::GT_Ocean(const char* textureImage)
-    : GT_Primitive(textureImage)
+    : GT_Primitive(textureImage),
+      modelLoc_( glGetUniformLocation(this->primitiveShader_->shaderProgram_, "model")),
+      viewLoc_( glGetUniformLocation(this->primitiveShader_->shaderProgram_, "view")),
+      projLoc_( glGetUniformLocation(this->primitiveShader_->shaderProgram_, "proj"))
 {
     sideA_ = 1000.0f;
     sideB_ = sideA_;
@@ -27,11 +33,21 @@ GT_Ocean::GT_Ocean(const char* textureImage)
     defineTexture();
     defineVAO();
     defineShader();
-    draw();
 }
 
-void GT_Ocean::draw()
+void GT_Ocean::draw(GT_Camera* tempCam)
 {
+    this->primitiveShader_->Use();
+    modelLoc_  = glGetUniformLocation(this->primitiveShader_->shaderProgram_, "model");
+    projLoc_   = glGetUniformLocation(this->primitiveShader_->shaderProgram_, "projection");
+    viewLoc_   = glGetUniformLocation(this->primitiveShader_->shaderProgram_, "view");
+
+    glm::mat4 view       = tempCam->GetViewMatrix();
+    glm::mat4 projection = tempCam->GetProjectionMatrix();
+
+    glUniformMatrix4fv(viewLoc_, 1, GL_FALSE, glm::value_ptr(view));
+    glUniformMatrix4fv(projLoc_, 1, GL_FALSE, glm::value_ptr(projection));
+
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, primitiveTexture_);
 

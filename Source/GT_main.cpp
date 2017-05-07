@@ -50,8 +50,6 @@ GLfloat lastFrame = 0.0f;
 
 GLfloat lastX = window_width/2, lastY = window_height/2;
 
-glm::vec3 lightPos(-42000.0f, 54800.0f, -71700.0f);
-
 class initialCallbacks
 {
 public:
@@ -198,91 +196,37 @@ public:
             //////////////////    camera movement    ///////////////
             glm::mat4 projection = glm::perspective(ZOOM, (window_width*1.0f)/window_height, 0.1f, horizon);
 
-            /*************************** enemies ********************************/
-            for (int i = 0; i < enemies_.size(); i++)
-            {
-                enemies_[i]->Draw(camera_);
-            }
-            /***********************************************************/
+            if (curScene_ == nullptr)
+                curScene_ = scenes_[0];
 
-            // Fighter
-            fighter_->modelPos = camera_->getCameraPos();
+            curScene_->renderScene();
 
-            shader_->Use();
-            GLuint modelLoc  = glGetUniformLocation(shader_->shaderProgram_, "model");
-            GLuint viewLoc  = glGetUniformLocation(shader_->shaderProgram_, "view");
-            GLuint projLoc  = glGetUniformLocation(shader_->shaderProgram_, "projection");
-            glUniform1i(glGetUniformLocation(shader_->shaderProgram_, "material.diffuse"),  0);
-            glUniform1i(glGetUniformLocation(shader_->shaderProgram_, "material.specular"), 1);
-            GLint lightPosLoc    = glGetUniformLocation(shader_->shaderProgram_, "light.position");
-            GLint viewPosLoc     = glGetUniformLocation(shader_->shaderProgram_, "viewPos");
-            glUniform3f(lightPosLoc,    lightPos.x, lightPos.y, lightPos.z);
-            glUniform3f(viewPosLoc,     camera_->getCameraPos().x, camera_->getCameraPos().y, camera_->getCameraPos().z);
+//            /*************************** enemies ********************************/
+//            for (int i = 0; i < enemies_.size(); i++)
+//            {
+//                enemies_[i]->Draw(camera_);
+//            }
+//            /***********************************************************/
 
-            // Set lights properties
-            glUniform3f(glGetUniformLocation(shader_->shaderProgram_, "light.ambient"),  0.50, 0.50f, 0.50f);
-            glUniform3f(glGetUniformLocation(shader_->shaderProgram_, "light.diffuse"),  0.80, 0.80f, 0.80f);
-            glUniform3f(glGetUniformLocation(shader_->shaderProgram_, "light.specular"), 0.05, 0.05f, 0.05f);
-            // Set material properties
-            glUniform1f(glGetUniformLocation(shader_->shaderProgram_, "material.shininess"), 1.0f);
+//            // Fighter
 
-            glm::mat4 model = glm::mat4(1.0f);
+//            aircafts_[0]->Draw(camera_);
 
-            model = glm::translate(model, +  glm::vec3(0.0f, -5.0f, -25.0f ));
-//            model =  glm::scale(model, glm::vec3(1.0f));
-            model = glm::rotate(model, (GLfloat)-3.14159/2.0f, glm::vec3(1.0f, 0.0f, 0.0f));
-            model = glm::inverse(camera_->GetViewMatrix()) * model;
+//            /**************************************************************************/
 
+//            renderProjectiles();
 
+//            ///////////////////////////////////////////////////////////////////////////////////////
+//            // skybox
 
-            glm::mat4 view = camera_->GetViewMatrix();
-            glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-            glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
-            glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
-            fighter_->Draw(*shader_);
+//            skybox_->Draw(camera_);
 
-            /**************************************************************************/
+//            /*****************************************************************************/
 
-            renderProjectiles();
+//            ocean_->draw(camera_);
+//            /*****************************************************************************/
 
-            ///////////////////////////////////////////////////////////////////////////////////////
-            // skybox
-            glDepthFunc(GL_LEQUAL);
-            skyboxShader_->Use();
-
-
-            viewLoc  = glGetUniformLocation(skyboxShader_->shaderProgram_, "view");
-            projLoc  = glGetUniformLocation(skyboxShader_->shaderProgram_, "projection");
-            view = glm::mat4(glm::mat3(camera_->GetViewMatrix()));
-            projection = glm::perspective(ZOOM, (window_width*1.0f)/window_height, 0.1f, 10000.0f);
-            glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
-            glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
-
-            glBindVertexArray(skybox_->skyboxVAO);
-            glActiveTexture(GL_TEXTURE0);
-            glBindTexture(GL_TEXTURE_CUBE_MAP, skybox_->skyboxTexID);
-            glDrawArrays(GL_TRIANGLES, 0, 36);
-            glBindVertexArray(0);
-            glDepthFunc(GL_LESS);
-
-            /*****************************************************************************/
-
-            ocean_->primitiveShader_->Use();
-            modelLoc  = glGetUniformLocation(ocean_->primitiveShader_->shaderProgram_, "model");
-            viewLoc  = glGetUniformLocation(ocean_->primitiveShader_->shaderProgram_, "view");
-            projLoc  = glGetUniformLocation(ocean_->primitiveShader_->shaderProgram_, "projection");
-
-            model = glm::mat4(1.0f);
-            view = camera_->GetViewMatrix();
-            glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
-            glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
-
-
-            ocean_->draw();
-            /*****************************************************************************/
-
-            HUD_->draw(camera_);
-
+//            HUD_->draw(camera_);
 
             /*****************************************************************************/
 
@@ -308,7 +252,6 @@ public:
             for (int i = 0; i < schedule_->currentLevelObjective_.size(); i++)
             {
                 font_->RenderText(*fontShader_,schedule_->currentLevelObjective_[i], 800.0f, 260.0f - 20*i, .30f, glm::vec3(1.0, 0.1f, 0.5f));
-                std::cout << i <<" "<< schedule_->currentLevelObjective_.size()<<std::endl;
             }
 
 
@@ -522,7 +465,12 @@ glBindVertexArray(0);
         defineActors();
 
         camera_ = new GT_Camera();
-        scenes_ .push_back(new GT_Scene());
+        scenes_ .push_back(new GT_Scene(camera_));
+        scenes_ .push_back(new GT_Scene(camera_));
+        scenes_[0]->setAircrafts(aircafts_);
+        aircafts_[0] = new GT_Aircraft(modelMap_[F22]);
+        scenes_[1]->setAircrafts(aircafts_);
+
 
         shader_ = new GT_Shader(modelShader, VmodelShader, FmodelShader);
 
@@ -776,7 +724,14 @@ private:
 
     void KeyboardCallback(GLFWwindow* window, int key, int scancode, int action, int mode)
     {
+
         if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+        {
+            if (curScene_ == scenes_[0]) curScene_ = scenes_[1];
+            else curScene_ = scenes_[0];
+        }
+
+        if (key == GLFW_KEY_Q && action == GLFW_PRESS)
         {
             glfwSetWindowShouldClose(window, GL_TRUE);
         }
@@ -859,6 +814,7 @@ private:
     GT_Shader* fontShader_;
 
     std::vector<GT_Scene*> scenes_;
+    GT_Scene* curScene_;
 
     // classes
     GT_Camera* camera_;

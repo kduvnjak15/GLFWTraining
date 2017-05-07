@@ -4,7 +4,6 @@
 #include <GT_Actor.h>
 #include <glm/glm.hpp>
 
-
 enum AIRCRAFT
 {
     F18,
@@ -20,10 +19,18 @@ public:
     GT_Aircraft(GT_Model* aircraftModel);
     ~GT_Aircraft();
 
-    void Draw();
-    void Integrate(GLfloat DX_);
+    void Draw(GT_Camera *tempCam);
+    void Integrate(GLfloat DT_);
 
 private:
 
-    GT_Shader* aircraftShader_;
+    GLuint modelLoc_;
+    GLuint viewLoc_;
+    GLuint projLoc_;
+    GLuint lightPosLoc_;
+    GLuint viewPosLoc_;
+
+
+
+    GLfloat speed_;
 };

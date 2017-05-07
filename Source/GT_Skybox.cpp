@@ -8,6 +8,7 @@
 #include "GT_Skybox.h"
 
 GT_Skybox::GT_Skybox()
+    : skyboxShader_(new GT_Shader(skyboxShader, "../Shaders/skybox.vs", "../Shaders/skybox.fs"))
 {
 
     glGenTextures(1, &skyboxTexID);
@@ -71,4 +72,28 @@ void GT_Skybox::loadCubeMaps()
     cubemaps.push_back("../Content/Skybox/bottom.jpg");
     cubemaps.push_back("../Content/Skybox/back.jpg");
     cubemaps.push_back("../Content/Skybox/front.jpg");
+}
+
+
+void GT_Skybox::Draw(GT_Camera* tempCam)
+{
+    glDepthFunc(GL_LEQUAL);
+    skyboxShader_->Use();
+
+    viewLoc_  = glGetUniformLocation(skyboxShader_->shaderProgram_, "view");
+    projLoc_  = glGetUniformLocation(skyboxShader_->shaderProgram_, "projection");
+    glm::mat4 view = glm::mat4(glm::mat3(tempCam->GetViewMatrix()));
+    glm::mat4 projection = glm::perspective(ZOOM, (window_width*1.0f)/window_height, 0.1f, 10000.0f);
+    glUniformMatrix4fv(viewLoc_, 1, GL_FALSE, glm::value_ptr(view));
+    glUniformMatrix4fv(projLoc_, 1, GL_FALSE, glm::value_ptr(projection));
+
+    glBindVertexArray(this->skyboxVAO);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, this->skyboxTexID);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+    glBindVertexArray(0);
+    glDepthFunc(GL_LESS);
+
+
+
 }

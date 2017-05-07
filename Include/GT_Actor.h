@@ -2,7 +2,7 @@
 
 #include <GT_Model.h>
 #include <glm/glm.hpp>
-
+#include "GT_Camera.h"
 
 enum class MODEL_ENUM
 {
@@ -19,7 +19,7 @@ public:
     GT_Actor(GT_Model *actorModel);
     ~GT_Actor();
 
-    virtual void Draw() = 0;
+    virtual void Draw(GT_Camera* tempCam) = 0;
     virtual void Integrate(GLfloat DX_) = 0;
 
 protected:

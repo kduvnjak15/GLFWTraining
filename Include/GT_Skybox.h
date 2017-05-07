@@ -1,8 +1,8 @@
 #pragma once
 #include <GL/glew.h>
 #include <vector>
-
-
+#include "GT_Shader.h"
+#include "GT_Camera.h"
 
 class GT_Skybox
 {
@@ -14,6 +14,7 @@ class GT_Skybox
 
         GLuint skyboxTexID;
 
+        void Draw(GT_Camera *tempCam);
 
     private:
         void loadCubeMaps();
@@ -24,6 +25,9 @@ class GT_Skybox
         GLuint cubeVBO;
         GLuint skyboxVBO;
 
+        GT_Shader* skyboxShader_;
+        GLuint viewLoc_;
+        GLuint projLoc_;
 
 
         GLfloat cubeVertices[216] = {

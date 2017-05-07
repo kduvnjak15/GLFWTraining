@@ -37,7 +37,7 @@ const GLuint window_height = 600;
 const GLfloat horizon = 50000;
 const GLfloat MAX_SPEED = 500.0f;
 
-
+static glm::vec3 lightPos(-42000.0f, 54800.0f, -71700.0f);
 
 
 class GT_Camera
