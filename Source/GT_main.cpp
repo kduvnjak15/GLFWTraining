@@ -20,6 +20,7 @@
 #include "GT_HUD.h"
 #include "GT_Objectives.h"
 #include "GT_Aircraft.h"
+#include "GT_MenuScene.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -465,8 +466,8 @@ glBindVertexArray(0);
         defineActors();
 
         camera_ = new GT_Camera();
-        scenes_ .push_back(new GT_Scene(camera_));
-        scenes_ .push_back(new GT_Scene(camera_));
+        scenes_ .push_back(new GT_Scene(camera_, introScene));
+        scenes_ .push_back(new GT_MenuScene(camera_));
         scenes_[0]->setAircrafts(aircafts_);
         aircafts_[0] = new GT_Aircraft(modelMap_[F22]);
         scenes_[1]->setAircrafts(aircafts_);
@@ -673,45 +674,39 @@ private:
         glViewport(0, 0, window_width, window_height);
     }
 
+
+
     void do_movement()
     {
-#ifdef oldcode
-        // Camera controls
-        if (keys[GLFW_KEY_W])
-            camera_->keyboardHandler(FORWARD, deltaTime);
-        if (keys[GLFW_KEY_S])
-            camera_->keyboardHandler(BACKWARD, deltaTime);
-        if (keys[GLFW_KEY_A])
-        {
-            camera_->keyboardHandler(LEFT, deltaTime);
-            rotate_ += 0.005f;
-        }
-        if (keys[GLFW_KEY_D])
-        {
-            camera_->keyboardHandler(RIGHT, deltaTime);
-            rotate_ -= 0.005f;
-        }
-#else
-    if (fly_)
-        camera_->keyboardHandler(FORWARD, deltaTime);
-    if (keys[GLFW_KEY_W])
-        camera_->keyboardHandler(PITCH_D, deltaTime);
-    if (keys[GLFW_KEY_S])
-        camera_->keyboardHandler(PITCH_U, deltaTime);
-    if (keys[GLFW_KEY_A])
-        camera_->keyboardHandler(ROLL_L, deltaTime);
-    if (keys[GLFW_KEY_D])
-        camera_->keyboardHandler(ROLL_R, deltaTime);
-    if (keys[GLFW_KEY_Q])
-        camera_->keyboardHandler(YAW_L, deltaTime);
-    if (keys[GLFW_KEY_E])
-        camera_->keyboardHandler(YAW_R, deltaTime);
-    if (keys[GLFW_KEY_LEFT_CONTROL])
-        camera_->keyboardHandler(ACCELERATE, deltaTime);
-    if (keys[GLFW_KEY_LEFT_SHIFT])
-        camera_->keyboardHandler(DECELERATE, deltaTime);
 
-#endif
+        if (curScene_->getCurrentSceneType() == gameplay)
+        {
+            if (fly_)
+                camera_->keyboardHandler(FORWARD, deltaTime);
+            if (keys[GLFW_KEY_W])
+                camera_->keyboardHandler(PITCH_D, deltaTime);
+            if (keys[GLFW_KEY_S])
+                camera_->keyboardHandler(PITCH_U, deltaTime);
+            if (keys[GLFW_KEY_A])
+                camera_->keyboardHandler(ROLL_L, deltaTime);
+            if (keys[GLFW_KEY_D])
+                camera_->keyboardHandler(ROLL_R, deltaTime);
+            if (keys[GLFW_KEY_Q])
+                camera_->keyboardHandler(YAW_L, deltaTime);
+            if (keys[GLFW_KEY_E])
+                camera_->keyboardHandler(YAW_R, deltaTime);
+            if (keys[GLFW_KEY_LEFT_CONTROL])
+                camera_->keyboardHandler(ACCELERATE, deltaTime);
+            if (keys[GLFW_KEY_LEFT_SHIFT])
+                camera_->keyboardHandler(DECELERATE, deltaTime);
+        }
+        else if (curScene_->getCurrentSceneType() == introScene)
+        {
+            if (keys[GLFW_KEY_LEFT])
+                    curScene_
+        }
+
+
     }
 
     void initializeCallbacks()
@@ -748,7 +743,6 @@ private:
 
         if (key == GLFW_KEY_ENTER && action == GLFW_PRESS)
         {
-            std::cout<<(target_ == nullptr)<<std::endl;
             if (target_ != nullptr)
             {
                     for (int i = 0; i < rockets_.size(); i++)

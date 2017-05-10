@@ -14,14 +14,22 @@ enum sceneType
     introScene
 };
 
-
+enum class keyPressed
+{
+    LEFT,
+    RIGHT,
+    UP,
+    DOWN,
+    ENTER,
+    ESC
+};
 
 class GT_Scene
 {
 
 public:
-    GT_Scene(GT_Camera* tempCam);
-    GT_Scene(sceneType sceneEnum);
+    GT_Scene(GT_Camera* tempCam, sceneType sceneEnum);
+    GT_Scene();
 
     ~GT_Scene();
 
@@ -33,12 +41,14 @@ public:
 
     void setCamera(GT_Camera* tempCam) { camera_ = tempCam; }
 
-private:
+    virtual void sceneKeyboardHandler() = 0;
+
+
+protected:
 
     GLfloat lastFrame_;
 
     void integrateScene(GLfloat dT);
-
 
     sceneType currentScene_;
     std::vector<GT_Aircraft*> aircrafts_;
@@ -47,5 +57,6 @@ private:
     GT_Ocean*  ocean_;
 
     GT_Camera* camera_;
+    GT_HUD* HUD_;
 
 };
