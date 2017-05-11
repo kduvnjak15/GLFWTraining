@@ -13,44 +13,12 @@ GT_MenuScene::GT_MenuScene(GT_Camera* tempCam)
 }
 
 
-void GT_MenuScene::KeyboardHandler(keyPressed keyInput)
+void GT_MenuScene::sceneKeyboardHandler(int key, int scancode, int action, int mode)
 {
-    if (keyInput == keyPressed::LEFT)
-    {
-        int temp = currButton_;
-        temp--;
-        currButton_ = temp % buttons_.size();
-        std::cout << currButton_ << std::endl;
-    }
-    else if (keyInput == keyPressed::RIGHT)
-    {
-        int temp = currButton_;
-        temp++;
-        currButton_ = temp % buttons_.size();
-        std::cout << currButton_ << std::endl;
-    }
-    else if (keyInput == keyPressed::UP)
-    {
 
-    }
-    else if (keyInput == keyPressed::DOWN)
-    {
-
-    }
-    else if (keyInput == keyPressed::ENTER)
-    {
-        if (buttons_[currButton_] == "QUIT GAME")
-        {
-
-        }
-        else if (buttons_[currButton_] == "PLAY GAME")
-        {
-
-        }
-    }
-    else if (keyInput == keyPressed::ESC)
-    {
-
-    }
 }
 
+void GT_MenuScene::renderScene()
+{
+
+}

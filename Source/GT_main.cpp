@@ -103,6 +103,23 @@ static void glerror_output(GLenum source, GLenum type, GLuint eid, GLenum severi
 }
 
 
+class GT_Warehouse
+{
+public:
+    static void* getSkybox()
+    {
+        if (!skybox_)
+            skybox_ = new GT_Skybox();
+
+        std::cout << "return skybox " << skybox_ << std::endl;
+        return skybox_;
+    }
+
+private:
+
+    static GT_Skybox* skybox_;
+};
+
 class GAME : public initialCallbacks
 {
 public:
@@ -136,7 +153,7 @@ public:
         glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 
         // CreateWindow
-        windowPtr_ = glfwCreateWindow(window_width, window_height, "GLFWTraining", NULL, NULL);
+        windowPtr_ = glfwCreateWindow(window_width, window_height, "SkyKnights", NULL, NULL);
         if (windowPtr_ == NULL)
         {
             std::cout<<"Failed to create GLFW window"<<std::endl;
@@ -286,10 +303,17 @@ public:
 
 
         }
-glBindVertexArray(0);
+
         glfwTerminate();
         return true;
     }
+
+    void quitGame()
+    {
+        glfwWindowShouldClose(windowPtr_);
+
+    }
+
 
     void renderProjectiles()
     {
@@ -437,7 +461,7 @@ glBindVertexArray(0);
         glfwWindowShouldClose(windowPtr_);
 
         glfwTerminate();
-
+        quitGame();
     }
 
     void loadModels()
@@ -466,12 +490,6 @@ glBindVertexArray(0);
         defineActors();
 
         camera_ = new GT_Camera();
-        scenes_ .push_back(new GT_Scene(camera_, introScene));
-        scenes_ .push_back(new GT_MenuScene(camera_));
-        scenes_[0]->setAircrafts(aircafts_);
-        aircafts_[0] = new GT_Aircraft(modelMap_[F22]);
-        scenes_[1]->setAircrafts(aircafts_);
-
 
         shader_ = new GT_Shader(modelShader, VmodelShader, FmodelShader);
 
@@ -702,8 +720,8 @@ private:
         }
         else if (curScene_->getCurrentSceneType() == introScene)
         {
-            if (keys[GLFW_KEY_LEFT])
-                    curScene_
+
+
         }
 
 
@@ -711,15 +729,12 @@ private:
 
     void initializeCallbacks()
     {
-
         glfwSetKeyCallback(windowPtr_, KeyboardCB);
         glfwSetCursorPosCallback(windowPtr_, MouseCB);
-
     }
 
     void KeyboardCallback(GLFWwindow* window, int key, int scancode, int action, int mode)
     {
-
         if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
         {
             if (curScene_ == scenes_[0]) curScene_ = scenes_[1];
@@ -745,28 +760,24 @@ private:
         {
             if (target_ != nullptr)
             {
-                    for (int i = 0; i < rockets_.size(); i++)
+                for (int i = 0; i < rockets_.size(); i++)
+                {
+                    if (!rockets_[i]->isFired())
                     {
-                        if (!rockets_[i]->isFired())
-                        {
-                            rockets_[i]->modelFront = camera_->getCameraFront();
-                            rockets_[i]->modelUp = camera_->getCameraUp();
-                            rockets_[i]->Fire(target_);
-                            break ;
-                        }
+                        rockets_[i]->modelFront = camera_->getCameraFront();
+                        rockets_[i]->modelUp = camera_->getCameraUp();
+                        rockets_[i]->Fire(target_);
+                        break ;
                     }
-//                if (!rockets_[0]->isFired())
-//                {
-//                    rockets_[0]->modelFront = camera_->getCameraFront();
-//                    rockets_[0]->modelUp = camera_->getCameraUp();
-//                    rockets_[0]->Fire(target_);
-//                }
-//                else if (!rockets_[1]->isFired())
-//                {
-//                    rockets_[1]->modelFront = camera_->getCameraFront();
-//                    rockets_[1]->modelUp = camera_->getCameraUp();
-//                    rockets_[1]->Fire(target_);
-//                }
+                }
+            }
+
+            if (curScene_)
+                curScene_->sceneKeyboardHandler(key, scancode, action, mode);
+            else
+            {
+                std::cout << "NO CURSCENE_; CATASTRPHIC CRASH" << std::endl;
+                glfwSetWindowShouldClose(window, GL_TRUE);
             }
         }
 
@@ -852,7 +863,6 @@ private:
 
 };
 
-
 int main(int argc, char** argv)
 {
     GAME* gamePtr = new GAME();
@@ -868,7 +878,6 @@ int main(int argc, char** argv)
         std::cout<<" GameInit Failed! "<<std::endl;
         return -1;
     }
-
 
     std::cout<<"GameOver"<<std::endl;
     return 0;

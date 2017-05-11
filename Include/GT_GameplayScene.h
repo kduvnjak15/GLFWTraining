@@ -5,6 +5,11 @@
 class GT_GameplayScene : public GT_Scene
 {
 public:
-    GT_GameplayScene();
+    GT_GameplayScene(GT_Camera* camera_, sceneType sceneEnum);
+
+    void renderScene();
+
+    void sceneKeyboardHandler(int key, int scancode, int action, int mode);
+
 };
 
