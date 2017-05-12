@@ -186,6 +186,11 @@ public:
         loadGame();
         loadActors();
 
+        scenes_.push_back(new GT_MenuScene(camera_));
+        curScene_ = scenes_[0];
+
+        std::cout << "brandy " << std::endl;
+
         while (!glfwWindowShouldClose(windowPtr_))
         {
 
@@ -208,16 +213,15 @@ public:
 
             ///////////////////////////////////////////////////////
 
-            gameRules();
-            updateActors();
+//            gameRules();
+//            updateActors();
 
             //////////////////    camera movement    ///////////////
             glm::mat4 projection = glm::perspective(ZOOM, (window_width*1.0f)/window_height, 0.1f, horizon);
 
-            if (curScene_ == nullptr)
-                curScene_ = scenes_[0];
-
+            std::cout << "oko kere " << std::endl;
             curScene_->renderScene();
+            std::cout << "oko kere " << std::endl;
 
 //            /*************************** enemies ********************************/
 //            for (int i = 0; i < enemies_.size(); i++)
@@ -450,9 +454,6 @@ public:
                 enemies_[i]->falloutMove();
         }
 
-
-
-
     }
 
     void handleCrash()
@@ -466,8 +467,8 @@ public:
 
     void loadModels()
     {
-        models_.push_back(new GT_Model("../Content/CV - Essex class/essex_scb-125_generic.obj"));
-        modelMap_.insert(std::pair<AIRCRAFT, GT_Model*>(USS, models_[0]));
+//        models_.push_back(new GT_Model("../Content/CV - Essex class/essex_scb-125_generic.obj"));
+//        modelMap_.insert(std::pair<AIRCRAFT, GT_Model*>(USS, models_[0]));
         models_.push_back(new GT_Model("../Content/FA-22_Raptor/FA-22_Raptor.obj"));
         modelMap_.insert(std::pair<AIRCRAFT, GT_Model*>(F22, models_[1]));
         models_.push_back(new GT_Model("../Content/FA-18_RC/FA-18_RC.obj"));
@@ -490,6 +491,8 @@ public:
         defineActors();
 
         camera_ = new GT_Camera();
+
+
 
         shader_ = new GT_Shader(modelShader, VmodelShader, FmodelShader);
 
