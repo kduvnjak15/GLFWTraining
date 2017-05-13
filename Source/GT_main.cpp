@@ -99,26 +99,8 @@ static void glerror_output(GLenum source, GLenum type, GLuint eid, GLenum severi
 //    {	eh_logf(ge, "GLDEBUG %s from %04x, TYPE=%04x, ID=%04x, SEVERITY=%d, msg=%s\n", typestr, source, type, eid, severity, message);
 //        DEBUG_BREAKPOINT();
 //    }
-    std::cout << typestr <<std::endl;
+
 }
-
-
-class GT_Warehouse
-{
-public:
-    static void* getSkybox()
-    {
-        if (!skybox_)
-            skybox_ = new GT_Skybox();
-
-        std::cout << "return skybox " << skybox_ << std::endl;
-        return skybox_;
-    }
-
-private:
-
-    static GT_Skybox* skybox_;
-};
 
 class GAME : public initialCallbacks
 {
@@ -131,15 +113,7 @@ public:
     }
     virtual ~GAME()
     {
-
-        delete shader_;
-        delete lightShader_;
-        delete cubemapShader_;
-        delete skyboxShader_;
-        delete fontShader_;
-
         delete camera_;
-        delete skybox_;
         delete windowPtr_;
     }
 
@@ -184,12 +158,9 @@ public:
     {
         glfwSwapInterval(1);
         loadGame();
-        loadActors();
 
-        scenes_.push_back(new GT_MenuScene(camera_));
+        scenes_.push_back(new GT_MenuScene(camera_, warehouse_));
         curScene_ = scenes_[0];
-
-        std::cout << "brandy " << std::endl;
 
         while (!glfwWindowShouldClose(windowPtr_))
         {
@@ -219,9 +190,7 @@ public:
             //////////////////    camera movement    ///////////////
             glm::mat4 projection = glm::perspective(ZOOM, (window_width*1.0f)/window_height, 0.1f, horizon);
 
-            std::cout << "oko kere " << std::endl;
             curScene_->renderScene();
-            std::cout << "oko kere " << std::endl;
 
 //            /*************************** enemies ********************************/
 //            for (int i = 0; i < enemies_.size(); i++)
@@ -254,41 +223,6 @@ public:
 
             // Fonts
             projection = glm::ortho(0.0f, static_cast<GLfloat>(window_width), 0.0f, static_cast<GLfloat>(window_height));
-            fontShader_->Use();
-            glUniformMatrix4fv(glGetUniformLocation(fontShader_->shaderProgram_, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
-            font_->RenderText(*fontShader_,"Time: ", 25.0f, 25.0f, .50f, glm::vec3(1.0, 0.1f, 0.1f));
-            font_->RenderText(*fontShader_, std::to_string(glfwGetTime()), 120.0f, 25.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
-            font_->RenderText(*fontShader_,"FPS: ", 25.0f, 50.0f, .50f, glm::vec3(1.0, 0.1f, 0.1f));
-            font_->RenderText(*fontShader_, std::to_string(1/deltaTime), 120.0f, 50.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
-            font_->RenderText(*fontShader_,"Speed: ", 25.0f, 75.0f, .50f, glm::vec3(1.0, 0.1f, 0.1f));
-            font_->RenderText(*fontShader_, std::to_string(camera_->getSpeed()), 120.0f, 75.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
-            font_->RenderText(*fontShader_,"Altitude: ", 25.0f, 100.0f, .50f, glm::vec3(1.0, 0.1f, 0.1f));
-            font_->RenderText(*fontShader_, std::to_string(camera_->getCameraPos().y), 120.0f, 100.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
-            font_->RenderText(*fontShader_,"Missiles: ", 25.0f, 125.0f, .50f, glm::vec3(1.0, 0.1f, 0.1f));
-            font_->RenderText(*fontShader_, std::to_string(missilesLeft()), 120.0f, 125.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
-            font_->RenderText(*fontShader_,"Enemies: ", 25.0f, 150.0f, .50f, glm::vec3(1.0, 0.1f, 0.1f));
-            font_->RenderText(*fontShader_, std::to_string(bogiesLeft()), 120.0f, 150.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
-
-            // mision objectives
-            font_->RenderText(*fontShader_,schedule_->currentLevelHeadline_, 790.0f, 280.0f, .50f, glm::vec3(0.5, 0.5f, .50f));
-            for (int i = 0; i < schedule_->currentLevelObjective_.size(); i++)
-            {
-                font_->RenderText(*fontShader_,schedule_->currentLevelObjective_[i], 800.0f, 260.0f - 20*i, .30f, glm::vec3(1.0, 0.1f, 0.5f));
-            }
-
-
-//            // camera position
-//            font_->RenderText(*fontShader_, std::to_string(camera_->getCameraPos().x), 5.0f, 500.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
-//            font_->RenderText(*fontShader_, std::to_string(camera_->getCameraPos().y), 130.0f, 500.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
-//            font_->RenderText(*fontShader_, std::to_string(camera_->getCameraPos().z), 240.0f, 500.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
-//            // camera Front
-//            font_->RenderText(*fontShader_, std::to_string(camera_->getCameraFront().x), 5.0f, 480.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
-//            font_->RenderText(*fontShader_, std::to_string(camera_->getCameraFront().y), 130.0f, 480.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
-//            font_->RenderText(*fontShader_, std::to_string(camera_->getCameraFront().z), 240.0f, 480.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
-//            // enemy pos
-//            font_->RenderText(*fontShader_, std::to_string(actors_[0]->modelPos.x), 5.0f, 460.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
-//            font_->RenderText(*fontShader_, std::to_string(actors_[0]->modelPos.y), 130.0f, 460.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
-//            font_->RenderText(*fontShader_, std::to_string(actors_[0]->modelPos.z), 240.0f, 460.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
 
             /////////////////////    rendering    //////////////////
 
@@ -330,12 +264,6 @@ public:
             if (missile_->dead_)
                 continue;
 
-
-            shader_->Use();
-            GLuint modelLoc  = glGetUniformLocation(shader_->shaderProgram_, "model");
-            GLuint viewLoc  = glGetUniformLocation(shader_->shaderProgram_, "view");
-            GLuint projLoc  = glGetUniformLocation(shader_->shaderProgram_, "projection");
-
             glm::mat4 model = glm::mat4(1.0f);
             if (missile_->isFired())
             {
@@ -367,15 +295,8 @@ public:
             }
 
             glm::mat4 view = camera_->GetViewMatrix();
-            glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-            glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
-            glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
-            missile_->Draw(*shader_);
 
                 particle_->primitiveShader_->Use();
-                modelLoc  = glGetUniformLocation(particle_->primitiveShader_->shaderProgram_, "model");
-                viewLoc  = glGetUniformLocation(particle_->primitiveShader_->shaderProgram_, "view");
-                projLoc  = glGetUniformLocation(particle_->primitiveShader_->shaderProgram_, "projection");
 
                 const GLfloat interpolateBias = 10;
                 std::vector<contrail> container_ = missile_->getParticles();
@@ -399,9 +320,6 @@ public:
                         tran2 = align * tran2;
                         model = tran1 * tran2 * rot * scale;
 
-                        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-                        glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
-                        glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
                         particle_->draw();
 
@@ -412,49 +330,6 @@ public:
 
         }
 
-    int bogiesLeft()
-    {
-        int a = 0;
-        for (int i = 0; i < enemies_.size(); i++)
-        {
-            if (!enemies_[i]->isHit())
-                a++;
-        }
-        if ( currLevel_ == 0)
-            return a - 1 ;
-        else if (currLevel_ == 1)
-            return a;
-    }
-
-    int missilesLeft()
-    {
-        int a = 0;
-        for (int i = 0; i < rockets_.size(); i++)
-        {
-            if (!rockets_[i]->isFired())
-                a++;
-        }
-        return a;
-    }
-
-    void updateActors()
-    {
-        for (std::vector<GT_Rocket*>::iterator rit = rockets_.begin(); rit != rockets_.end(); rit++ )
-        {
-            if ((*rit)->dead_)
-                rockets_.erase(rit);
-
-            if ((*rit)->isFired() && !(*rit)->dead_)
-                (*rit)->move();
-        }
-
-        for (int i = 0; i < enemies_.size(); i++)
-        {
-            if (enemies_[i]->isHit())
-                enemies_[i]->falloutMove();
-        }
-
-    }
 
     void handleCrash()
     {
@@ -465,228 +340,17 @@ public:
         quitGame();
     }
 
-    void loadModels()
-    {
-//        models_.push_back(new GT_Model("../Content/CV - Essex class/essex_scb-125_generic.obj"));
-//        modelMap_.insert(std::pair<AIRCRAFT, GT_Model*>(USS, models_[0]));
-        models_.push_back(new GT_Model("../Content/FA-22_Raptor/FA-22_Raptor.obj"));
-        modelMap_.insert(std::pair<AIRCRAFT, GT_Model*>(F22, models_[1]));
-        models_.push_back(new GT_Model("../Content/FA-18_RC/FA-18_RC.obj"));
-        modelMap_.insert(std::pair<AIRCRAFT, GT_Model*>(F18, models_[2]));
-        models_.push_back(new GT_Model("../Content/AVMT300/AVMT300.3ds"));
-        modelMap_.insert(std::pair<AIRCRAFT, GT_Model*>(AIM, models_[3]));
-    }
-
-    void defineActors()
-    {
-        aircafts_.push_back(new GT_Aircraft(modelMap_[F18]));
-        aircafts_.push_back(new GT_Aircraft(modelMap_[USS]));
-        for (int i = 0; i < numOfBogies_; i++)
-            aircafts_.push_back(new GT_Aircraft(modelMap_[F22]));
-    }
-
     void loadGame()
     {
-        loadModels();
-        defineActors();
+        warehouse_ = new GT_Warehouse();
+        warehouse_->loadModels();
+        warehouse_->defineAircrafts();
 
         camera_ = new GT_Camera();
-
-
-
-        shader_ = new GT_Shader(modelShader, VmodelShader, FmodelShader);
-
-        skybox_ = new GT_Skybox();
-        skyboxShader_ = new GT_Shader(skyboxShader, vsSkyboxShader, fsSkyboxShader);
-        font_ = new GT_Alphabet();
-        fontShader_ = new GT_Shader(fontShader, vsFontShader, fsFontShader);
-        particle_ = new GT_Particle();
-        ocean_ = new GT_Ocean();
-        HUD_ = new GT_HUD();
-        schedule_ = new GT_Objective();
-        schedule_->defineLevel(currLevel_);
-
-
     }
 
-    void loadActors()
-    {
-
-        if (currLevel_ == 0 )
-        {
-            numOfBogies_ = 1;
-            numOfMissiles_= 4;
-        }
-        else if (currLevel_ == 1)
-        {
-            numOfBogies_ = 2;
-            numOfMissiles_ = 15;
-        }
-
-        enemies_.clear();
-
-        enemies_.push_back(new GT_USSCarrier("../Content/CV - Essex class/essex_scb-125_generic.obj"));
-        enemies_[0]->modelPos = glm::vec3(-1000.0f, 350.0f, -2500);
-
-        for (int i = 0; i < numOfBogies_; i++)
-        {
-            enemies_.push_back(new GT_Raptor("../Content/FA-22_Raptor/FA-22_Raptor.obj"));
-            enemies_[i+1]->modelPos = glm::vec3(-2500.0f+500.0f*i, 800.0f, -2500);
-        }
-
-        fighter_ = new GT_Model("../Content/FA-18_RC/FA-18_RC.obj");
-        fighter_->modelPos = glm::vec3(0.0f, 100.0f, -100.0f);
-        fighter_->modelFront = camera_->getCameraFront();
-        fighter_->modelUp = camera_->getCameraUp();
 
 
-        rockets_.clear();
-        for (int i = 0; i < numOfMissiles_; i++)
-        {
-            rockets_.push_back(new GT_Rocket("../Content/AVMT300/AVMT300.3ds"));
-            rockets_[i]->wingSlotOffset = glm::vec3(i%2 == 0 ? 8.0f : -3.0f, -3.0f, 0.0f);
-
-        }
-
-        actors_.clear();
-        actors_.push_back(fighter_);
-        for ( int i = 0 ; i < rockets_.size(); i++)
-        {
-            actors_.push_back(rockets_[i]);
-        }
-
-
-        for ( int i = 0 ; i < enemies_.size(); i++)
-        {
-            actors_.push_back(enemies_[i]);
-        }
-
-        HUD_->introduceActors(actors_);
-    }
-
-    void bounceBBox()
-    {
-
-        if (camera_->getCameraPos().x > 10000 || camera_->getCameraPos().x < -10000 || camera_->getCameraPos().y > 5000  || camera_->getCameraPos().z > 10000 || camera_->getCameraPos().z < -10000)
-        {
-            camera_->bounceBBox();
-        }
-
-        if (camera_->getCameraPos().y < 5)
-        {
-            std::cout << "Epic fail! You fly low as your moma's IQ "<< crashTime_ <<std::endl;
-
-            if (crashTime_ == 0.0)
-                crashTime_ = glfwGetTime();
-        }
-    }
-
-    void gravitySim()
-    {
-        if (camera_->getSpeed() < 100)
-        {
-            camera_->enforceGravity( 1.0f - camera_->getSpeed()/100.0f);
-        }
-    }
-
-    void objectives()
-    {
-
-        if (currLevel_ == 0 )
-        {
-            target_ = nullptr;
-            for (int i = 1; i < enemies_.size(); i++)
-            {
-                aimed(enemies_[i]);
-            }
-
-            for (int i = 1; i < enemies_.size(); i++)
-            {
-                if (!enemies_[i]->isHit())
-                    return;
-            }
-
-            if (levelPassed_ < 0 )
-                levelPassed_ = glfwGetTime();
-            font_->RenderText(*fontShader_, "GREJTSKSES!! Level 1 Completed!", window_width/4.0f,window_height/2.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
-
-            if (glfwGetTime() - levelPassed_ > 2.0f)
-            {
-                currLevel_++;
-                font_->RenderText(*fontShader_, "Loading Level 2 ...", window_width/4.0f,window_height/2.0f+20 , .50f, glm::vec3(0.5, 0.8f, 0.2f));
-                loadActors();
-                schedule_->defineLevel(currLevel_);
-                levelPassed_ *= -1.0f;
-            }
-
-        }
-        else if ( currLevel_ == 1)
-        {
-
-            target_ = nullptr;
-            for (int i = 0; i < enemies_.size(); i++)
-            {
-                aimed(enemies_[i]);
-            }
-
-            for (int i = 1; i < enemies_.size(); i++)
-            {
-                if (!enemies_[i]->isHit())
-                    return;
-            }
-
-            if (levelPassed_ < 0 )
-                levelPassed_ = glfwGetTime();
-            font_->RenderText(*fontShader_, "GREJTSKSES!! Level 2 Completed!", window_width/4.0f,window_height/2.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
-            font_->RenderText(*fontShader_, "YOU BAD ASS MOTHERFUCKER!!!", window_width/4.0f,window_height/2.0f+20.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
-
-            if (glfwGetTime() - levelPassed_ > 2.0f)
-            {
-                currLevel_++;
-
-                handleCrash();
-            }
-
-        }
-
-
-        //handleCrash();
-    }
-
-    void gameRules()
-    {
-        gravitySim();
-        bounceBBox();
-        objectives();
-
-    }
-
-    void aimed(GT_Enemy* target)
-    {
-        glm::vec3 enemyPos = target->modelPos;
-        glm::vec3 fighterPos = actors_[0]->modelPos;
-        glm::vec3 diagonal =  glm::normalize( enemyPos - fighterPos );
-
-        GLfloat tempDOT = glm::dot(camera_->getCameraFront(), diagonal );
-        if (tempDOT > 0.997 )
-        {
-            font_->RenderText(*fontShader_, "LOCKED!!!", 700.0f, 100.0f, 1.0f, glm::vec3(1.0, 0.0f, .4f));
-            if (sin(glfwGetTime()*6) >0)
-                if (rockets_[0]->isFired() && rockets_[1]->isFired())
-                    font_->RenderText(*fontShader_, "OUT OF MISSILES!!!", 630.0f, 65.0f, 0.8f, glm::vec3(1.0, 0.0f, .4f));
-                else
-                    font_->RenderText(*fontShader_, "ENTER to FIRE!!!", 680.0f, 65.0f, 0.8f, glm::vec3(1.0, 0.0f, .4f));
-            target_ = target;
-
-        }
-        else
-        {
-//            std::cout<<    glm::dot(camera_->getCameraFront(), diagonal )<<std::endl;
-
-        }
-
-
-    }
 
 private:
 //class private function members
@@ -696,14 +360,12 @@ private:
     }
 
 
-
     void do_movement()
     {
 
-        if (curScene_->getCurrentSceneType() == gameplay)
-        {
-            if (fly_)
-                camera_->keyboardHandler(FORWARD, deltaTime);
+
+//            if (fly_)
+//                camera_->keyboardHandler(FORWARD, deltaTime);
             if (keys[GLFW_KEY_W])
                 camera_->keyboardHandler(PITCH_D, deltaTime);
             if (keys[GLFW_KEY_S])
@@ -720,13 +382,6 @@ private:
                 camera_->keyboardHandler(ACCELERATE, deltaTime);
             if (keys[GLFW_KEY_LEFT_SHIFT])
                 camera_->keyboardHandler(DECELERATE, deltaTime);
-        }
-        else if (curScene_->getCurrentSceneType() == introScene)
-        {
-
-
-        }
-
 
     }
 
@@ -744,7 +399,7 @@ private:
             else curScene_ = scenes_[0];
         }
 
-        if (key == GLFW_KEY_Q && action == GLFW_PRESS)
+        if (key == GLFW_KEY_ESCAPE && key == GLFW_KEY_RIGHT_SHIFT && action == GLFW_PRESS)
         {
             glfwSetWindowShouldClose(window, GL_TRUE);
         }
@@ -774,20 +429,23 @@ private:
                     }
                 }
             }
-
-            if (curScene_)
-                curScene_->sceneKeyboardHandler(key, scancode, action, mode);
-            else
-            {
-                std::cout << "NO CURSCENE_; CATASTRPHIC CRASH" << std::endl;
-                glfwSetWindowShouldClose(window, GL_TRUE);
-            }
         }
+
+
 
         if(action == GLFW_PRESS)
             keys[key] = true;
         else if(action == GLFW_RELEASE)
             keys[key] = false;
+
+        if (curScene_)
+            curScene_->sceneKeyboardHandler(keys, key, scancode, action, mode);
+        else
+        {
+            std::cout << "NO CURSCENE_; CATASTRPHIC CRASH" << std::endl;
+            glfwSetWindowShouldClose(window, GL_TRUE);
+        }
+
      }
 
     void MouseCallback(GLFWwindow* window, double xpos, double ypos)
@@ -813,26 +471,13 @@ private:
 
     GLFWwindow* windowPtr_;
 
-    // shaders
-    std::map<std::string, GT_Shader> shaders_;
-    GT_Shader* shader_;
-    GT_Shader* lightShader_;
-    GT_Shader* cubemapShader_;
-    GT_Shader* skyboxShader_;
-    GT_Shader* fontShader_;
-
     std::vector<GT_Scene*> scenes_;
     GT_Scene* curScene_;
 
+    GT_Warehouse* warehouse_;
+
     // classes
     GT_Camera* camera_;
-    GT_Skybox* skybox_;
-    GT_Alphabet* font_;
-
-
-    // Models
-    std::vector<GT_Model*> models_;
-    std::map< AIRCRAFT, GT_Model*> modelMap_;
 
     std::vector<GT_Aircraft*> aircafts_;
     std::vector<GT_Model*> actors_;

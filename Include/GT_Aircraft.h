@@ -30,7 +30,5 @@ private:
     GLuint lightPosLoc_;
     GLuint viewPosLoc_;
 
-
-
     GLfloat speed_;
 };

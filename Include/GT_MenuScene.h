@@ -3,8 +3,7 @@
 #include <vector>
 #include "GT_Scene.h"
 
-#include "GT_Skybox.h"
-#include "GT_Ocean.h"
+#include "GT_Warehouse.h"
 
 enum buttons
 {
@@ -15,17 +14,20 @@ enum buttons
 class GT_MenuScene : public GT_Scene
 {
     public:
-    GT_MenuScene(GT_Camera *tempCam);
+    GT_MenuScene(GT_Camera *tempCam, GT_Warehouse* warehousePtr);
 
     void renderScene();
 
-    void sceneKeyboardHandler(int key, int scancode, int action, int mode);
+    void integrateScene(GLfloat deltaTime);
+
+    void sceneKeyboardHandler(bool* keys, int key, int scancode, int action, int mode);
 
 private:
 
     std::vector<const char* > buttons_;
-    uint currButton_;
+    int currButton_;
     GT_Skybox* skybox_;
-    GT_Ocean* Ocean_;
+    GT_Ocean* ocean_;
+    GT_Aircraft* requisite_;
 
 };

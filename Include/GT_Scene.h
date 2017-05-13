@@ -2,6 +2,8 @@
 
 #include <vector>
 #include "GT_Camera.h"
+#include "GT_Alphabet.h"
+
 
 enum sceneType
 {
@@ -34,7 +36,7 @@ public:
 
     void setCamera(GT_Camera* tempCam) { sceneCamera_ = tempCam; }
 
-    virtual void sceneKeyboardHandler(int key, int scancode, int action, int mode) = 0;
+    virtual void sceneKeyboardHandler(bool* keys, int key, int scancode, int action, int mode) = 0;
 
 
 protected:
@@ -44,6 +46,8 @@ protected:
     sceneType currentScene_;
 
     GT_Camera* sceneCamera_;
+
+    GT_Alphabet* font_;
 
 
 };

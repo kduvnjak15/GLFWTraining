@@ -14,8 +14,12 @@ GT_Aircraft::GT_Aircraft(GT_Model *aircraftModel)
 
 void GT_Aircraft::Draw(GT_Camera* tempCam)
 {
+    if (!actorModel_)
+    {
+        std::cout << "actorModel non existing " << std::endl;
+        return;
+    }
 
-    actorModel_->modelPos = tempCam->getCameraPos();
     this->actorShader_->Use();
     modelLoc_  = glGetUniformLocation(actorShader_->shaderProgram_, "model");
     viewLoc_   = glGetUniformLocation(actorShader_->shaderProgram_, "view");
@@ -34,10 +38,11 @@ void GT_Aircraft::Draw(GT_Camera* tempCam)
     glUniform1f(glGetUniformLocation(actorShader_->shaderProgram_, "material.shininess"), 1.0f);
     glm::mat4 model = glm::mat4(1.0f);
 
-    model = glm::translate(model, +  glm::vec3(0.0f, -5.0f, -25.0f ));
-//            model =  glm::scale(model, glm::vec3(1.0f));
-    model = glm::rotate(model, (GLfloat)-3.14159/2.0f, glm::vec3(1.0f, 0.0f, 0.0f));
-    model = glm::inverse(tempCam->GetViewMatrix()) * model;
+    glm::mat4 sc  = glm::scale(glm::mat4(1.0f), glm::vec3(1000.0f));
+    glm::mat4 rot = glm::rotate(glm::mat4(1.0f), (GLfloat)-3.14159/2.0f, glm::vec3(1.0f, 0.0f, 0.0f));
+    glm::mat4 tr  = glm::translate(glm::mat4(1.0f),  this->position_);
+
+    model = tr * sc;
 
     glm::mat4 view = tempCam->GetViewMatrix();
     glm::mat4 projection = tempCam->GetProjectionMatrix();
@@ -45,7 +50,7 @@ void GT_Aircraft::Draw(GT_Camera* tempCam)
     glUniformMatrix4fv(viewLoc_,  1, GL_FALSE, glm::value_ptr(view));
     glUniformMatrix4fv(projLoc_,  1, GL_FALSE, glm::value_ptr(projection));
 
-    if (actorModel_) actorModel_->Draw(*actorShader_);
+    actorModel_->Draw(*actorShader_);
 }
 
 void GT_Aircraft::Integrate(GLfloat DT_)

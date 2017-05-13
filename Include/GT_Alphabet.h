@@ -11,7 +11,7 @@
 
 #include "glm/glm.hpp"
 
-
+#include "GT_Camera.h"
 
 struct Character
 {
@@ -26,17 +26,22 @@ struct Character
 class GT_Alphabet
 {
 public:
-    GT_Alphabet();
+    GT_Alphabet(GT_Camera* tempCam);
 
     GLuint fontVAO;
 
-    void RenderText(GT_Shader &shader, std::string text, GLfloat x, GLfloat y, GLfloat scale, glm::vec3 color);
+    void PrintLine(std::string text, GLfloat x, GLfloat y, GLfloat scale, glm::vec3 color);
 
 private:
+
+    void RenderText(GT_Shader &shader, std::string text, GLfloat x, GLfloat y, GLfloat scale, glm::vec3 color);
 
     void createTexQuads();
 
     GLuint VBO;
 
     std::map<GLchar, Character> Alphabet_;
+
+    GT_Shader* fontShader_;
+    GT_Camera* tempCam_;
 };

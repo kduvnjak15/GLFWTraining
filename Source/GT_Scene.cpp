@@ -9,7 +9,8 @@ GT_Scene::GT_Scene(GT_Camera* tempCam, sceneType sceneEnum)
     :
     currentScene_(sceneEnum),
     lastFrame_(glfwGetTime()),
-    sceneCamera_ (tempCam)
+    sceneCamera_ (tempCam),
+    font_(new GT_Alphabet(tempCam))
 {
 
     std::cout << "Scene initialized " << this << std::endl;

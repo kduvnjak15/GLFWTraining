@@ -22,6 +22,8 @@ public:
     virtual void Draw(GT_Camera* tempCam) = 0;
     virtual void Integrate(GLfloat DX_) = 0;
 
+    void setPosition(glm::vec3 pos_);
+
 protected:
 
     GT_Model* actorModel_;

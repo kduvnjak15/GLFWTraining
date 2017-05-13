@@ -3,7 +3,7 @@
 #include "GT_Alphabet.h"
 
 
-GT_Alphabet::GT_Alphabet()
+GT_Alphabet::GT_Alphabet(GT_Camera *tempCam)
 {
 
     FT_Library ft;
@@ -63,6 +63,17 @@ GT_Alphabet::GT_Alphabet()
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+    fontShader_ = new GT_Shader(fontShader, "../Shaders/fontShader.vs", "../Shaders/fontShader.fs");
+    this->tempCam_  = tempCam;
+
+}
+
+void GT_Alphabet::PrintLine(std::string text, GLfloat x, GLfloat y, GLfloat scale, glm::vec3 color)
+{
+    glm::mat4 projection = glm::ortho(0.0f, static_cast<GLfloat>(window_width), 0.0f, static_cast<GLfloat>(window_height));
+    glUniformMatrix4fv(glGetUniformLocation(fontShader_->shaderProgram_, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+
+    RenderText(*fontShader_, text, x, y, scale, color );
 }
 
 void GT_Alphabet::RenderText(GT_Shader &shader, std::string text, GLfloat x, GLfloat y, GLfloat scale, glm::vec3 color)

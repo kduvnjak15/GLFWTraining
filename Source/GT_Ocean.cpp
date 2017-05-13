@@ -11,7 +11,7 @@ GT_Ocean::GT_Ocean()
       viewLoc_( glGetUniformLocation(this->primitiveShader_->shaderProgram_, "view")),
       projLoc_( glGetUniformLocation(this->primitiveShader_->shaderProgram_, "proj"))
 {
-    sideA_ = 1000.0f;
+    sideA_ = 10000.0f;
     sideB_ = sideA_;
     initValues();
     defineTexture();
@@ -26,7 +26,7 @@ GT_Ocean::GT_Ocean(const char* textureImage)
       viewLoc_( glGetUniformLocation(this->primitiveShader_->shaderProgram_, "view")),
       projLoc_( glGetUniformLocation(this->primitiveShader_->shaderProgram_, "proj"))
 {
-    sideA_ = 1000.0f;
+    sideA_ = 10000.0f;
     sideB_ = sideA_;
 
     initValues();
@@ -54,8 +54,8 @@ void GT_Ocean::draw(GT_Camera* tempCam)
     GLuint modelLoc = glGetUniformLocation(primitiveShader_->shaderProgram_, "model");
 
     glBindVertexArray(VAO_);
-    for (int i = -50; i < 50; i++)
-        for (int j = -50; j < 50; j++)
+    for (int i = -20; i < 20; i++)
+        for (int j = -20; j < 20; j++)
         {
             glm::mat4 model = glm::mat4(1.0f);
             model = glm::translate(model,  glm::vec3(2*vertices_[7]*i, 0.0f, 2*vertices_[7]*j));
