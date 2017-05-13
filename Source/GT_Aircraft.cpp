@@ -14,6 +14,7 @@ GT_Aircraft::GT_Aircraft(GT_Model *aircraftModel)
 
 void GT_Aircraft::Draw(GT_Camera* tempCam)
 {
+
     if (!actorModel_)
     {
         std::cout << "actorModel non existing " << std::endl;

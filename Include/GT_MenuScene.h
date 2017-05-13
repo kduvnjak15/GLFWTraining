@@ -14,13 +14,15 @@ enum buttons
 class GT_MenuScene : public GT_Scene
 {
     public:
-    GT_MenuScene(GT_Camera *tempCam, GT_Warehouse* warehousePtr);
+    GT_MenuScene(GT_Camera *tempCam, GT_Warehouse* warehousePtr, void* functors);
 
     void renderScene();
 
-    void integrateScene(GLfloat deltaTime);
+    void checkKeyboardInput();
 
     void sceneKeyboardHandler(bool* keys, int key, int scancode, int action, int mode);
+
+    void integrateScene(GLfloat deltaTime);
 
 private:
 
@@ -30,4 +32,6 @@ private:
     GT_Ocean* ocean_;
     GT_Aircraft* requisite_;
 
+    const GLfloat SPINFACTOR_ = 0.5f;
+    void* functors_;
 };

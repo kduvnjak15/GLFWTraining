@@ -56,6 +56,7 @@ class initialCallbacks
 public:
     virtual void KeyboardCallback(GLFWwindow* window, int key, int scancode, int action, int mode) = 0;
     virtual void MouseCallback(GLFWwindow* window, double xpos, double ypos) = 0;
+    virtual void leaveGame() = 0;
 };
 
 initialCallbacks* gamePointer = NULL;
@@ -70,6 +71,11 @@ static void KeyboardCB(GLFWwindow* window, int key, int scancode, int action, in
 static void MouseCB(GLFWwindow* window, double xpos, double ypos)
 {
     gamePointer->MouseCallback(window, xpos, ypos);
+}
+
+void quitGame()
+{
+    gamePointer->leaveGame();
 }
 
 static void glerror_output(GLenum source, GLenum type, GLuint eid, GLenum severity, GLsizei length, const char* message, void* ge)
@@ -159,18 +165,11 @@ public:
         glfwSwapInterval(1);
         loadGame();
 
-        scenes_.push_back(new GT_MenuScene(camera_, warehouse_));
+        scenes_.push_back(new GT_MenuScene(camera_, warehouse_, functors));
         curScene_ = scenes_[0];
 
         while (!glfwWindowShouldClose(windowPtr_))
         {
-
-            //////////////////////   timer ////////////////////////
-
-            currentFrame = glfwGetTime();
-            deltaTime = currentFrame - lastFrame;
-
-            lastFrame = currentFrame;
 
             ///////////////////////////////////////////////////////
 
@@ -179,8 +178,6 @@ public:
 
             /////////////////////   color buffer   ////////////////
 
-            glClearColor(0.0, 0.15f, 0.2f, 1.0f);
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
             ///////////////////////////////////////////////////////
 
@@ -191,38 +188,6 @@ public:
             glm::mat4 projection = glm::perspective(ZOOM, (window_width*1.0f)/window_height, 0.1f, horizon);
 
             curScene_->renderScene();
-
-//            /*************************** enemies ********************************/
-//            for (int i = 0; i < enemies_.size(); i++)
-//            {
-//                enemies_[i]->Draw(camera_);
-//            }
-//            /***********************************************************/
-
-//            // Fighter
-
-//            aircafts_[0]->Draw(camera_);
-
-//            /**************************************************************************/
-
-//            renderProjectiles();
-
-//            ///////////////////////////////////////////////////////////////////////////////////////
-//            // skybox
-
-//            skybox_->Draw(camera_);
-
-//            /*****************************************************************************/
-
-//            ocean_->draw(camera_);
-//            /*****************************************************************************/
-
-//            HUD_->draw(camera_);
-
-            /*****************************************************************************/
-
-            // Fonts
-            projection = glm::ortho(0.0f, static_cast<GLfloat>(window_width), 0.0f, static_cast<GLfloat>(window_height));
 
             /////////////////////    rendering    //////////////////
 
@@ -239,17 +204,17 @@ public:
                 handleCrash();
             }
 
-
+            if (curScene_->exit_)
+                return true;
         }
 
         glfwTerminate();
         return true;
     }
 
-    void quitGame()
+    void leaveGame()
     {
         glfwWindowShouldClose(windowPtr_);
-
     }
 
 
@@ -337,7 +302,7 @@ public:
         glfwWindowShouldClose(windowPtr_);
 
         glfwTerminate();
-        quitGame();
+        leaveGame();
     }
 
     void loadGame()
@@ -374,10 +339,10 @@ private:
                 camera_->keyboardHandler(ROLL_L, deltaTime);
             if (keys[GLFW_KEY_D])
                 camera_->keyboardHandler(ROLL_R, deltaTime);
-            if (keys[GLFW_KEY_Q])
-                camera_->keyboardHandler(YAW_L, deltaTime);
-            if (keys[GLFW_KEY_E])
-                camera_->keyboardHandler(YAW_R, deltaTime);
+//            if (keys[GLFW_KEY_Q])
+//                camera_->keyboardHandler(YAW_L, deltaTime);
+//            if (keys[GLFW_KEY_E])
+//                camera_->keyboardHandler(YAW_R, deltaTime);
             if (keys[GLFW_KEY_LEFT_CONTROL])
                 camera_->keyboardHandler(ACCELERATE, deltaTime);
             if (keys[GLFW_KEY_LEFT_SHIFT])
@@ -478,6 +443,7 @@ private:
 
     // classes
     GT_Camera* camera_;
+    void* functors;
 
     std::vector<GT_Aircraft*> aircafts_;
     std::vector<GT_Model*> actors_;
