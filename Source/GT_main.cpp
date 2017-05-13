@@ -26,6 +26,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include "SFML/Audio.hpp"
+
 #define VmodelShader "../Shaders/modelShader.vs"
 #define FmodelShader "../Shaders/modelShader.fs"
 #define vLightShader  "../Shaders/vLightShader.vs"
@@ -165,7 +167,7 @@ public:
         glfwSwapInterval(1);
         loadGame();
 
-        scenes_.push_back(new GT_MenuScene(camera_, warehouse_, functors));
+        scenes_.push_back(new GT_MenuScene(camera_, warehouse_));
         curScene_ = scenes_[0];
 
         while (!glfwWindowShouldClose(windowPtr_))

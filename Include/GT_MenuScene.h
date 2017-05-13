@@ -4,6 +4,8 @@
 #include "GT_Scene.h"
 
 #include "GT_Warehouse.h"
+#include ""
+
 
 enum buttons
 {
@@ -14,7 +16,7 @@ enum buttons
 class GT_MenuScene : public GT_Scene
 {
     public:
-    GT_MenuScene(GT_Camera *tempCam, GT_Warehouse* warehousePtr, void* functors);
+    GT_MenuScene(GT_Camera *tempCam, GT_Warehouse* warehousePtr);
 
     void renderScene();
 
@@ -33,5 +35,4 @@ private:
     GT_Aircraft* requisite_;
 
     const GLfloat SPINFACTOR_ = 0.5f;
-    void* functors_;
 };

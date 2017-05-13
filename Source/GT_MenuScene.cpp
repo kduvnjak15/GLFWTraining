@@ -4,7 +4,7 @@
 
 #include "GT_Alphabet.h"
 
-GT_MenuScene::GT_MenuScene(GT_Camera* tempCam, GT_Warehouse *warehousePtr, void *functors)
+GT_MenuScene::GT_MenuScene(GT_Camera* tempCam, GT_Warehouse *warehousePtr)
     :
       GT_Scene(tempCam, introScene),
       currButton_(0),
@@ -20,6 +20,7 @@ GT_MenuScene::GT_MenuScene(GT_Camera* tempCam, GT_Warehouse *warehousePtr, void 
     ocean_  = new GT_Ocean();
     requisite_ = warehousePtr->getAircraft(USS);
     requisite_->setPosition(glm::vec3(-500.0f, 450.f, 2700.f));
+
 
 
     std::cout << " GT_MenuScene initialized " << std::endl;

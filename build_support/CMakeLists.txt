@@ -5,6 +5,7 @@ set(INC_DIR .)
 set(INC_DIR ../Include ${INC_DIR})
 set(INC_DIR ../../assimp/include/ ${INC_DIR})
 set(INC_DIR ../Include/freetype  ${INC_DIR}) 
+set(INC_DIR ../../SFML-master/include ${INC_DIR})
 
 
 include_directories(${INC_DIR})
@@ -16,8 +17,10 @@ set(LIBS libglfw.so.3 ${LIBS})
 set(LIBS libSOIL.so ${LIBS}) 
 set(LIBS libfreetype.so ${LIBS})
 set(LIBS libassimp.so.3 ${LIBS})
+set(LIBS libsfml-audio.so ${LIBS})
 
-set(LIBS_DIR /home/duvnjakk/workspace/GLFWTraining/Lib )
+set(LIBS_DIR /home/duvnjakk/workspace/GLFWTraining/Lib  )
+set(LIBS_DIR /home/duvnjakk/workspace/SFML-master/build_support/lib ${LIBS_DIR})
 link_directories( ${LIBS_DIR} )
 
 file(GLOB SOURCES "../Source/*.cpp")
