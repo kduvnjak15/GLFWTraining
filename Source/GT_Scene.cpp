@@ -18,6 +18,12 @@ GT_Scene::GT_Scene(GT_Camera* tempCam, sceneType sceneEnum)
     std::cout << "Scene initialized " << this << std::endl;
 }
 
+void GT_Scene::updateClock()
+{
+    deltaTime_ =  glfwGetTime() - lastFrame_;
+    lastFrame_ = glfwGetTime();
+}
+
 GT_Scene::~GT_Scene()
 {
     std::cout << "Scene deconstructor" << this << std::endl;

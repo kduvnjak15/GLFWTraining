@@ -22,11 +22,10 @@ GT_Skybox::GT_Skybox()
     unsigned char* image;
 
     glBindTexture(GL_TEXTURE_CUBE_MAP, skyboxTexID);
-    std::cout<<"Konstruktor "<<skyboxTexID<<std::endl;
+
     for (GLuint i = 0; i<cubemaps.size(); i++)
     {
         image = SOIL_load_image(cubemaps[i].c_str(), &width, &height, 0, SOIL_LOAD_RGB);
-        std::cout<<(!image)<<std::endl;
         glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
 
     }

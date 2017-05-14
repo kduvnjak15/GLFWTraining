@@ -9,7 +9,10 @@ enum sceneType
 {
     gameplay,
     pauseScene,
-    introScene
+    menuScene,
+    options,
+    exitGame,
+    nonType
 };
 
 enum class keyPressed
@@ -40,8 +43,11 @@ public:
 
     bool exit_;
 
+    sceneType nextScene_;
 
-protected:
+protected:    
+
+    void updateClock();
 
     GLfloat lastFrame_;
     GLfloat deltaTime_;

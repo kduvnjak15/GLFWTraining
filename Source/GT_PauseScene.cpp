@@ -1,70 +1,28 @@
-#include <iostream>
 
-#include "GT_MenuScene.h"
 
-GT_MenuScene::GT_MenuScene(GT_Camera* tempCam, GT_Warehouse *warehousePtr)
+#include "GT_PauseScene.h"
+
+GT_PauseScene::GT_PauseScene(GT_Camera *tempCam, GT_Warehouse *warehouse)
     :
-      GT_Scene(tempCam, menuScene),
+      GT_Scene(tempCam, pauseScene),
       currButton_(0),
       skybox_(new GT_Skybox()),
       ocean_(new GT_Ocean())
 {
-    buttons_.push_back("PLAY GAME");
-    buttons_.push_back("OPTIONS");
-    buttons_.push_back("QUIT GAME");
+    buttons_.push_back("Resume Game");
+    buttons_.push_back("Leave Game");
 
-    // mem leak ?
-    skybox_ = new GT_Skybox();
-    ocean_  = new GT_Ocean();
-    requisite_ = warehousePtr->getAircraft(USS);
-    requisite_->setPosition(glm::vec3(-500.0f, 450.f, 2700.f));
+    skybox_= new GT_Skybox();
+    ocean_= new GT_Ocean();
 
-    nextScene_ = menuScene;
+    nextScene_ = pauseScene;
 
-    std::cout << " GT_MenuScene initialized " << std::endl;
-}
-
-
-void GT_MenuScene::sceneKeyboardHandler(bool* keys, int key, int scancode, int action, int mode)
-{
-
-    keys_ = keys;
-
-    if (keys[GLFW_KEY_LEFT]  && action == GLFW_PRESS)
-    {
-        if (currButton_ == 0)
-            currButton_ = buttons_.size() - 1;
-        else
-        {
-            std::cout << "left pres " << buttons_.size() << std::endl;
-            currButton_ = --currButton_ % buttons_.size();
-        }
-    }
-
-    if (keys[GLFW_KEY_RIGHT] && action == GLFW_PRESS)
-    {
-        std::cout << "right pres " <<buttons_.size()<< std::endl;
-        currButton_ = ++currButton_ % buttons_.size();
-    }
-
-    if (keys[GLFW_KEY_ENTER] && action == GLFW_PRESS)
-    {
-        if (currButton_ == 0)
-            nextScene_ = gameplay;
-        if (currButton_ == 1)
-            nextScene_ = options;
-        if (currButton_ == 2)
-            nextScene_ = exitGame;
-
-        std::cout << "right pres " <<buttons_.size()<< std::endl;
-    }
-
-    std::cout << "cB "<< currButton_ <<std::endl;
-
+    requisite_ = warehouse->getAircraft(F18);
+    std::cout << " GT_PauseScene initialized " << std::endl;
 
 }
 
-void GT_MenuScene::checkKeyboardInput()
+void GT_PauseScene::checkKeyboardInput()
 {
     if (keys_ != nullptr)
     {
@@ -75,18 +33,9 @@ void GT_MenuScene::checkKeyboardInput()
     }
 }
 
-void GT_MenuScene::integrateScene(GLfloat deltaTime)
+void GT_PauseScene::renderScene()
 {
-    deltaTime *= SPINFACTOR_;
-    if (sin(glfwGetTime()*0.01)> 0)
-        sceneCamera_->keyboardHandler(YAW_L, deltaTime);
-    else
-        sceneCamera_->keyboardHandler(YAW_R, deltaTime);
 
-}
-
-void GT_MenuScene::renderScene()
-{
     ////////////////////////// timer //////////////////////////////////////
     updateClock();
     ///////////////////////////////////////////////////////////////////////
@@ -103,7 +52,6 @@ void GT_MenuScene::renderScene()
     glClearColor(0.0, 0.15f, 0.2f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     ///////////////////////////////////////////////////////////////////////
-
 
     for (int i = 0; i < buttons_.size(); i++)
     {
@@ -126,11 +74,57 @@ void GT_MenuScene::renderScene()
     font_->PrintLine("Altitude: ", 25.0f, 100.0f, .50f, glm::vec3(1.0, 0.1f, 0.1f));
     font_->PrintLine( std::to_string(sceneCamera_->getCameraPos().y), 120.0f, 100.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
 
+    font_->PrintLine("PAUSE ", 600.0f, 400.0f, 1.0f, glm::vec3(1.0, 0.1f, 0.1f));
+
+
     ////////////////////////   rendering phase   /////////////////////////////
 
     skybox_->Draw(sceneCamera_);
     ocean_->draw(sceneCamera_);
-    requisite_->Draw(sceneCamera_);
+//    requisite_->Draw(sceneCamera_);
 
-    ///////////////////////////////////////////////////////////////////////
+    std::cout << "rendering pause "<<std::endl;
+
 }
+
+void GT_PauseScene::integrateScene(GLfloat deltaTime)
+{
+    deltaTime *= SPINFACTOR_;
+    if (sin(glfwGetTime()*0.01)> 0)
+        sceneCamera_->keyboardHandler(YAW_L, deltaTime);
+    else
+        sceneCamera_->keyboardHandler(YAW_R, deltaTime);
+
+}
+
+
+void GT_PauseScene::sceneKeyboardHandler(bool* keys, int key, int scancode, int action, int mode)
+{
+    keys_ = keys;
+
+    if (keys[GLFW_KEY_LEFT]  && action == GLFW_PRESS)
+    {
+        if (currButton_ == 0)
+            currButton_ = buttons_.size() - 1;
+        else
+        {
+            currButton_ = --currButton_ % buttons_.size();
+        }
+    }
+
+    if (keys[GLFW_KEY_RIGHT] && action == GLFW_PRESS)
+    {
+        currButton_ = ++currButton_ % buttons_.size();
+    }
+
+    if (keys[GLFW_KEY_ENTER] && action == GLFW_PRESS)
+    {
+        if (currButton_ == 0)
+            nextScene_ = gameplay;
+        else if (currButton_ == 1)
+            nextScene_ = menuScene;
+    }
+
+    std::cout << "cB "<< currButton_ <<std::endl;
+}
+

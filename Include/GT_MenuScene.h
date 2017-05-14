@@ -1,17 +1,8 @@
 #pragma once
 
-#include <vector>
 #include "GT_Scene.h"
 
 #include "GT_Warehouse.h"
-#include ""
-
-
-enum buttons
-{
-    PlayGame,
-    QuitGame
-};
 
 class GT_MenuScene : public GT_Scene
 {

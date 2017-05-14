@@ -21,6 +21,8 @@
 #include "GT_Objectives.h"
 #include "GT_Aircraft.h"
 #include "GT_MenuScene.h"
+#include "GT_GameplayScene.h"
+#include "GT_PauseScene.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -168,6 +170,8 @@ public:
         loadGame();
 
         scenes_.push_back(new GT_MenuScene(camera_, warehouse_));
+        scenes_.push_back(new GT_GameplayScene(camera_, warehouse_));
+        scenes_.push_back(new GT_PauseScene(camera_, warehouse_));
         curScene_ = scenes_[0];
 
         while (!glfwWindowShouldClose(windowPtr_))
@@ -190,6 +194,33 @@ public:
             glm::mat4 projection = glm::perspective(ZOOM, (window_width*1.0f)/window_height, 0.1f, horizon);
 
             curScene_->renderScene();
+
+            if (curScene_->nextScene_ != nonType )
+            {
+                if (curScene_->nextScene_ == gameplay)
+                {
+                    std::cout << "next scene gameplay"<< std::endl;
+                    curScene_->nextScene_ = nonType;
+                    curScene_ = scenes_[1];
+                }
+                else if (curScene_->nextScene_ == menuScene)
+                {
+                    curScene_->nextScene_ = nonType;
+                    curScene_ = scenes_[0];
+                }
+                else if (curScene_->nextScene_ == pauseScene)
+                {
+                    std::cout << "Next scene pausescene" << std::endl;
+                    curScene_->nextScene_ = nonType;
+                    curScene_ = scenes_[2];
+                }
+                else if (curScene_->nextScene_ == exitGame)
+                    return true;
+                else
+                    curScene_ = scenes_[0];
+            }
+
+
 
             /////////////////////    rendering    //////////////////
 
@@ -360,11 +391,11 @@ private:
 
     void KeyboardCallback(GLFWwindow* window, int key, int scancode, int action, int mode)
     {
-        if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-        {
-            if (curScene_ == scenes_[0]) curScene_ = scenes_[1];
-            else curScene_ = scenes_[0];
-        }
+//        if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+//        {
+//            if (curScene_ == scenes_[0]) curScene_ = scenes_[1];
+//            else curScene_ = scenes_[0];
+//        }
 
         if (key == GLFW_KEY_ESCAPE && key == GLFW_KEY_RIGHT_SHIFT && action == GLFW_PRESS)
         {
