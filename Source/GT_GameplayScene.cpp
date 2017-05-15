@@ -17,7 +17,10 @@ void GT_GameplayScene::checkKeyboardInput()
     if (keys_ != nullptr)
     {
         if (keys_[GLFW_KEY_W])
+        {
+
             sceneCamera_->keyboardHandler(PITCH_D, deltaTime_);
+        }
         if (keys_[GLFW_KEY_S])
             sceneCamera_->keyboardHandler(PITCH_U, deltaTime_);
         if (keys_[GLFW_KEY_A])
@@ -32,6 +35,12 @@ void GT_GameplayScene::checkKeyboardInput()
             sceneCamera_->keyboardHandler(ACCELERATE, deltaTime_);
         if (keys_[GLFW_KEY_LEFT_SHIFT])
             sceneCamera_->keyboardHandler(DECELERATE, deltaTime_);
+        if (keypressed_ )
+            sceneCamera_->keyboardHandler(Camera_Movement::KEY_PRESSED, deltaTime_);
+        else
+            sceneCamera_->keyboardHandler(Camera_Movement::KEY_RELEASED, deltaTime_);
+
+        std::cout << sceneCamera_->getKeyDelay() <<std::endl;
     }
 
 }
@@ -72,8 +81,6 @@ void GT_GameplayScene::renderScene()
     ocean_->draw(sceneCamera_);
 
     fighter_->Draw(sceneCamera_);
-
-    std::cout << "Key delay :: "<<sceneCamera_->getKeyDelay() <<std::endl;
     ///////////////////////////////////////////////////////////////////////
 }
 
@@ -90,12 +97,7 @@ void GT_GameplayScene::sceneKeyboardHandler(bool* keys, int key, int scancode, i
     if (action == GLFW_PRESS)
         keypressed_ = true;
     else if (action == GLFW_RELEASE)
-        keypressed_ = true;
-
-std::cout << " keypressed "<< keypressed_<<std::endl;
-    if (keypressed_ )
-        sceneCamera_->keyboardHandler(Camera_Movement::KEY_PRESSED, deltaTime_);
-
+        keypressed_ = false;
 
 }
 

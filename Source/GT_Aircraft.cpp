@@ -52,6 +52,8 @@ void GT_Aircraft::Draw(GT_Camera* tempCam)
     glUniformMatrix4fv(projLoc_,  1, GL_FALSE, glm::value_ptr(projection));
 
     actorModel_->Draw(*actorShader_);
+
+    std::cout << tempCam->yawDelay_ << ", "<< tempCam->pitchDelay_ << "; " << tempCam->rollDelay_ << std::endl;
 }
 
 void GT_Aircraft::Integrate(GLfloat DT_)

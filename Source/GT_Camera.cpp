@@ -12,7 +12,13 @@ GT_Camera::GT_Camera()
       MovementSpeed(SPEED),
       MouseSensitivity(SENSITIVITY),
       Zoom(ZOOM),
-      speed_(SPEED)
+      speed_(SPEED),
+
+      rollDelay_(false),
+      pitchDelay_(false),
+      yawDelay_(false)
+
+
 
 {
     cameraRight = glm::normalize(glm::cross(cameraFront, cameraUp));
@@ -44,6 +50,8 @@ void GT_Camera::pitchControl(Camera_Movement controlDirection, GLfloat deltaSpac
     cameraFront = getRotatedVector();
 
     this->cameraUp    = glm::normalize(glm::cross(this->cameraRight, this->cameraFront));
+
+    pitchDelay_ = true;
 }
 
 void GT_Camera::rollControl(Camera_Movement controlDirection, GLfloat deltaSpace)
@@ -59,6 +67,7 @@ void GT_Camera::rollControl(Camera_Movement controlDirection, GLfloat deltaSpace
 
     this->cameraRight = glm::normalize(glm::cross(this->cameraFront, this->cameraUp));
 
+    rollDelay_ = true;
 }
 void GT_Camera::yawControl(Camera_Movement controlDirection, GLfloat deltaSpace)
 {
@@ -73,6 +82,7 @@ void GT_Camera::yawControl(Camera_Movement controlDirection, GLfloat deltaSpace)
 
     this->cameraFront = glm::normalize(glm::cross(this->cameraUp, this->cameraRight));
 
+    yawDelay_ = true;
 }
 
 void GT_Camera::keyboardHandler(Camera_Movement direction, GLfloat deltaTime)
@@ -106,11 +116,11 @@ void GT_Camera::keyboardHandler(Camera_Movement direction, GLfloat deltaTime)
     }
 
     if (direction == Camera_Movement::KEY_PRESSED)
-        keyDelay_ += 0.1;
-    else
-        keyDelay_ -= 0.1f;
+        keyDelay_ += 0.05f;
+    if (direction == Camera_Movement::KEY_RELEASED)
+        keyDelay_ -= 0.05f;
 
-    if (keyDelay_ > 2.0f) keyDelay_ = 2.0f;
+    if (keyDelay_ > 1.0f) keyDelay_ = 1.0f;
     else if (keyDelay_ < 0.0f ) keyDelay_ = 0.0f;
 
 }

@@ -41,8 +41,6 @@ public:
 
     void setCamera(GT_Camera* tempCam) { sceneCamera_ = tempCam; }
 
-    bool exit_;
-
     sceneType nextScene_;
 
     bool keypressed_;

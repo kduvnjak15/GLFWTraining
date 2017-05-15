@@ -22,7 +22,8 @@ enum Camera_Movement {
     ROLL_L,
     ACCELERATE,
     DECELERATE,
-    KEY_PRESSED
+    KEY_PRESSED,
+    KEY_RELEASED
 };
 
 // Default camera values
@@ -60,8 +61,12 @@ public:
     GLfloat getMouseSensitivity()   { return MouseSensitivity; }
     GLfloat getZoom()               { return Zoom; }
     GLfloat getSpeed()              { return speed_; }
-    GLfloat getKeyDelay()           { return keyDelay_; }
     GLfloat getSpeedOffset();
+
+    GLfloat getKeyDelay()           { return keyDelay_; }
+    GLboolean rollDelay_;
+    GLboolean yawDelay_;
+    GLboolean pitchDelay_;
 
     glm::mat4 GetViewMatrix();
     glm::mat4 GetProjectionMatrix() {return glm::perspective(ZOOM, (window_width*1.0f)/window_height, 0.1f, horizon);}
@@ -105,6 +110,7 @@ private:
     GLfloat speedOffset_;
 
     GLfloat keyDelay_;
+
 
     glm::vec3 getRotatedVector();
 

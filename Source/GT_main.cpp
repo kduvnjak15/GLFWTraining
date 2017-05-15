@@ -231,8 +231,7 @@ public:
                 handleCrash();
             }
 
-            if (curScene_->exit_)
-                return true;
+
         }
 
         glfwTerminate();
@@ -422,8 +421,6 @@ private:
                 }
             }
         }
-
-
 
         if(action == GLFW_PRESS)
             keys[key] = true;
