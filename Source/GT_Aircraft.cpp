@@ -39,13 +39,13 @@ void GT_Aircraft::Draw(GT_Camera* tempCam)
     glUniform1f(glGetUniformLocation(actorShader_->shaderProgram_, "material.shininess"), 1.0f);
     glm::mat4 model = glm::mat4(1.0f);
 
-    glm::mat4 sc  = glm::scale(glm::mat4(1.0f), glm::vec3(1000.0f));
+    glm::mat4 sc  = glm::scale(glm::mat4(1.0f), glm::vec3(1.0f));
     glm::mat4 rot = glm::rotate(glm::mat4(1.0f), (GLfloat)-3.14159/2.0f, glm::vec3(1.0f, 0.0f, 0.0f));
-    glm::mat4 tr  = glm::translate(glm::mat4(1.0f),  this->position_);
+    glm::mat4 tr  = glm::translate(glm::mat4(1.0f),  glm::vec3(0.0f, -5.0f, -tempCam->getSpeedOffset()));
 
-    model = tr * sc;
+    model =  tr * rot * sc;
 
-    glm::mat4 view = tempCam->GetViewMatrix();
+    glm::mat4 view = glm::mat4(1.0f);
     glm::mat4 projection = tempCam->GetProjectionMatrix();
     glUniformMatrix4fv(modelLoc_, 1, GL_FALSE, glm::value_ptr(model));
     glUniformMatrix4fv(viewLoc_,  1, GL_FALSE, glm::value_ptr(view));

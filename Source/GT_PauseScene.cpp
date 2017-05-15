@@ -83,8 +83,6 @@ void GT_PauseScene::renderScene()
     ocean_->draw(sceneCamera_);
 //    requisite_->Draw(sceneCamera_);
 
-    std::cout << "rendering pause "<<std::endl;
-
 }
 
 void GT_PauseScene::integrateScene(GLfloat deltaTime)

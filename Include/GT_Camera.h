@@ -21,7 +21,8 @@ enum Camera_Movement {
     ROLL_R,
     ROLL_L,
     ACCELERATE,
-    DECELERATE
+    DECELERATE,
+    KEY_PRESSED
 };
 
 // Default camera values
@@ -31,11 +32,11 @@ const GLfloat SPEED      =  150.0f;
 const GLfloat SENSITIVITY =  0.25f;
 const GLfloat ZOOM       =  45.0f;
 const GLfloat rollSensitivity = .85;
-const GLfloat cameraOffset = 25;
+const GLfloat CAMERA_OFFSET = 20;
 const GLuint window_width = 1024;
 const GLuint window_height = 600;
 const GLfloat horizon = 50000;
-const GLfloat MAX_SPEED = 500.0f;
+const GLfloat MAX_SPEED = 600.0f;
 
 static glm::vec3 lightPos(-42000.0f, 54800.0f, -71700.0f);
 
@@ -59,6 +60,8 @@ public:
     GLfloat getMouseSensitivity()   { return MouseSensitivity; }
     GLfloat getZoom()               { return Zoom; }
     GLfloat getSpeed()              { return speed_; }
+    GLfloat getKeyDelay()           { return keyDelay_; }
+    GLfloat getSpeedOffset();
 
     glm::mat4 GetViewMatrix();
     glm::mat4 GetProjectionMatrix() {return glm::perspective(ZOOM, (window_width*1.0f)/window_height, 0.1f, horizon);}
@@ -99,6 +102,9 @@ private:
 
 
     GLfloat speed_;
+    GLfloat speedOffset_;
+
+    GLfloat keyDelay_;
 
     glm::vec3 getRotatedVector();
 

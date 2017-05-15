@@ -41,7 +41,10 @@ void GT_Warehouse::defineAircrafts()
     aircraftMap_.insert(std::pair<AIRCRAFT, GT_Aircraft*>(F22, aircafts_[1]));
     aircafts_.push_back(new GT_Aircraft(modelMap_[USS]));
     aircraftMap_.insert(std::pair<AIRCRAFT, GT_Aircraft*>(USS, aircafts_[2]));
+
 }
+
+
 
 GT_Warehouse::~GT_Warehouse()
 {

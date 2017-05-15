@@ -22,5 +22,7 @@ private:
     GT_Skybox* skybox_;
     GT_Ocean* ocean_;
 
+    GT_Aircraft* fighter_;
+
 };
 

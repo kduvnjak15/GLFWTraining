@@ -45,6 +45,9 @@ public:
 
     sceneType nextScene_;
 
+    bool keypressed_;
+    GLfloat keyDelay_;
+
 protected:    
 
     void updateClock();

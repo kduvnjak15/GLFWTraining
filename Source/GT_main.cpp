@@ -180,20 +180,19 @@ public:
             ///////////////////////////////////////////////////////
 
             glfwPollEvents();
-            do_movement();
 
-            /////////////////////   color buffer   ////////////////
+            //////////////////    game rules          /////////////
 
 
-            ///////////////////////////////////////////////////////
-
-//            gameRules();
-//            updateActors();
 
             //////////////////    camera movement    ///////////////
             glm::mat4 projection = glm::perspective(ZOOM, (window_width*1.0f)/window_height, 0.1f, horizon);
 
+            /////////////////////    rendering    //////////////////
+
             curScene_->renderScene();
+
+            /////////////////    gameplay control  //////////////////
 
             if (curScene_->nextScene_ != nonType )
             {
@@ -219,11 +218,6 @@ public:
                 else
                     curScene_ = scenes_[0];
             }
-
-
-
-            /////////////////////    rendering    //////////////////
-
 
 
             ////////////////////////////////////////////////////////

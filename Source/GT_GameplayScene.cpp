@@ -7,6 +7,8 @@ GT_GameplayScene::GT_GameplayScene(GT_Camera *camera_, GT_Warehouse* warehouse)
       ocean_(new GT_Ocean())
 {
 
+    fighter_ = warehouse->getAircraft(F18);
+
     nextScene_ = gameplay;
 }
 
@@ -69,7 +71,9 @@ void GT_GameplayScene::renderScene()
     skybox_->Draw(sceneCamera_);
     ocean_->draw(sceneCamera_);
 
-    std::cout << "rednered gameplay" << this << std::endl;
+    fighter_->Draw(sceneCamera_);
+
+    std::cout << "Key delay :: "<<sceneCamera_->getKeyDelay() <<std::endl;
     ///////////////////////////////////////////////////////////////////////
 }
 
@@ -82,9 +86,21 @@ void GT_GameplayScene::sceneKeyboardHandler(bool* keys, int key, int scancode, i
     {
         nextScene_ = pauseScene;
     }
+
+    if (action == GLFW_PRESS)
+        keypressed_ = true;
+    else if (action == GLFW_RELEASE)
+        keypressed_ = true;
+
+std::cout << " keypressed "<< keypressed_<<std::endl;
+    if (keypressed_ )
+        sceneCamera_->keyboardHandler(Camera_Movement::KEY_PRESSED, deltaTime_);
+
+
 }
 
 void GT_GameplayScene::integrateScene(GLfloat deltaTime)
 {
     sceneCamera_->keyboardHandler(FORWARD, deltaTime);
+    fighter_->setPosition(sceneCamera_->getCameraPos());
 }

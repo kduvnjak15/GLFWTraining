@@ -105,6 +105,14 @@ void GT_Camera::keyboardHandler(Camera_Movement direction, GLfloat deltaTime)
         if (speed_ < 0) speed_ = 0.0f;
     }
 
+    if (direction == Camera_Movement::KEY_PRESSED)
+        keyDelay_ += 0.1;
+    else
+        keyDelay_ -= 0.1f;
+
+    if (keyDelay_ > 2.0f) keyDelay_ = 2.0f;
+    else if (keyDelay_ < 0.0f ) keyDelay_ = 0.0f;
+
 }
 
 
@@ -128,5 +136,10 @@ void GT_Camera::mouseHandler(GLfloat xoffset, GLfloat yoffset, GLboolean constra
 
 glm::mat4 GT_Camera::GetViewMatrix()
 {
-    return glm::lookAt(this->cameraPos-(this->cameraFront*cameraOffset), this->cameraPos + this->cameraFront, this->cameraUp );
+    return glm::lookAt(this->cameraPos-(this->cameraFront*this->getSpeedOffset()), this->cameraPos + this->cameraFront, this->cameraUp );
+}
+
+inline GLfloat GT_Camera::getSpeedOffset()
+{
+     return ((speed_ - MAX_SPEED/4.0f)/MAX_SPEED)*CAMERA_OFFSET/3.0f + CAMERA_OFFSET;
 }
