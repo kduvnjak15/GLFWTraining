@@ -12,7 +12,8 @@ GT_Scene::GT_Scene(GT_Camera* tempCam, sceneType sceneEnum)
     deltaTime_(0),
     sceneCamera_ (tempCam),
     font_(new GT_Alphabet(tempCam)),    
-    keypressed_(false)
+    keyPressed_(false),
+    keys_(nullptr)
 {
 
     std::cout << "Scene initialized " << this << std::endl;

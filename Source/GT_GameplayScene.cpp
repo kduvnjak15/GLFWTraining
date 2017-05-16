@@ -1,4 +1,5 @@
 #include "GT_GameplayScene.h"
+#include <set>
 
 GT_GameplayScene::GT_GameplayScene(GT_Camera *camera_, GT_Warehouse* warehouse)
     :
@@ -18,7 +19,6 @@ void GT_GameplayScene::checkKeyboardInput()
     {
         if (keys_[GLFW_KEY_W])
         {
-
             sceneCamera_->keyboardHandler(PITCH_D, deltaTime_);
         }
         if (keys_[GLFW_KEY_S])
@@ -35,7 +35,7 @@ void GT_GameplayScene::checkKeyboardInput()
             sceneCamera_->keyboardHandler(ACCELERATE, deltaTime_);
         if (keys_[GLFW_KEY_LEFT_SHIFT])
             sceneCamera_->keyboardHandler(DECELERATE, deltaTime_);
-        if (keypressed_ )
+        if (keyPressed_ )
             sceneCamera_->keyboardHandler(Camera_Movement::KEY_PRESSED, deltaTime_);
         else
             sceneCamera_->keyboardHandler(Camera_Movement::KEY_RELEASED, deltaTime_);
@@ -81,6 +81,7 @@ void GT_GameplayScene::renderScene()
     ocean_->draw(sceneCamera_);
 
     fighter_->Draw(sceneCamera_);
+    std::cout << keyPressed_ << std::endl;
     ///////////////////////////////////////////////////////////////////////
 }
 
@@ -94,10 +95,23 @@ void GT_GameplayScene::sceneKeyboardHandler(bool* keys, int key, int scancode, i
         nextScene_ = pauseScene;
     }
 
+
+
     if (action == GLFW_PRESS)
-        keypressed_ = true;
+    {
+        keysEnable_.insert(key);
+    }
     else if (action == GLFW_RELEASE)
-        keypressed_ = false;
+    {
+        auto it = keysEnable_.find(key);
+        if (it != keysEnable_.end())
+            keysEnable_.erase( keysEnable_.find(key) );
+    }
+
+    if (keysEnable_.size()> 0)
+        keyPressed_ = true;
+    else
+        keyPressed_ = false;
 
 }
 

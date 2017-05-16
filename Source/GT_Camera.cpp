@@ -14,11 +14,9 @@ GT_Camera::GT_Camera()
       Zoom(ZOOM),
       speed_(SPEED),
 
-      rollDelay_(false),
-      pitchDelay_(false),
-      yawDelay_(false)
-
-
+      rollDelay_(0.0f),
+      pitchDelay_(0.0f),
+      yawDelay_(0.0f)
 
 {
     cameraRight = glm::normalize(glm::cross(cameraFront, cameraUp));
@@ -51,7 +49,6 @@ void GT_Camera::pitchControl(Camera_Movement controlDirection, GLfloat deltaSpac
 
     this->cameraUp    = glm::normalize(glm::cross(this->cameraRight, this->cameraFront));
 
-    pitchDelay_ = true;
 }
 
 void GT_Camera::rollControl(Camera_Movement controlDirection, GLfloat deltaSpace)
@@ -67,7 +64,6 @@ void GT_Camera::rollControl(Camera_Movement controlDirection, GLfloat deltaSpace
 
     this->cameraRight = glm::normalize(glm::cross(this->cameraFront, this->cameraUp));
 
-    rollDelay_ = true;
 }
 void GT_Camera::yawControl(Camera_Movement controlDirection, GLfloat deltaSpace)
 {
@@ -82,20 +78,51 @@ void GT_Camera::yawControl(Camera_Movement controlDirection, GLfloat deltaSpace)
 
     this->cameraFront = glm::normalize(glm::cross(this->cameraUp, this->cameraRight));
 
-    yawDelay_ = true;
 }
 
 void GT_Camera::keyboardHandler(Camera_Movement direction, GLfloat deltaTime)
 {
 
+
+
     GLfloat deltaSpace = speed_ * deltaTime;
-    GLfloat flightOffset = rollSensitivity * deltaTime;
+    GLfloat flightOffset = rollSensitivity * deltaTime * keyDelay_* keyDelay_* keyDelay_;
+
+    if (direction == Camera_Movement::KEY_PRESSED)
+    {
+        keyDelay_ += 0.05f;
+    }
+    else if (direction == Camera_Movement::KEY_RELEASED)
+    {
+        keyDelay_ -= 0.05f;
+    }
+
+    if (keyDelay_ > 1.1f) keyDelay_ = 1.1f;
+    else if (keyDelay_ < 0.0f ) keyDelay_ = 0.0f;
+
+
     if (direction == Camera_Movement::FORWARD)
         cameraPos += cameraFront * deltaSpace;
     if (direction == Camera_Movement::PITCH_D)
-        pitchControl(PITCH_D, -flightOffset);
-    if (direction == Camera_Movement::PITCH_U)
-        pitchControl(PITCH_D, flightOffset);
+    {
+        pitchDelay_ -= 0.05f;
+        if (pitchDelay_ < -1.1f) pitchDelay_ = -1.1f ;
+        //-flightOffset * keyDelay_;
+    }
+    else if (direction == Camera_Movement::PITCH_U)
+    {
+        pitchDelay_ += 0.05f;
+        if (pitchDelay_ > 1.1f) pitchDelay_ = 1.1f ;
+    }
+    else
+    {
+        if (pitchDelay_ != 0)
+        pitchDelay_ += -pitchDelay_/(abs(pitchDelay_))*0.05;
+    }
+
+//    if (direction == Camera_Movement::PITCH_U)
+//        pitchControl(PITCH_D, flightOffset);
+
     if (direction == Camera_Movement::ROLL_L)
         rollControl(PITCH_D, -flightOffset);
     if (direction == Camera_Movement::ROLL_R)
@@ -104,6 +131,20 @@ void GT_Camera::keyboardHandler(Camera_Movement direction, GLfloat deltaTime)
         yawControl(PITCH_D, flightOffset);
     if (direction == Camera_Movement::YAW_R)
         yawControl(PITCH_D, -flightOffset);
+
+    pitchControl(PITCH_D, pitchDelay_ * flightOffset);
+//    if (direction == Camera_Movement::PITCH_D)
+//        pitchControl(PITCH_D, -flightOffset);
+//    if (direction == Camera_Movement::PITCH_U)
+//        pitchControl(PITCH_D, flightOffset);
+//    if (direction == Camera_Movement::ROLL_L)
+//        rollControl(PITCH_D, -flightOffset);
+//    if (direction == Camera_Movement::ROLL_R)
+//        rollControl(PITCH_D, flightOffset);
+//    if (direction == Camera_Movement::YAW_L)
+//        yawControl(PITCH_D, flightOffset);
+//    if (direction == Camera_Movement::YAW_R)
+//        yawControl(PITCH_D, -flightOffset);
     if (direction == Camera_Movement::ACCELERATE)
     {
         speed_ += 2.0f;
@@ -115,13 +156,8 @@ void GT_Camera::keyboardHandler(Camera_Movement direction, GLfloat deltaTime)
         if (speed_ < 0) speed_ = 0.0f;
     }
 
-    if (direction == Camera_Movement::KEY_PRESSED)
-        keyDelay_ += 0.05f;
-    if (direction == Camera_Movement::KEY_RELEASED)
-        keyDelay_ -= 0.05f;
 
-    if (keyDelay_ > 1.0f) keyDelay_ = 1.0f;
-    else if (keyDelay_ < 0.0f ) keyDelay_ = 0.0f;
+    std::cout << pitchDelay_ << ", " << rollDelay_ << ", " << yawDelay_ << std::endl;
 
 }
 

@@ -1,5 +1,6 @@
 #pragma once 
 
+#include <set>
 #include <vector>
 #include "GT_Camera.h"
 #include "GT_Alphabet.h"
@@ -43,7 +44,8 @@ public:
 
     sceneType nextScene_;
 
-    bool keypressed_;
+    std::set<int> keysEnable_;
+    bool keyPressed_;
     GLfloat keyDelay_;
 
 protected:    

@@ -64,9 +64,9 @@ public:
     GLfloat getSpeedOffset();
 
     GLfloat getKeyDelay()           { return keyDelay_; }
-    GLboolean rollDelay_;
-    GLboolean yawDelay_;
-    GLboolean pitchDelay_;
+    GLfloat rollDelay_;
+    GLfloat yawDelay_;
+    GLfloat pitchDelay_;
 
     glm::mat4 GetViewMatrix();
     glm::mat4 GetProjectionMatrix() {return glm::perspective(ZOOM, (window_width*1.0f)/window_height, 0.1f, horizon);}
