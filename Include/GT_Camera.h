@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iostream>
+#include <set>
 #include <GL/glew.h>
 
 #include <glm/glm.hpp>
@@ -72,6 +73,7 @@ public:
     glm::mat4 GetProjectionMatrix() {return glm::perspective(ZOOM, (window_width*1.0f)/window_height, 0.1f, horizon);}
 
     void keyboardHandler(Camera_Movement direction, GLfloat deltaTime);
+    void keyboardHandler(std::set<int> keysPressed, GLfloat deltaTime);
     void mouseHandler(GLfloat xoffset, GLfloat yoffset, GLboolean constrainPitch = false );
 
     void pitchControl(Camera_Movement controlDirection, GLfloat deltaSpace);

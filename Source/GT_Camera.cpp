@@ -1,5 +1,6 @@
 #include "GT_Camera.h"
 #include <GL/glew.h>
+#include <GLFW/glfw3.h>
 
 GT_Camera::GT_Camera()
     : cameraPos(0.0f, 400.0f, 2500.5f),
@@ -80,49 +81,91 @@ void GT_Camera::yawControl(Camera_Movement controlDirection, GLfloat deltaSpace)
 
 }
 
+void GT_Camera::keyboardHandler(std::set<int> keysPressed, GLfloat deltaTime)
+{
+    GLfloat deltaSpace = speed_ * deltaTime;
+    GLfloat flightOffset = rollSensitivity * deltaTime ;
+
+    /////////////////////////         pitch          /////////////////////////
+
+    if (keysPressed.find(GLFW_KEY_W) != keysPressed.end())
+    {
+        pitchDelay_ -= 0.05f;
+        if (pitchDelay_ < -2.0f) pitchDelay_ = -2.0f;
+    }
+    else if (keysPressed.find(GLFW_KEY_S) != keysPressed.end())
+    {
+        pitchDelay_ += 0.05f;
+        if (pitchDelay_ > 2.0f) pitchDelay_ = 2.0f;
+    }
+    else
+    {
+        if (abs(pitchDelay_ )< 0.05f) pitchDelay_ = 0.0f;
+        else pitchDelay_ += -pitchDelay_/abs(pitchDelay_)*0.05f;
+    }
+    /////////////////////////////////////////////////////////////////////////////
+
+
+    ///////////////////////       roll             //////////////////////////////
+    if (keysPressed.find(GLFW_KEY_A) != keysPressed.end())
+    {
+        rollDelay_ -= 0.08f;
+        if (rollDelay_ < -2.0f) rollDelay_ = -2.0f;
+    }
+    else if (keysPressed.find(GLFW_KEY_D) != keysPressed.end())
+    {
+        rollDelay_ += 0.08f;
+        if (rollDelay_  > 2.0f) rollDelay_ = 2.0f;
+    }
+    else
+    {
+        if (abs(rollDelay_ )< 0.08f) rollDelay_ = 0.0f;
+        else rollDelay_ += -rollDelay_/abs(rollDelay_)*0.08f;
+    }
+    /////////////////////////////////////////////////////////////////////////////
+
+    ///////////////////           YAW           ///////////////////////////////////
+
+    if (keysPressed.find(GLFW_KEY_E) != keysPressed.end())
+    {
+        yawDelay_ -= 0.05f;
+        if (yawDelay_ < -2.0f) yawDelay_ = -2.0f;
+    }
+    else if (keysPressed.find(GLFW_KEY_Q) != keysPressed.end())
+    {
+        yawDelay_ += 0.05f;
+        if (yawDelay_ > 2.0f) yawDelay_ = 2.0f;
+    }
+    else
+    {
+        if (abs(yawDelay_ )< 0.05f) yawDelay_ = 0.0f;
+        else yawDelay_ += -yawDelay_/abs(yawDelay_)*0.05f;
+    }
+
+    /////////////////////////////////////////////////////////////////////////////
+
+
+
+
+    pitchControl(PITCH_D,   pitchDelay_ * flightOffset);
+    yawControl(PITCH_D,     yawDelay_   * flightOffset * 0.25);
+    rollControl(PITCH_D,    rollDelay_  * flightOffset * 2);
+
+    std::cout << pitchDelay_ << ", " << rollDelay_ << ", " << yawDelay_ << std::endl;
+
+}
+
 void GT_Camera::keyboardHandler(Camera_Movement direction, GLfloat deltaTime)
 {
-
-
-
     GLfloat deltaSpace = speed_ * deltaTime;
-    GLfloat flightOffset = rollSensitivity * deltaTime * keyDelay_* keyDelay_* keyDelay_;
-
-    if (direction == Camera_Movement::KEY_PRESSED)
-    {
-        keyDelay_ += 0.05f;
-    }
-    else if (direction == Camera_Movement::KEY_RELEASED)
-    {
-        keyDelay_ -= 0.05f;
-    }
-
-    if (keyDelay_ > 1.1f) keyDelay_ = 1.1f;
-    else if (keyDelay_ < 0.0f ) keyDelay_ = 0.0f;
-
+    GLfloat flightOffset = rollSensitivity * deltaTime ;
 
     if (direction == Camera_Movement::FORWARD)
         cameraPos += cameraFront * deltaSpace;
     if (direction == Camera_Movement::PITCH_D)
-    {
-        pitchDelay_ -= 0.05f;
-        if (pitchDelay_ < -1.1f) pitchDelay_ = -1.1f ;
-        //-flightOffset * keyDelay_;
-    }
-    else if (direction == Camera_Movement::PITCH_U)
-    {
-        pitchDelay_ += 0.05f;
-        if (pitchDelay_ > 1.1f) pitchDelay_ = 1.1f ;
-    }
-    else
-    {
-        if (pitchDelay_ != 0)
-        pitchDelay_ += -pitchDelay_/(abs(pitchDelay_))*0.05;
-    }
-
-//    if (direction == Camera_Movement::PITCH_U)
-//        pitchControl(PITCH_D, flightOffset);
-
+        pitchControl(PITCH_D, -flightOffset);
+    if (direction == Camera_Movement::PITCH_U)
+        pitchControl(PITCH_D, flightOffset);
     if (direction == Camera_Movement::ROLL_L)
         rollControl(PITCH_D, -flightOffset);
     if (direction == Camera_Movement::ROLL_R)
@@ -131,20 +174,6 @@ void GT_Camera::keyboardHandler(Camera_Movement direction, GLfloat deltaTime)
         yawControl(PITCH_D, flightOffset);
     if (direction == Camera_Movement::YAW_R)
         yawControl(PITCH_D, -flightOffset);
-
-    pitchControl(PITCH_D, pitchDelay_ * flightOffset);
-//    if (direction == Camera_Movement::PITCH_D)
-//        pitchControl(PITCH_D, -flightOffset);
-//    if (direction == Camera_Movement::PITCH_U)
-//        pitchControl(PITCH_D, flightOffset);
-//    if (direction == Camera_Movement::ROLL_L)
-//        rollControl(PITCH_D, -flightOffset);
-//    if (direction == Camera_Movement::ROLL_R)
-//        rollControl(PITCH_D, flightOffset);
-//    if (direction == Camera_Movement::YAW_L)
-//        yawControl(PITCH_D, flightOffset);
-//    if (direction == Camera_Movement::YAW_R)
-//        yawControl(PITCH_D, -flightOffset);
     if (direction == Camera_Movement::ACCELERATE)
     {
         speed_ += 2.0f;
@@ -157,7 +186,7 @@ void GT_Camera::keyboardHandler(Camera_Movement direction, GLfloat deltaTime)
     }
 
 
-    std::cout << pitchDelay_ << ", " << rollDelay_ << ", " << yawDelay_ << std::endl;
+//    std::cout << pitchDelay_ << ", " << rollDelay_ << ", " << yawDelay_ << std::endl;
 
 }
 
