@@ -41,13 +41,13 @@ void GT_Aircraft::Draw(GT_Camera* tempCam)
 
     glm::mat4 sc  = glm::scale(glm::mat4(1.0f), glm::vec3(1.0f));
     glm::mat4 rot = glm::rotate(glm::mat4(1.0f), (GLfloat)-3.14159/2.0f, glm::vec3(1.0f, 0.0f, 0.0f));
-    glm::mat4 yawRot   = glm::rotate(glm::mat4(1.0f), (GLfloat)3.14159/72.0f * tempCam->yawDelay_,   tempCam->getCameraUp() );
-    glm::mat4 rollRot  = glm::rotate(glm::mat4(1.0f), (GLfloat)-3.14159/72.0f * tempCam->rollDelay_,  tempCam->getCameraFront() );
-    glm::mat4 pitchRot = glm::rotate(glm::mat4(1.0f), (GLfloat)-3.14159/72.0f * tempCam->pitchDelay_, tempCam->getCameraRight() );
+    glm::mat4 yawRot   = glm::rotate(glm::mat4(1.0f), (GLfloat) 3.14159/72.0f * tempCam->yawDelay_,   glm::vec3(0.0f, 1.0f, 0.0f) );
+    glm::mat4 rollRot  = glm::rotate(glm::mat4(1.0f), (GLfloat)-3.14159/72.0f * tempCam->rollDelay_,  glm::vec3(0.0f, 0.0f, 1.0f) );
+    glm::mat4 pitchRot = glm::rotate(glm::mat4(1.0f), (GLfloat) 3.14159/72.0f * tempCam->pitchDelay_, glm::vec3(1.0f, 0.0f, 0.0f) );
 
     glm::mat4 tr  = glm::translate(glm::mat4(1.0f),  glm::vec3(0.0f, -5.0f, -tempCam->getSpeedOffset()));
 
-    model =  tr * rot * pitchRot * sc;
+    model =  tr * yawRot * rollRot * pitchRot * rot * sc;
 
     glm::mat4 view = glm::mat4(1.0f);
     glm::mat4 projection = tempCam->GetProjectionMatrix();
