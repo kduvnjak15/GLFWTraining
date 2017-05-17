@@ -41,9 +41,13 @@ void GT_Aircraft::Draw(GT_Camera* tempCam)
 
     glm::mat4 sc  = glm::scale(glm::mat4(1.0f), glm::vec3(1.0f));
     glm::mat4 rot = glm::rotate(glm::mat4(1.0f), (GLfloat)-3.14159/2.0f, glm::vec3(1.0f, 0.0f, 0.0f));
+    glm::mat4 yawRot   = glm::rotate(glm::mat4(1.0f), (GLfloat)3.14159/72.0f * tempCam->yawDelay_,   tempCam->getCameraUp() );
+    glm::mat4 rollRot  = glm::rotate(glm::mat4(1.0f), (GLfloat)-3.14159/72.0f * tempCam->rollDelay_,  tempCam->getCameraFront() );
+    glm::mat4 pitchRot = glm::rotate(glm::mat4(1.0f), (GLfloat)-3.14159/72.0f * tempCam->pitchDelay_, tempCam->getCameraRight() );
+
     glm::mat4 tr  = glm::translate(glm::mat4(1.0f),  glm::vec3(0.0f, -5.0f, -tempCam->getSpeedOffset()));
 
-    model =  tr * rot * sc;
+    model =  tr * rot * pitchRot * sc;
 
     glm::mat4 view = glm::mat4(1.0f);
     glm::mat4 projection = tempCam->GetProjectionMatrix();
@@ -53,7 +57,7 @@ void GT_Aircraft::Draw(GT_Camera* tempCam)
 
     actorModel_->Draw(*actorShader_);
 
-    std::cout << tempCam->yawDelay_ << ", "<< tempCam->pitchDelay_ << "; " << tempCam->rollDelay_ << std::endl;
+    std::cout << tempCam->getCameraFront().x << std::endl;
 }
 
 void GT_Aircraft::Integrate(GLfloat DT_)
