@@ -35,12 +35,12 @@ void GT_Warehouse::loadModels()
 
 void GT_Warehouse::defineAircrafts()
 {
-    aircafts_.push_back(new GT_Aircraft(modelMap_[F18]));
+    aircafts_.push_back(new GT_Aircraft(modelMap_[F18], modelMap_[AIM]));
     aircraftMap_.insert(std::pair<AIRCRAFT, GT_Aircraft*>(F18, aircafts_[0]));
-    aircafts_.push_back(new GT_Aircraft(modelMap_[F22]));
+    aircafts_.push_back(new GT_Aircraft(modelMap_[F22], modelMap_[AIM]));
     aircraftMap_.insert(std::pair<AIRCRAFT, GT_Aircraft*>(F22, aircafts_[1]));
-    aircafts_.push_back(new GT_Aircraft(modelMap_[USS]));
-    aircraftMap_.insert(std::pair<AIRCRAFT, GT_Aircraft*>(USS, aircafts_[2]));
+//    aircafts_.push_back(new GT_Aircraft(modelMap_[USS]));
+//    aircraftMap_.insert(std::pair<AIRCRAFT, GT_Aircraft*>(USS, aircafts_[2]));
 
 }
 

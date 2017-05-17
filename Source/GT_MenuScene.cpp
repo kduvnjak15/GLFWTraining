@@ -16,7 +16,7 @@ GT_MenuScene::GT_MenuScene(GT_Camera* tempCam, GT_Warehouse *warehousePtr)
     // mem leak ?
     skybox_ = new GT_Skybox();
     ocean_  = new GT_Ocean();
-    requisite_ = warehousePtr->getAircraft(USS);
+    requisite_ = warehousePtr->getAircraft(F22);
     requisite_->setPosition(glm::vec3(-500.0f, 450.f, 2700.f));
 
     nextScene_ = menuScene;

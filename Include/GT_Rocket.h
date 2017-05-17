@@ -20,6 +20,7 @@ class GT_Rocket : public  GT_Model
 {
 public:
 
+
     GT_Rocket(const char* path);
     ~GT_Rocket();
 

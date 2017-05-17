@@ -169,11 +169,15 @@ public:
         glfwSwapInterval(1);
         loadGame();
 
+        std::cout << "Loading scenes "<< std::endl;
+
         scenes_.push_back(new GT_MenuScene(camera_, warehouse_));
         scenes_.push_back(new GT_GameplayScene(camera_, warehouse_));
         scenes_.push_back(new GT_PauseScene(camera_, warehouse_));
         curScene_ = scenes_[0];
 
+
+        std::cout << "Starting GAME LOOP "<< std::endl;
         while (!glfwWindowShouldClose(windowPtr_))
         {
 

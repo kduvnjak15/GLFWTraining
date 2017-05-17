@@ -2,13 +2,16 @@
 
 #include "GT_Aircraft.h"
 
-
-GT_Aircraft::GT_Aircraft(GT_Model *aircraftModel)
+GT_Aircraft::GT_Aircraft(GT_Model *aircraftModel, GT_Model* missileModel)
     : GT_Actor(),
-      speed_(1)
+      speed_(1),
+      numOfMissiles_(10),
+      missileModel_(missileModel)
 {
     actorModel_  = aircraftModel;
     actorShader_ = new GT_Shader(aircraftShader, "../Shaders/aircraftShader.vs", "../Shaders/aircraftShader.fs");
+
+
     std::cout << "GT_Aircraft initialized " << this << std::endl;
 }
 

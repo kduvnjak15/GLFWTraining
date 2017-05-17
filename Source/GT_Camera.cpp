@@ -144,15 +144,9 @@ void GT_Camera::keyboardHandler(std::set<int> keysPressed, GLfloat deltaTime)
 
     /////////////////////////////////////////////////////////////////////////////
 
-
-
-
     pitchControl(PITCH_D,   pitchDelay_ * flightOffset);
     yawControl(PITCH_D,     yawDelay_   * flightOffset * 0.25);
     rollControl(PITCH_D,    rollDelay_  * flightOffset * 2);
-
-    std::cout << pitchDelay_ << ", " << rollDelay_ << ", " << yawDelay_ << std::endl;
-
 }
 
 void GT_Camera::keyboardHandler(Camera_Movement direction, GLfloat deltaTime)
@@ -184,10 +178,6 @@ void GT_Camera::keyboardHandler(Camera_Movement direction, GLfloat deltaTime)
         speed_ -= 2.0f;
         if (speed_ < 0) speed_ = 0.0f;
     }
-
-
-//    std::cout << pitchDelay_ << ", " << rollDelay_ << ", " << yawDelay_ << std::endl;
-
 }
 
 

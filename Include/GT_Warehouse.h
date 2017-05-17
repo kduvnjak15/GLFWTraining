@@ -31,4 +31,6 @@ private:
 
     std::vector<GT_Aircraft*> aircafts_;
 
+
+
 };

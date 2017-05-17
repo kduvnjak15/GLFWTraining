@@ -16,6 +16,8 @@ GT_Rocket::~GT_Rocket()
 
 }
 
+
+
 void GT_Rocket::Fire(GT_Enemy* target)
 {
     if (!fired_)
@@ -48,6 +50,7 @@ void GT_Rocket::move()
         destroy();
         return;
     }
+
 
     glm::vec3 dif = target_->modelPos - this->modelPos;
     if (glm::length(dif)< 5.0f)
