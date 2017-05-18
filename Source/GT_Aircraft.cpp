@@ -37,7 +37,7 @@ void GT_Aircraft::Draw(GT_Camera* tempCam)
     // Set lights properties
     glUniform3f(glGetUniformLocation(actorShader_->shaderProgram_, "light.ambient"),  0.50, 0.50f, 0.50f);
     glUniform3f(glGetUniformLocation(actorShader_->shaderProgram_, "light.diffuse"),  0.80, 0.80f, 0.80f);
-    glUniform3f(glGetUniformLocation(actorShader_->shaderProgram_, "light.specular"), 0.05, 0.05f, 0.05f);
+    glUniform3f(glGetUniformLocation(actorShader_->shaderProgram_, "light.specular"), 0.1, 0.1f, 0.1f);
     // Set material properties
     glUniform1f(glGetUniformLocation(actorShader_->shaderProgram_, "material.shininess"), 1.0f);
     glm::mat4 model = glm::mat4(1.0f);
@@ -50,17 +50,16 @@ void GT_Aircraft::Draw(GT_Camera* tempCam)
 
     glm::mat4 tr  = glm::translate(glm::mat4(1.0f),  glm::vec3(0.0f, -5.0f, -tempCam->getSpeedOffset()));
 
-    model =  tr * yawRot * rollRot * pitchRot * rot * sc;
+    glm::mat4 view = tempCam->GetViewMatrix();
+    glm::mat4 projection = glm::perspective(ZOOM, (window_width*1.0f)/window_height, 0.1f, horizon);
 
-    glm::mat4 view = glm::mat4(1.0f);
-    glm::mat4 projection = tempCam->GetProjectionMatrix();
+    model = glm::inverse(view) * tr * yawRot * rollRot * pitchRot * rot * sc;
+
     glUniformMatrix4fv(modelLoc_, 1, GL_FALSE, glm::value_ptr(model));
     glUniformMatrix4fv(viewLoc_,  1, GL_FALSE, glm::value_ptr(view));
     glUniformMatrix4fv(projLoc_,  1, GL_FALSE, glm::value_ptr(projection));
 
     actorModel_->Draw(*actorShader_);
-
-    std::cout << tempCam->getCameraFront().x << std::endl;
 }
 
 void GT_Aircraft::Integrate(GLfloat DT_)
