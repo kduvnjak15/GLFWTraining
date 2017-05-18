@@ -341,6 +341,7 @@ public:
         warehouse_->loadModels();
         warehouse_->defineAircrafts();
 
+
         camera_ = new GT_Camera();
     }
 

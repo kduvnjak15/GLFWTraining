@@ -8,8 +8,15 @@ GT_Aircraft::GT_Aircraft(GT_Model *aircraftModel, GT_Model* missileModel)
       numOfMissiles_(10),
       missileModel_(missileModel)
 {
+    position_    = glm::vec3(0.0f);
     actorModel_  = aircraftModel;
     actorShader_ = new GT_Shader(aircraftShader, "../Shaders/aircraftShader.vs", "../Shaders/aircraftShader.fs");
+
+    for (int i = 0 ; i < numOfMissiles_; i++)
+    {
+        missiles_.push_back(new GT_Missile(missileModel_, this));
+        missiles_[i]->setPosition(glm::vec3(-200.0f + i* 100.f, 0.0f, 0.0f));
+    }
 
 
     std::cout << "GT_Aircraft initialized " << this << std::endl;
@@ -44,28 +51,45 @@ void GT_Aircraft::Draw(GT_Camera* tempCam)
 
     glm::mat4 sc  = glm::scale(glm::mat4(1.0f), glm::vec3(1.0f));
     glm::mat4 rot = glm::rotate(glm::mat4(1.0f), (GLfloat)-3.14159/2.0f, glm::vec3(1.0f, 0.0f, 0.0f));
-    glm::mat4 yawRot   = glm::rotate(glm::mat4(1.0f), (GLfloat) 3.14159/72.0f * tempCam->yawDelay_,   glm::vec3(0.0f, 1.0f, 0.0f) );
-    glm::mat4 rollRot  = glm::rotate(glm::mat4(1.0f), (GLfloat)-3.14159/72.0f * tempCam->rollDelay_,  glm::vec3(0.0f, 0.0f, 1.0f) );
-    glm::mat4 pitchRot = glm::rotate(glm::mat4(1.0f), (GLfloat) 3.14159/72.0f * tempCam->pitchDelay_, glm::vec3(1.0f, 0.0f, 0.0f) );
+//    glm::mat4 yawRot   = glm::rotate(glm::mat4(1.0f), (GLfloat) 3.14159/72.0f * tempCam->yawDelay_,   glm::vec3(0.0f, 1.0f, 0.0f) );
+//    glm::mat4 rollRot  = glm::rotate(glm::mat4(1.0f), (GLfloat)-3.14159/72.0f * tempCam->rollDelay_,  glm::vec3(0.0f, 0.0f, 1.0f) );
+//    glm::mat4 pitchRot = glm::rotate(glm::mat4(1.0f), (GLfloat) 3.14159/72.0f * tempCam->pitchDelay_, glm::vec3(1.0f, 0.0f, 0.0f) );
 
-    glm::mat4 tr  = glm::translate(glm::mat4(1.0f),  glm::vec3(0.0f, -5.0f, -tempCam->getSpeedOffset()));
+    glm::mat4 yawRot   = glm::rotate(glm::mat4(1.0f), (GLfloat) 3.14159/72.0f * tempCam->yawDelay_,   this->up_ );
+    glm::mat4 rollRot  = glm::rotate(glm::mat4(1.0f), (GLfloat)-3.14159/72.0f * tempCam->rollDelay_,  this->front_ );
+    glm::mat4 pitchRot = glm::rotate(glm::mat4(1.0f), (GLfloat) 3.14159/72.0f * tempCam->pitchDelay_, tempCam->getCameraRight() );
+
+  //  glm::mat4 tr  = glm::translate(glm::mat4(1.0f), position_ + glm::vec3(0.0f, -5.0f, -tempCam->getSpeedOffset()));
+      glm::mat4 tr  = glm::translate(glm::mat4(1.0f), position_ );
+
+      glm::mat4 planeOrient = glm::lookAt(glm::vec3(0.0f), this->front_, this->up_);
 
     glm::mat4 view = tempCam->GetViewMatrix();
+  //  glm::mat4 view = glm::mat4(1.0f);
     glm::mat4 projection = glm::perspective(ZOOM, (window_width*1.0f)/window_height, 0.1f, horizon);
 
-    model = glm::inverse(view) * tr * yawRot * rollRot * pitchRot * rot * sc;
+    model =  tr * yawRot * rollRot * pitchRot * glm::inverse(planeOrient) * rot * sc;
 
     glUniformMatrix4fv(modelLoc_, 1, GL_FALSE, glm::value_ptr(model));
     glUniformMatrix4fv(viewLoc_,  1, GL_FALSE, glm::value_ptr(view));
     glUniformMatrix4fv(projLoc_,  1, GL_FALSE, glm::value_ptr(projection));
 
     actorModel_->Draw(*actorShader_);
+
+
+    std::cout << "fp" << position_.x << ", "<< position_.y <<" , " << position_.z << std::endl;
+
+    for (int i = 0; i < missiles_.size(); i++)
+    {
+        missiles_[i]->Draw(tempCam);
+    }
 }
 
 void GT_Aircraft::Integrate(GLfloat DT_)
 {
     DT_ *=speed_;
     position_ += front_*DT_;
+
 }
 
 GT_Aircraft::~GT_Aircraft()

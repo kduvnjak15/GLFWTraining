@@ -3,7 +3,7 @@
 #include <GLFW/glfw3.h>
 
 GT_Camera::GT_Camera()
-    : cameraPos(0.0f, 400.0f, 2500.5f),
+    : cameraPos(0.0f, 400.0f, 0.0f),
       cameraFront(0.0f, 0.0f, -1.0f),
       cameraUp(0.0f, 1.0f, 0.0f),
       cameraWorldUp(0.0f, 1.0f, 0.0f),
@@ -201,7 +201,9 @@ void GT_Camera::mouseHandler(GLfloat xoffset, GLfloat yoffset, GLboolean constra
 
 glm::mat4 GT_Camera::GetViewMatrix()
 {
-    return glm::lookAt(this->cameraPos-(this->cameraFront*this->getSpeedOffset()), this->cameraPos + this->cameraFront, this->cameraUp );
+    glm::vec3 horizontalOffset = -this->cameraFront*this->getSpeedOffset();
+    glm::vec3 verticalOffset   =  this->cameraUp * 5.0f;
+    return glm::lookAt(this->cameraPos+ horizontalOffset + verticalOffset, this->cameraPos + this->cameraFront, this->cameraUp );
 }
 
 inline GLfloat GT_Camera::getSpeedOffset()

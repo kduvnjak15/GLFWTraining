@@ -4,6 +4,7 @@
 
 #include "GT_Ocean.h"
 #include "GT_Skybox.h"
+#include "GT_Missile.h"
 
 class GT_Warehouse
 {
@@ -11,6 +12,7 @@ public:
 
     GT_Skybox*      getSkybox();
     GT_Ocean*       getOcean();
+    GT_Model*       getMissileModel();
     GT_Aircraft*    getAircraft(AIRCRAFT aircraftEnum);
 
     void loadModels();

@@ -1,7 +1,8 @@
 #pragma once
 
 
-#include <GT_Actor.h>
+#include "GT_Actor.h"
+#include "GT_Missile.h"
 #include <glm/glm.hpp>
 
 enum AIRCRAFT
@@ -24,6 +25,8 @@ public:
 
     void loadMissiles(GT_Model* missileModel);
 
+    glm::vec3 getPosition() { return position_; }
+
 private:
 
     GLuint modelLoc_;
@@ -36,4 +39,5 @@ private:
 
     GLuint numOfMissiles_;
     GT_Model* missileModel_;
+    std::vector<GT_Missile* > missiles_;
 };

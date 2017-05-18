@@ -54,6 +54,11 @@ public:
         }
     }
 
+    ~GT_Model()
+    {
+        std::cout << "GT_Model destuctor "<< directory <<std::endl;
+    }
+
 protected:
 
     GLuint modelLoc_;

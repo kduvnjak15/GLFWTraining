@@ -23,6 +23,8 @@ public:
     virtual void Integrate(GLfloat DX_) = 0;
 
     void setPosition(glm::vec3 pos_);
+    void setFront(glm::vec3 frontVec_);
+    void setUp(glm::vec3 up_);
 
 protected:
 
@@ -36,3 +38,4 @@ protected:
 
 
 };
+

@@ -91,7 +91,6 @@ void GT_GameplayScene::renderScene()
     ocean_->draw(sceneCamera_);
 
     fighter_->Draw(sceneCamera_);
-    std::cout << keyPressed_ << std::endl;
     ///////////////////////////////////////////////////////////////////////
 }
 
@@ -128,5 +127,10 @@ void GT_GameplayScene::sceneKeyboardHandler(bool* keys, int key, int scancode, i
 void GT_GameplayScene::integrateScene(GLfloat deltaTime)
 {
     sceneCamera_->keyboardHandler(FORWARD, deltaTime);
-    fighter_->setPosition(sceneCamera_->getCameraPos());
+
+    fighter_->setPosition(sceneCamera_->getCameraPos() );
+    fighter_->setFront(sceneCamera_->getCameraFront());
+    fighter_->setUp(sceneCamera_->getCameraUp());
+
+    fighter_->Integrate(0.0f);
 }
