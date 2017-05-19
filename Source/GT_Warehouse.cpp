@@ -16,34 +16,30 @@ GT_Ocean* GT_Warehouse::getOcean()
     return ocean_;
 }
 
-GT_Aircraft* GT_Warehouse::getAircraft(AIRCRAFT aircraftEnum)
+GT_Model* GT_Warehouse::getModel(MODEL_TYPE modelEnum)
 {
-    return aircraftMap_[aircraftEnum];
+    return modelMap_[modelEnum];
 }
 
-GT_Model* GT_Warehouse::getMissileModel()
-{
-    return modelMap_[AIM];
-}
 
 void GT_Warehouse::loadModels()
 {
-    models_.push_back(new GT_Model("../Content/CV - Essex class/essex_scb-125_generic.obj"));
-    modelMap_.insert(std::pair<AIRCRAFT, GT_Model*>(USS, models_[0]));
     models_.push_back(new GT_Model("../Content/FA-22_Raptor/FA-22_Raptor.obj"));
-    modelMap_.insert(std::pair<AIRCRAFT, GT_Model*>(F22, models_[1]));
+    modelMap_.insert(std::pair<MODEL_TYPE, GT_Model*>(F22, models_[0]));
     models_.push_back(new GT_Model("../Content/FA-18_RC/FA-18_RC.obj"));
-    modelMap_.insert(std::pair<AIRCRAFT, GT_Model*>(F18, models_[2]));
+    modelMap_.insert(std::pair<MODEL_TYPE, GT_Model*>(F18, models_[1]));
     models_.push_back(new GT_Model("../Content/AVMT300/AVMT300.3ds"));
-    modelMap_.insert(std::pair<AIRCRAFT, GT_Model*>(AIM, models_[3]));
+    modelMap_.insert(std::pair<MODEL_TYPE, GT_Model*>(AIM, models_[2]));
+    //    models_.push_back(new GT_Model("../Content/CV - Essex class/essex_scb-125_generic.obj"));
+    //    modelMap_.insert(std::pair<MODEL_TYPE, GT_Model*>(USS, models_[0]));
 }
 
-void GT_Warehouse::defineAircrafts()
+void GT_Warehouse::defineActors()
 {
-    aircafts_.push_back(new GT_Aircraft(modelMap_[F18], modelMap_[AIM]));
-    aircraftMap_.insert(std::pair<AIRCRAFT, GT_Aircraft*>(F18, aircafts_[0]));
-    aircafts_.push_back(new GT_Aircraft(modelMap_[F22], modelMap_[AIM]));
-    aircraftMap_.insert(std::pair<AIRCRAFT, GT_Aircraft*>(F22, aircafts_[1]));
+    actors_.push_back(new GT_Actor(modelMap_[F18]));
+    actorMap_.insert(std::pair<MODEL_TYPE, GT_Actor*>(F18, actors_[0]));
+    actors_.push_back(new GT_Actor(modelMap_[F22]));
+    actorMap_.insert(std::pair<MODEL_TYPE, GT_Actor*>(F22, actors_[1]));
 }
 
 

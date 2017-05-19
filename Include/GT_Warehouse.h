@@ -1,22 +1,21 @@
 #pragma once
 
-#include "GT_Aircraft.h"
-
 #include "GT_Ocean.h"
 #include "GT_Skybox.h"
-#include "GT_Missile.h"
+
+#include "GT_Aircraft.h"
+
 
 class GT_Warehouse
 {
 public:
 
     GT_Skybox*      getSkybox();
-    GT_Ocean*       getOcean();
-    GT_Model*       getMissileModel();
-    GT_Aircraft*    getAircraft(AIRCRAFT aircraftEnum);
+    GT_Ocean*       getOcean();    
+    GT_Model*       getModel(MODEL_TYPE modelEnum);
 
     void loadModels();
-    void defineAircrafts();
+    void defineActors();
 
     ~GT_Warehouse();
 
@@ -28,10 +27,10 @@ private:
     GT_Ocean* ocean_;
 
     std::vector<GT_Model*> models_;
-    std::map< AIRCRAFT, GT_Model*> modelMap_;
-    std::map< AIRCRAFT, GT_Aircraft*> aircraftMap_;
+    std::map< MODEL_TYPE, GT_Model*> modelMap_;
+    std::map< MODEL_TYPE, GT_Actor*> actorMap_;
 
-    std::vector<GT_Aircraft*> aircafts_;
+    std::vector<GT_Actor*> actors_;
 
 
 

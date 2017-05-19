@@ -4,6 +4,7 @@
 
 #include "GT_Warehouse.h"
 
+
 class GT_GameplayScene : public GT_Scene
 {
 public:
@@ -22,7 +23,8 @@ private:
     GT_Skybox* skybox_;
     GT_Ocean* ocean_;
 
-    GT_Aircraft* fighter_;
+    std::vector<GT_Actor*> actors_;
+    std::vector<GT_Aircraft*> aircrafts_;
 
 };
 

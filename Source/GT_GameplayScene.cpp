@@ -1,4 +1,6 @@
 #include "GT_GameplayScene.h"
+#include "GT_Aircraft.h"
+
 #include <set>
 
 GT_GameplayScene::GT_GameplayScene(GT_Camera *camera_, GT_Warehouse* warehouse)
@@ -8,7 +10,17 @@ GT_GameplayScene::GT_GameplayScene(GT_Camera *camera_, GT_Warehouse* warehouse)
       ocean_(new GT_Ocean())
 {
 
-    fighter_ = warehouse->getAircraft(F18);
+//    actors_.push_back(new GT_Actor(warehouse->getModel(F22)));
+//    actors_.push_back(new GT_Actor(warehouse->getModel(F18)));
+
+//    actors_.push_back(new GT_Actor(warehouse->getModel(F22)));
+//    actors_.push_back(new GT_Actor(warehouse->getModel(F18)));
+
+//    actors_.push_back(new GT_Aircraft(warehouse->getModel(F22)));
+//    actors_.push_back(new GT_Aircraft(warehouse->getModel(F22)));
+    aircrafts_.push_back(new GT_Aircraft(warehouse->getModel(F22), warehouse->getModel(AIM)));
+    aircrafts_.push_back(new GT_Aircraft(warehouse->getModel(F22), warehouse->getModel(AIM)));
+    aircrafts_.push_back(new GT_Aircraft(warehouse->getModel(F22), warehouse->getModel(AIM)));
 
     nextScene_ = gameplay;
 }
@@ -20,27 +32,11 @@ void GT_GameplayScene::checkKeyboardInput()
 
         sceneCamera_->keyboardHandler(keysEnable_, deltaTime_);
 
-//        if (keys_[GLFW_KEY_W])
-//        {
-//            sceneCamera_->keyboardHandler(PITCH_D, deltaTime_);
-//        }
-//        if (keys_[GLFW_KEY_S])
-//            sceneCamera_->keyboardHandler(PITCH_U, deltaTime_);
-//        if (keys_[GLFW_KEY_A])
-//            sceneCamera_->keyboardHandler(ROLL_L, deltaTime_);
-//        if (keys_[GLFW_KEY_D])
-//            sceneCamera_->keyboardHandler(ROLL_R, deltaTime_);
-//        if (keys_[GLFW_KEY_Q])
-//            sceneCamera_->keyboardHandler(YAW_L, deltaTime_);
-//        if (keys_[GLFW_KEY_E])
-//            sceneCamera_->keyboardHandler(YAW_R, deltaTime_);
         if (keys_[GLFW_KEY_LEFT_CONTROL])
             sceneCamera_->keyboardHandler(ACCELERATE, deltaTime_);
         if (keys_[GLFW_KEY_LEFT_SHIFT])
             sceneCamera_->keyboardHandler(DECELERATE, deltaTime_);
-
     }
-
 }
 
 void GT_GameplayScene::renderScene()
@@ -90,7 +86,9 @@ void GT_GameplayScene::renderScene()
     skybox_->Draw(sceneCamera_);
     ocean_->draw(sceneCamera_);
 
-    fighter_->Draw(sceneCamera_);
+
+    for (int i = 0; i < aircrafts_.size(); i++)
+        aircrafts_[i]->Draw(sceneCamera_);
     ///////////////////////////////////////////////////////////////////////
 }
 
@@ -103,8 +101,6 @@ void GT_GameplayScene::sceneKeyboardHandler(bool* keys, int key, int scancode, i
     {
         nextScene_ = pauseScene;
     }
-
-
 
     if (action == GLFW_PRESS)
     {
@@ -126,11 +122,17 @@ void GT_GameplayScene::sceneKeyboardHandler(bool* keys, int key, int scancode, i
 
 void GT_GameplayScene::integrateScene(GLfloat deltaTime)
 {
+
     sceneCamera_->keyboardHandler(FORWARD, deltaTime);
 
-    fighter_->setPosition(sceneCamera_->getCameraPos() );
-    fighter_->setFront(sceneCamera_->getCameraFront());
-    fighter_->setUp(sceneCamera_->getCameraUp());
+    for (int i = 0; i < aircrafts_.size(); i++)
+    {
 
-    fighter_->Integrate(0.0f);
+        aircrafts_[i]->setPosition(glm::vec3(100.0f * i, 0.0f, 0.0f));
+        aircrafts_[i]->setFront(sceneCamera_->getCameraFront());
+        aircrafts_[i]->setUp(sceneCamera_->getCameraUp());
+
+        aircrafts_[i]->Integrate(deltaTime);
+
+    }
 }

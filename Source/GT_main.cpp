@@ -6,19 +6,8 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
-#include "GT_Shader.h"
-#include "GT_Scene.h"
 #include "GT_Camera.h"
 #include "GT_Model.h"
-#include "GT_Skybox.h"
-#include "GT_Alphabet.h"
-#include "GT_Rocket.h"
-#include "GT_Enemy.h"
-#include "GT_Ocean.h"
-#include "GT_Raptor.h"
-#include "GT_USSCarrier.h"
-#include "GT_HUD.h"
-#include "GT_Objectives.h"
 #include "GT_Aircraft.h"
 #include "GT_MenuScene.h"
 #include "GT_GameplayScene.h"
@@ -29,19 +18,6 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include "SFML/Audio.hpp"
-
-#define VmodelShader "../Shaders/modelShader.vs"
-#define FmodelShader "../Shaders/modelShader.fs"
-#define vLightShader  "../Shaders/vLightShader.vs"
-#define fLightShader  "../Shaders/fLightShader.fs"
-#define vsSkyboxShader "../Shaders/skybox.vs"
-#define fsSkyboxShader "../Shaders/skybox.fs"
-#define vsFontShader "../Shaders/fontShader.vs"
-#define fsFontShader "../Shaders/fontShader.fs"
-#define vsEnemyShader "../Shaders/enemyShader.vs"
-#define fsEnemyShader "../Shaders/enemyShader.fs"
-#define gsEnemyShader "../Shaders/enemyShader.gs"
-
 
 bool keys[1024];
 bool firstMouse = true;
@@ -248,82 +224,82 @@ public:
     }
 
 
-    void renderProjectiles()
-    {
-        glm::mat4 projection = glm::perspective(ZOOM, (window_width*1.0f)/window_height, 0.1f, horizon);
+//    void renderProjectiles()
+//    {
+//        glm::mat4 projection = glm::perspective(ZOOM, (window_width*1.0f)/window_height, 0.1f, horizon);
 
-        for (int i = 0; i < rockets_.size(); i++)
-        {
+//        for (int i = 0; i < rockets_.size(); i++)
+//        {
 
-            missile_ = rockets_[i]; // Missile 0
-            if (missile_->dead_)
-                continue;
+//            missile_ = rockets_[i]; // Missile 0
+//            if (missile_->dead_)
+//                continue;
 
-            glm::mat4 model = glm::mat4(1.0f);
-            if (missile_->isFired())
-            {
-                glm::mat4 tran1  = glm::translate(model, missile_->modelPos);
-                glm::mat4 tran2  = glm::translate(glm::mat4(1.0f),  missile_->wingSlotOffset);
-                glm::mat4 align = glm::lookAt(glm::vec3(0.0f), camera_->getCameraFront(), camera_->getCameraUp());
-                glm::mat4 rot   = glm::rotate(glm::mat4(1.0f), (GLfloat)-3.14159/2.0f, glm::vec3(0.0f, 1.0f, 0.0f));
-                glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.3f));
+//            glm::mat4 model = glm::mat4(1.0f);
+//            if (missile_->isFired())
+//            {
+//                glm::mat4 tran1  = glm::translate(model, missile_->modelPos);
+//                glm::mat4 tran2  = glm::translate(glm::mat4(1.0f),  missile_->wingSlotOffset);
+//                glm::mat4 align = glm::lookAt(glm::vec3(0.0f), camera_->getCameraFront(), camera_->getCameraUp());
+//                glm::mat4 rot   = glm::rotate(glm::mat4(1.0f), (GLfloat)-3.14159/2.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+//                glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.3f));
 
-                align = glm::inverse(align);
+//                align = glm::inverse(align);
 
-                tran2 = align * tran2;
-                model = tran1 * tran2 * rot * scale;
+//                tran2 = align * tran2;
+//                model = tran1 * tran2 * rot * scale;
 
-            }
-            else
-            {
-                missile_->modelPos = fighter_->modelPos ;
-                glm::mat4 tran1  = glm::translate(model, fighter_->modelPos);
-                glm::mat4 tran2  = glm::translate(glm::mat4(1.0f),  missile_->wingSlotOffset);
-                glm::mat4 align = glm::lookAt(glm::vec3(0.0f), camera_->getCameraFront(), camera_->getCameraUp());
-                glm::mat4 rot   = glm::rotate(glm::mat4(1.0f), (GLfloat)-3.14159/2.0f, glm::vec3(0.0f, 1.0f, 0.0f));
-                glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.3f));
+//            }
+//            else
+//            {
+//                missile_->modelPos = fighter_->modelPos ;
+//                glm::mat4 tran1  = glm::translate(model, fighter_->modelPos);
+//                glm::mat4 tran2  = glm::translate(glm::mat4(1.0f),  missile_->wingSlotOffset);
+//                glm::mat4 align = glm::lookAt(glm::vec3(0.0f), camera_->getCameraFront(), camera_->getCameraUp());
+//                glm::mat4 rot   = glm::rotate(glm::mat4(1.0f), (GLfloat)-3.14159/2.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+//                glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.3f));
 
-                align = glm::inverse(align);
-                tran2 = align * tran2;
-                model = tran1 * tran2 * rot * scale;
+//                align = glm::inverse(align);
+//                tran2 = align * tran2;
+//                model = tran1 * tran2 * rot * scale;
 
-            }
+//            }
 
-            glm::mat4 view = camera_->GetViewMatrix();
+//            glm::mat4 view = camera_->GetViewMatrix();
 
-                particle_->primitiveShader_->Use();
+//                particle_->primitiveShader_->Use();
 
-                const GLfloat interpolateBias = 10;
-                std::vector<contrail> container_ = missile_->getParticles();
-                for (int i = 1; i < container_.size(); i++)
-                {
-                    if (container_[i].birthday_ - glfwGetTime() < -5 )
-                        continue;
+//                const GLfloat interpolateBias = 10;
+//                std::vector<contrail> container_ = missile_->getParticles();
+//                for (int i = 1; i < container_.size(); i++)
+//                {
+//                    if (container_[i].birthday_ - glfwGetTime() < -5 )
+//                        continue;
 
-                    for (int j = 0; j< interpolateBias; j++)
-                    {
-                        model = glm::mat4(1.0f);
-                        glm::vec3 tempParticle = (container_[i].position_ - container_[i-1].position_)/interpolateBias;
+//                    for (int j = 0; j< interpolateBias; j++)
+//                    {
+//                        model = glm::mat4(1.0f);
+//                        glm::vec3 tempParticle = (container_[i].position_ - container_[i-1].position_)/interpolateBias;
 
-                        glm::mat4 tran1  = glm::translate(model, container_[i].position_+tempParticle*((GLfloat)j));
-                        glm::mat4 tran2  = glm::translate(glm::mat4(1.0f),  missile_->wingSlotOffset);
-                        glm::mat4 align = glm::lookAt(glm::vec3(0.0f), camera_->getCameraFront(), camera_->getCameraUp());
-                        glm::mat4 rot   = glm::rotate(glm::mat4(1.0f), (GLfloat)-3.14159/2.0f, glm::vec3(1.0f, 0.0f, 0.0f));
-                        glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 0.5f, 1.0f));
+//                        glm::mat4 tran1  = glm::translate(model, container_[i].position_+tempParticle*((GLfloat)j));
+//                        glm::mat4 tran2  = glm::translate(glm::mat4(1.0f),  missile_->wingSlotOffset);
+//                        glm::mat4 align = glm::lookAt(glm::vec3(0.0f), camera_->getCameraFront(), camera_->getCameraUp());
+//                        glm::mat4 rot   = glm::rotate(glm::mat4(1.0f), (GLfloat)-3.14159/2.0f, glm::vec3(1.0f, 0.0f, 0.0f));
+//                        glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 0.5f, 1.0f));
 
-                        align = glm::inverse(align);
-                        tran2 = align * tran2;
-                        model = tran1 * tran2 * rot * scale;
+//                        align = glm::inverse(align);
+//                        tran2 = align * tran2;
+//                        model = tran1 * tran2 * rot * scale;
 
 
-                        particle_->draw();
+//                        particle_->draw();
 
-                    }
-                }
+//                    }
+//                }
 
-            }
+//            }
 
-        }
+//        }
 
 
     void handleCrash()
@@ -339,8 +315,7 @@ public:
     {
         warehouse_ = new GT_Warehouse();
         warehouse_->loadModels();
-        warehouse_->defineAircrafts();
-
+        warehouse_->defineActors();
 
         camera_ = new GT_Camera();
     }
@@ -355,32 +330,6 @@ private:
         glViewport(0, 0, window_width, window_height);
     }
 
-
-    void do_movement()
-    {
-
-
-//            if (fly_)
-//                camera_->keyboardHandler(FORWARD, deltaTime);
-            if (keys[GLFW_KEY_W])
-                camera_->keyboardHandler(PITCH_D, deltaTime);
-            if (keys[GLFW_KEY_S])
-                camera_->keyboardHandler(PITCH_U, deltaTime);
-            if (keys[GLFW_KEY_A])
-                camera_->keyboardHandler(ROLL_L, deltaTime);
-            if (keys[GLFW_KEY_D])
-                camera_->keyboardHandler(ROLL_R, deltaTime);
-//            if (keys[GLFW_KEY_Q])
-//                camera_->keyboardHandler(YAW_L, deltaTime);
-//            if (keys[GLFW_KEY_E])
-//                camera_->keyboardHandler(YAW_R, deltaTime);
-            if (keys[GLFW_KEY_LEFT_CONTROL])
-                camera_->keyboardHandler(ACCELERATE, deltaTime);
-            if (keys[GLFW_KEY_LEFT_SHIFT])
-                camera_->keyboardHandler(DECELERATE, deltaTime);
-
-    }
-
     void initializeCallbacks()
     {
         glfwSetKeyCallback(windowPtr_, KeyboardCB);
@@ -389,42 +338,15 @@ private:
 
     void KeyboardCallback(GLFWwindow* window, int key, int scancode, int action, int mode)
     {
-//        if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-//        {
-//            if (curScene_ == scenes_[0]) curScene_ = scenes_[1];
-//            else curScene_ = scenes_[0];
-//        }
 
         if (key == GLFW_KEY_ESCAPE && key == GLFW_KEY_RIGHT_SHIFT && action == GLFW_PRESS)
         {
             glfwSetWindowShouldClose(window, GL_TRUE);
         }
 
-//        if (key == GLFW_KEY_SPACE && action == GLFW_PRESS)
-//        {
-//            fly_ = !fly_;
-//        }
-
         if (key == GLFW_KEY_T )
         {
             toggle_ = !toggle_;
-        }
-
-        if (key == GLFW_KEY_ENTER && action == GLFW_PRESS)
-        {
-            if (target_ != nullptr)
-            {
-                for (int i = 0; i < rockets_.size(); i++)
-                {
-                    if (!rockets_[i]->isFired())
-                    {
-                        rockets_[i]->modelFront = camera_->getCameraFront();
-                        rockets_[i]->modelUp = camera_->getCameraUp();
-                        rockets_[i]->Fire(target_);
-                        break ;
-                    }
-                }
-            }
         }
 
         if(action == GLFW_PRESS)
@@ -476,15 +398,8 @@ private:
 
     std::vector<GT_Aircraft*> aircafts_;
     std::vector<GT_Model*> actors_;
-    std::vector<GT_Enemy*> enemies_;
-    std::vector<GT_Rocket*> rockets_;
     GT_Model* fighter_;
-    GT_Rocket* missile_;
-    GT_Particle* particle_;
-    GT_Enemy* enemy_;
     GT_Ocean* ocean_;
-    GT_HUD* HUD_;
-    GT_Objective* schedule_;
 
     // uniforms
     GLfloat s_;
@@ -493,7 +408,6 @@ private:
     GLboolean toggle_;
 
     GLboolean aimed_;
-    GT_Enemy* target_ ;
     GLfloat rotate_;
 
     GLfloat blinker_ ;

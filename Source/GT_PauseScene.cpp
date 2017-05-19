@@ -17,7 +17,7 @@ GT_PauseScene::GT_PauseScene(GT_Camera *tempCam, GT_Warehouse *warehouse)
 
     nextScene_ = pauseScene;
 
-    requisite_ = warehouse->getAircraft(F18);
+    requisite_ = new GT_Actor(warehouse->getModel(USS));
     std::cout << " GT_PauseScene initialized " << std::endl;
 
 }

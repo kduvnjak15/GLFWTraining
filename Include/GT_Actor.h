@@ -1,10 +1,10 @@
 #pragma once
 
-#include <GT_Model.h>
+#include "GT_Model.h"
 #include <glm/glm.hpp>
 #include "GT_Camera.h"
 
-enum class MODEL_ENUM
+enum MODEL_TYPE
 {
     F18,
     F22,
@@ -15,12 +15,11 @@ enum class MODEL_ENUM
 class GT_Actor
 {
 public:
-    GT_Actor();
+
     GT_Actor(GT_Model *actorModel);
     ~GT_Actor();
 
-    virtual void Draw(GT_Camera* tempCam) = 0;
-    virtual void Integrate(GLfloat DX_) = 0;
+    virtual void Draw(GT_Camera* tempCam);
 
     void setPosition(glm::vec3 pos_);
     void setFront(glm::vec3 frontVec_);
@@ -35,6 +34,11 @@ protected:
     glm::vec3 front_;
     glm::vec3 up_;
 
+    GLuint modelLoc_;
+    GLuint viewLoc_;
+    GLuint projLoc_;
+    GLuint lightPosLoc_;
+    GLuint viewPosLoc_;
 
 
 };

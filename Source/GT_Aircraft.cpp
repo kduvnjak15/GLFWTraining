@@ -3,9 +3,8 @@
 #include "GT_Aircraft.h"
 
 GT_Aircraft::GT_Aircraft(GT_Model *aircraftModel, GT_Model* missileModel)
-    : GT_Actor(),
-      speed_(1),
-      numOfMissiles_(10),
+    : GT_Actor(aircraftModel),
+      numOfMissiles_(5),
       missileModel_(missileModel)
 {
     position_    = glm::vec3(0.0f);
@@ -14,10 +13,8 @@ GT_Aircraft::GT_Aircraft(GT_Model *aircraftModel, GT_Model* missileModel)
 
     for (int i = 0 ; i < numOfMissiles_; i++)
     {
-        missiles_.push_back(new GT_Missile(missileModel_, this));
-        missiles_[i]->setPosition(glm::vec3(-200.0f + i* 100.f, 0.0f, 0.0f));
+        missiles_.push_back(new GT_Missile(missileModel_, (void*)this));
     }
-
 
     std::cout << "GT_Aircraft initialized " << this << std::endl;
 }
@@ -49,7 +46,7 @@ void GT_Aircraft::Draw(GT_Camera* tempCam)
     glUniform1f(glGetUniformLocation(actorShader_->shaderProgram_, "material.shininess"), 1.0f);
     glm::mat4 model = glm::mat4(1.0f);
 
-    glm::mat4 sc  = glm::scale(glm::mat4(1.0f), glm::vec3(1.0f));
+    glm::mat4 sc  = glm::scale(glm::mat4(1.0f), glm::vec3(10.0f));
     glm::mat4 rot = glm::rotate(glm::mat4(1.0f), (GLfloat)-3.14159/2.0f, glm::vec3(1.0f, 0.0f, 0.0f));
 //    glm::mat4 yawRot   = glm::rotate(glm::mat4(1.0f), (GLfloat) 3.14159/72.0f * tempCam->yawDelay_,   glm::vec3(0.0f, 1.0f, 0.0f) );
 //    glm::mat4 rollRot  = glm::rotate(glm::mat4(1.0f), (GLfloat)-3.14159/72.0f * tempCam->rollDelay_,  glm::vec3(0.0f, 0.0f, 1.0f) );
@@ -77,7 +74,7 @@ void GT_Aircraft::Draw(GT_Camera* tempCam)
     actorModel_->Draw(*actorShader_);
 
 
-    std::cout << "fp" << position_.x << ", "<< position_.y <<" , " << position_.z << std::endl;
+    std::cout << "fp"<< missiles_.size()<<" ; " << position_.x << ", "<< position_.y <<" , " << position_.z << std::endl;
 
     for (int i = 0; i < missiles_.size(); i++)
     {
@@ -87,8 +84,13 @@ void GT_Aircraft::Draw(GT_Camera* tempCam)
 
 void GT_Aircraft::Integrate(GLfloat DT_)
 {
-    DT_ *=speed_;
-    position_ += front_*DT_;
+  //  position_ += front_*DT_;
+    for (int i = 0; i < missiles_.size(); i++)
+    {
+        missiles_[i]->setPosition( glm::vec3(0.0f, 100.0f, 0.0f));
+        missiles_[i]->setFront(this->front_);
+        missiles_[i]->setUp( this->up_ );
+    }
 
 }
 
@@ -99,4 +101,5 @@ GT_Aircraft::~GT_Aircraft()
 
     std::cout << "GT_Aircraft dtor" << this << std::endl;
 }
+
 

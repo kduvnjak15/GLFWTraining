@@ -9,7 +9,7 @@ in VS_OUT {
 	vec3 Normal; 
 	vec3 FragPos; 
 	vec2 TexCoords; 
-} gs_in;
+}gs_in;
 
 out vec2 TexCoords; 
 

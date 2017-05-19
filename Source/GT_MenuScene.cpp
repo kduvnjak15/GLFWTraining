@@ -16,8 +16,8 @@ GT_MenuScene::GT_MenuScene(GT_Camera* tempCam, GT_Warehouse *warehousePtr)
     // mem leak ?
     skybox_ = new GT_Skybox();
     ocean_  = new GT_Ocean();
-    requisite_ = warehousePtr->getAircraft(F22);
-    requisite_->setPosition(glm::vec3(-500.0f, 450.f, 2700.f));
+    requisite_ = new GT_Actor( warehousePtr->getModel(F22));
+    requisite_->setPosition(glm::vec3(0.0f, 450.f, 0.0f));
 
     nextScene_ = menuScene;
 
@@ -36,14 +36,12 @@ void GT_MenuScene::sceneKeyboardHandler(bool* keys, int key, int scancode, int a
             currButton_ = buttons_.size() - 1;
         else
         {
-            std::cout << "left pres " << buttons_.size() << std::endl;
             currButton_ = --currButton_ % buttons_.size();
         }
     }
 
     if (keys[GLFW_KEY_RIGHT] && action == GLFW_PRESS)
     {
-        std::cout << "right pres " <<buttons_.size()<< std::endl;
         currButton_ = ++currButton_ % buttons_.size();
     }
 
@@ -56,12 +54,7 @@ void GT_MenuScene::sceneKeyboardHandler(bool* keys, int key, int scancode, int a
         if (currButton_ == 2)
             nextScene_ = exitGame;
 
-        std::cout << "right pres " <<buttons_.size()<< std::endl;
     }
-
-    std::cout << "cB "<< currButton_ <<std::endl;
-
-
 }
 
 void GT_MenuScene::checkKeyboardInput()

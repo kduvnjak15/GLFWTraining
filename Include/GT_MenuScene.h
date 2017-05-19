@@ -23,7 +23,7 @@ private:
     int currButton_;
     GT_Skybox* skybox_;
     GT_Ocean* ocean_;
-    GT_Aircraft* requisite_;
+    GT_Actor* requisite_;
 
     const GLfloat SPINFACTOR_ = 0.5f;
 };
