@@ -76,7 +76,7 @@ void GT_Aircraft::Draw(GT_Camera* tempCam)
 
     std::cout << "fp"<< missiles_.size()<<" ; " << position_.x << ", "<< position_.y <<" , " << position_.z << std::endl;
 
-    for (int i = 0; i < missiles_.size(); i++)
+    for (int i = 0; i < missiles_.size() || i < 2 ; i++)
     {
         missiles_[i]->Draw(tempCam);
     }
@@ -87,13 +87,12 @@ void GT_Aircraft::Integrate(GT_Camera* tempCam, GLfloat DT_)
 
     this->front_    = tempCam->getCameraFront();
     this->up_       = tempCam->getCameraUp();
+    this->right_    = tempCam->getCameraRight();
 
   //  position_ += front_*DT_;
     for (int i = 0; i < missiles_.size(); i++)
     {
-        missiles_[i]->setPosition(position_ + glm::vec3(0.0f, 20.0f * i, 0.0f));
-        missiles_[i]->setFront(this->front_);
-        missiles_[i]->setUp( this->up_ );
+        missiles_[i]->Integrate(tempCam, DT_);
     }
 
 }

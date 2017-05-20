@@ -21,6 +21,9 @@ GT_GameplayScene::GT_GameplayScene(GT_Camera *camera_, GT_Warehouse* warehouse)
     aircrafts_.push_back(new GT_Aircraft(warehouse->getModel(F22), warehouse->getModel(AIM)));
     aircrafts_.push_back(new GT_Aircraft(warehouse->getModel(F22), warehouse->getModel(AIM)));
     aircrafts_.push_back(new GT_Aircraft(warehouse->getModel(F22), warehouse->getModel(AIM)));
+    aircrafts_.push_back(new GT_Aircraft(warehouse->getModel(F18), warehouse->getModel(AIM)));
+    aircrafts_.push_back(new GT_Aircraft(warehouse->getModel(F18), warehouse->getModel(AIM)));
+    aircrafts_.push_back(new GT_Aircraft(warehouse->getModel(F22), warehouse->getModel(AIM)));
 
     nextScene_ = gameplay;
 }
@@ -132,7 +135,7 @@ void GT_GameplayScene::integrateAircrafts(GLfloat deltaTime)
     for (int i = 0; i < aircrafts_.size(); i++)
     {
         aircrafts_[i]->Integrate(sceneCamera_, deltaTime);
-        aircrafts_[i]->setPosition(glm::vec3(100.0f * i, 0.0f, 0.0f));
+        aircrafts_[i]->setPosition(glm::vec3(100.0f * i, 400.0f, 0.0f));
     }
 }
 

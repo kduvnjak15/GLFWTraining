@@ -24,6 +24,11 @@ void GT_Actor::setUp(glm::vec3 up)
     up_ = up;
 }
 
+void GT_Actor::setRight(glm::vec3 right)
+{
+    right_ = right;
+}
+
 void GT_Actor::Draw(GT_Camera *tempCam)
 {
     if (!actorModel_ || !actorShader_)

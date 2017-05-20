@@ -13,10 +13,11 @@ public:
     ~GT_Missile();
 
     void Draw(GT_Camera* tempCam);
-    void Integrate(GLfloat DX_);
+    void Integrate(GT_Camera* tempCam, GLfloat DX_);
 
 protected:
 
     void* ownerPtr_;
     GLuint missileIndex_;
+    glm::vec3 missileOffset_;
 };
