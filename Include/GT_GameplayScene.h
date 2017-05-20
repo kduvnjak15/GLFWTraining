@@ -16,9 +16,14 @@ public:
 
     void sceneKeyboardHandler(bool* keys, int key, int scancode, int action, int mode);
 
+private:
+
     void integrateScene(GLfloat deltaTime);
 
-private:
+    void integrateAircrafts(GLfloat deltaTime);
+    void renderAircrafts();
+
+
 
     GT_Skybox* skybox_;
     GT_Ocean* ocean_;

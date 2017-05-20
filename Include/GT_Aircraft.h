@@ -2,6 +2,7 @@
 
 
 #include "GT_Actor.h"
+
 #include "GT_Missile.h"
 #include <glm/glm.hpp>
 
@@ -14,13 +15,15 @@ public:
     ~GT_Aircraft();
 
     void Draw(GT_Camera *tempCam);
-    void Integrate(GLfloat DT_);
 
-    void loadMissiles(GT_Model* missileModel);
+    void Integrate(GT_Camera* tempCam,  GLfloat DT_);
 
     glm::vec3 getPosition() { return position_; }
+    glm::vec3 setPosition(glm::vec3 positionSetter_) { position_ = positionSetter_;}
 
 private:
+
+
 
     GLuint numOfMissiles_;
     GT_Model* missileModel_;

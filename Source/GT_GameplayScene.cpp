@@ -77,8 +77,6 @@ void GT_GameplayScene::renderScene()
     font_->PrintLine( std::to_string(sceneCamera_->getCameraRight().y), 250.0f, 430.0f, .40f, glm::vec3(0.5, 0.8f, 0.2f));
     font_->PrintLine( std::to_string(sceneCamera_->getCameraRight().z), 250.0f, 400.0f, .40f, glm::vec3(0.5, 0.8f, 0.2f));
 
-
-
     font_->PrintLine("GAMEPLAY", 600.0f, 400.0f, 1.0f, glm::vec3(1.0, 0.1f, 0.1f));
 
     ////////////////////////   rendering phase   /////////////////////////////
@@ -86,9 +84,8 @@ void GT_GameplayScene::renderScene()
     skybox_->Draw(sceneCamera_);
     ocean_->draw(sceneCamera_);
 
+    renderAircrafts();
 
-    for (int i = 0; i < aircrafts_.size(); i++)
-        aircrafts_[i]->Draw(sceneCamera_);
     ///////////////////////////////////////////////////////////////////////
 }
 
@@ -123,16 +120,24 @@ void GT_GameplayScene::sceneKeyboardHandler(bool* keys, int key, int scancode, i
 void GT_GameplayScene::integrateScene(GLfloat deltaTime)
 {
 
+    // Fly movement
     sceneCamera_->keyboardHandler(FORWARD, deltaTime);
 
+    integrateAircrafts(deltaTime);
+
+}
+
+void GT_GameplayScene::integrateAircrafts(GLfloat deltaTime)
+{
     for (int i = 0; i < aircrafts_.size(); i++)
     {
-
+        aircrafts_[i]->Integrate(sceneCamera_, deltaTime);
         aircrafts_[i]->setPosition(glm::vec3(100.0f * i, 0.0f, 0.0f));
-        aircrafts_[i]->setFront(sceneCamera_->getCameraFront());
-        aircrafts_[i]->setUp(sceneCamera_->getCameraUp());
-
-        aircrafts_[i]->Integrate(deltaTime);
-
     }
+}
+
+void GT_GameplayScene::renderAircrafts()
+{
+    for (int i = 0; i < aircrafts_.size(); i++)
+        aircrafts_[i]->Draw(sceneCamera_);
 }

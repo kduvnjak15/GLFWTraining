@@ -13,7 +13,7 @@ GT_Aircraft::GT_Aircraft(GT_Model *aircraftModel, GT_Model* missileModel)
 
     for (int i = 0 ; i < numOfMissiles_; i++)
     {
-        missiles_.push_back(new GT_Missile(missileModel_, (void*)this));
+        missiles_.push_back(new GT_Missile(missileModel_, (void*)this, i));
     }
 
     std::cout << "GT_Aircraft initialized " << this << std::endl;
@@ -82,12 +82,16 @@ void GT_Aircraft::Draw(GT_Camera* tempCam)
     }
 }
 
-void GT_Aircraft::Integrate(GLfloat DT_)
+void GT_Aircraft::Integrate(GT_Camera* tempCam, GLfloat DT_)
 {
+
+    this->front_    = tempCam->getCameraFront();
+    this->up_       = tempCam->getCameraUp();
+
   //  position_ += front_*DT_;
     for (int i = 0; i < missiles_.size(); i++)
     {
-        missiles_[i]->setPosition( glm::vec3(0.0f, 100.0f, 0.0f));
+        missiles_[i]->setPosition(position_ + glm::vec3(0.0f, 20.0f * i, 0.0f));
         missiles_[i]->setFront(this->front_);
         missiles_[i]->setUp( this->up_ );
     }
@@ -101,5 +105,4 @@ GT_Aircraft::~GT_Aircraft()
 
     std::cout << "GT_Aircraft dtor" << this << std::endl;
 }
-
 
