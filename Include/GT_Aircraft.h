@@ -7,11 +7,13 @@
 #include <glm/glm.hpp>
 
 
+
 class GT_Aircraft : public GT_Actor
 {
 public:
 
     GT_Aircraft(GT_Model* aircraftModel, GT_Model* missileModel);
+    GT_Aircraft(GT_Model* aircraftModel, GT_Model* missileModel, GLuint missileCount);
     ~GT_Aircraft();
 
     void Draw(GT_Camera *tempCam);
@@ -23,11 +25,13 @@ public:
     glm::vec3 getPosition() { return position_; }
     glm::vec3 setPosition(glm::vec3 positionSetter_) { position_ = positionSetter_;}
 
-private:
-
-
-
     GLuint numOfMissiles_;
+
+protected:
+
+
     GT_Model* missileModel_;
     std::vector<GT_Missile* > missiles_;
+
+    GLfloat aircraftSpeed_;
 };

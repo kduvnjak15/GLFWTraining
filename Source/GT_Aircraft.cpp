@@ -3,9 +3,18 @@
 #include "GT_Aircraft.h"
 
 GT_Aircraft::GT_Aircraft(GT_Model *aircraftModel, GT_Model* missileModel)
-    : GT_Actor(aircraftModel),
-      numOfMissiles_(5),
-      missileModel_(missileModel)
+    :
+      GT_Aircraft(aircraftModel, missileModel, 2)
+{
+
+}
+
+GT_Aircraft::GT_Aircraft(GT_Model *aircraftModel, GT_Model* missileModel, GLuint missileCount)
+    :
+      GT_Actor(aircraftModel),
+      numOfMissiles_(missileCount),
+      missileModel_(missileModel),
+      aircraftSpeed_(10.0f)
 {
     position_    = glm::vec3(0.0f);
     actorModel_  = aircraftModel;
@@ -46,15 +55,15 @@ void GT_Aircraft::Draw(GT_Camera* tempCam)
     glUniform1f(glGetUniformLocation(actorShader_->shaderProgram_, "material.shininess"), 1.0f);
     glm::mat4 model = glm::mat4(1.0f);
 
-    glm::mat4 sc  = glm::scale(glm::mat4(1.0f), glm::vec3(10.0f));
+    glm::mat4 sc  = glm::scale(glm::mat4(1.0f), glm::vec3(1.0f));
     glm::mat4 rot = glm::rotate(glm::mat4(1.0f), (GLfloat)-3.14159/2.0f, glm::vec3(1.0f, 0.0f, 0.0f));
 //    glm::mat4 yawRot   = glm::rotate(glm::mat4(1.0f), (GLfloat) 3.14159/72.0f * tempCam->yawDelay_,   glm::vec3(0.0f, 1.0f, 0.0f) );
 //    glm::mat4 rollRot  = glm::rotate(glm::mat4(1.0f), (GLfloat)-3.14159/72.0f * tempCam->rollDelay_,  glm::vec3(0.0f, 0.0f, 1.0f) );
 //    glm::mat4 pitchRot = glm::rotate(glm::mat4(1.0f), (GLfloat) 3.14159/72.0f * tempCam->pitchDelay_, glm::vec3(1.0f, 0.0f, 0.0f) );
 
-    glm::mat4 yawRot   = glm::rotate(glm::mat4(1.0f), (GLfloat) 3.14159/72.0f * tempCam->yawDelay_,   this->up_ );
-    glm::mat4 rollRot  = glm::rotate(glm::mat4(1.0f), (GLfloat)-3.14159/72.0f * tempCam->rollDelay_,  this->front_ );
-    glm::mat4 pitchRot = glm::rotate(glm::mat4(1.0f), (GLfloat) 3.14159/72.0f * tempCam->pitchDelay_, tempCam->getCameraRight() );
+    glm::mat4 yawRot   = glm::rotate(glm::mat4(1.0f), (GLfloat) 3.14159/48.0f * tempCam->yawDelay_,   this->up_ );
+    glm::mat4 rollRot  = glm::rotate(glm::mat4(1.0f), (GLfloat)-3.14159/48.0f * tempCam->rollDelay_,  this->front_ );
+    glm::mat4 pitchRot = glm::rotate(glm::mat4(1.0f), (GLfloat) 3.14159/48.0f * tempCam->pitchDelay_, tempCam->getCameraRight() );
 
   //  glm::mat4 tr  = glm::translate(glm::mat4(1.0f), position_ + glm::vec3(0.0f, -5.0f, -tempCam->getSpeedOffset()));
       glm::mat4 tr  = glm::translate(glm::mat4(1.0f), position_ );
@@ -83,7 +92,6 @@ void GT_Aircraft::Draw(GT_Camera* tempCam)
         if (br>1)
             break;
     }
-
 }
 
 void GT_Aircraft::Integrate(GT_Camera* tempCam, GLfloat DT_)
@@ -93,11 +101,13 @@ void GT_Aircraft::Integrate(GT_Camera* tempCam, GLfloat DT_)
     this->up_       = tempCam->getCameraUp();
     this->right_    = tempCam->getCameraRight();
 
-  //  position_ += front_*DT_;
+    //movement
+
     for (int i = 0; i < missiles_.size(); i++)
     {
         missiles_[i]->Integrate(tempCam, DT_);
     }
+
 }
 
 void GT_Aircraft::fireMissile()

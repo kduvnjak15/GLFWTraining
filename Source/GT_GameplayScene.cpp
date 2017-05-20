@@ -25,6 +25,8 @@ GT_GameplayScene::GT_GameplayScene(GT_Camera *camera_, GT_Warehouse* warehouse)
     aircrafts_.push_back(new GT_Aircraft(warehouse->getModel(F18), warehouse->getModel(AIM)));
     aircrafts_.push_back(new GT_Aircraft(warehouse->getModel(F22), warehouse->getModel(AIM)));
 
+    fighter_= new GT_Fighter(warehouse);
+
     nextScene_ = gameplay;
 }
 
@@ -64,7 +66,7 @@ void GT_GameplayScene::renderScene()
     font_->PrintLine("Time: ", 25.0f, 25.0f, .50f, glm::vec3(1.0, 0.1f, 0.1f));
     font_->PrintLine( std::to_string(glfwGetTime()), 120.0f, 25.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
     font_->PrintLine("FPS: ", 25.0f, 50.0f, .50f, glm::vec3(1.0, 0.1f, 0.1f));
-    font_->PrintLine( std::to_string(1/deltaTime_), 120.0f, 50.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
+    font_->PrintLine( std::to_string(60.0f - 1/deltaTime_), 120.0f, 50.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
     font_->PrintLine("Speed: ", 25.0f, 75.0f, .50f, glm::vec3(1.0, 0.1f, 0.1f));
     font_->PrintLine( std::to_string(sceneCamera_->getSpeed()), 120.0f, 75.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
     font_->PrintLine("Altitude: ", 25.0f, 100.0f, .50f, glm::vec3(1.0, 0.1f, 0.1f));
@@ -137,6 +139,10 @@ void GT_GameplayScene::integrateScene(GLfloat deltaTime)
 
 void GT_GameplayScene::integrateAircrafts(GLfloat deltaTime)
 {
+    fighter_->setPosition(sceneCamera_->getCameraPos() + sceneCamera_->getCameraUp()*-3.0f);
+    fighter_->Integrate(sceneCamera_, deltaTime);
+    fighter_->setPosition(sceneCamera_->getCameraPos() + sceneCamera_->getCameraUp()*-3.0f);
+
     for (int i = 0; i < aircrafts_.size(); i++)
     {
         aircrafts_[i]->Integrate(sceneCamera_, deltaTime);
@@ -146,15 +152,18 @@ void GT_GameplayScene::integrateAircrafts(GLfloat deltaTime)
 
 void GT_GameplayScene::renderAircrafts()
 {
+    fighter_->Draw(sceneCamera_);
+
     for (int i = 0; i < aircrafts_.size(); i++)
         aircrafts_[i]->Draw(sceneCamera_);
 }
 
 void GT_GameplayScene::missileFIRE()
 {
-    std::cout << "FOX ONE "<< std::endl;
     for( auto it = aircrafts_.begin(); it != aircrafts_.end(); it++)
     {
         (*it)->fireMissile();
     }
+
+    fighter_->fireMissile();
 }

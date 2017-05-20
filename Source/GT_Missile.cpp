@@ -14,9 +14,9 @@ GT_Missile::GT_Missile(GT_Model *missileModel, void* ownerPtr, GLuint missileInd
     position_ = ((GT_Aircraft*)ownerPtr_)->getPosition();
 
     if ( missileIndex_ % 2 == 0)
-        missileOffset_ = glm::vec3(-22.0f, -1.0f, -20.0f);
+        missileOffset_ = glm::vec3(-2.0f, 0.0f, -1.0f);
     else
-        missileOffset_ = glm::vec3( 40.0f, -1.0f, -20.0f);
+        missileOffset_ = glm::vec3( 3.0f, 0.0f, -1.0f);
 
     std::cout << "GT_Missile initialized "<< this << std::endl;
 }
@@ -52,7 +52,7 @@ void GT_Missile::Draw(GT_Camera *tempCam)
     glUniform1f(glGetUniformLocation(actorShader_->shaderProgram_, "material.shininess"), 1.0f);
     glm::mat4 model = glm::mat4(1.0f);
 
-    glm::mat4 sc  = glm::scale(glm::mat4(1.0f), glm::vec3(1.0f));
+    glm::mat4 sc  = glm::scale(glm::mat4(1.0f), glm::vec3(0.10f));
     glm::mat4 rot = glm::rotate(glm::mat4(1.0f), (GLfloat)-3.14159/2.0f, glm::vec3(0.0f, 1.0f, 0.0f));
 //    glm::mat4 yawRot   = glm::rotate(glm::mat4(1.0f), (GLfloat) 3.14159/72.0f * tempCam->yawDelay_,   glm::vec3(0.0f, 1.0f, 0.0f) );
 //    glm::mat4 rollRot  = glm::rotate(glm::mat4(1.0f), (GLfloat)-3.14159/72.0f * tempCam->rollDelay_,  glm::vec3(0.0f, 0.0f, 1.0f) );
