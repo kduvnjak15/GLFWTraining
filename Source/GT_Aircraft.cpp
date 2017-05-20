@@ -73,13 +73,17 @@ void GT_Aircraft::Draw(GT_Camera* tempCam)
 
     actorModel_->Draw(*actorShader_);
 
-
-    std::cout << "fp"<< missiles_.size()<<" ; " << position_.x << ", "<< position_.y <<" , " << position_.z << std::endl;
-
-    for (int i = 0; i < missiles_.size() || i < 2 ; i++)
+    int br = 0;
+    for (int i = 0; i < missiles_.size() ; i++)
     {
         missiles_[i]->Draw(tempCam);
+        if (!missiles_[i]->isFired())
+            br++;
+
+        if (br>1)
+            break;
     }
+
 }
 
 void GT_Aircraft::Integrate(GT_Camera* tempCam, GLfloat DT_)
@@ -94,7 +98,18 @@ void GT_Aircraft::Integrate(GT_Camera* tempCam, GLfloat DT_)
     {
         missiles_[i]->Integrate(tempCam, DT_);
     }
+}
 
+void GT_Aircraft::fireMissile()
+{
+    for (int i = 0; i < missiles_.size(); i++)
+        if (missiles_[i]->isFired())
+            continue;
+        else
+        {
+            missiles_[i]->FIRE();
+            break;
+        }
 }
 
 GT_Aircraft::~GT_Aircraft()

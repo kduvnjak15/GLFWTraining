@@ -18,6 +18,8 @@ public:
 
     void Integrate(GT_Camera* tempCam,  GLfloat DT_);
 
+    void fireMissile();
+
     glm::vec3 getPosition() { return position_; }
     glm::vec3 setPosition(glm::vec3 positionSetter_) { position_ = positionSetter_;}
 

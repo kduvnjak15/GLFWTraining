@@ -102,6 +102,11 @@ void GT_GameplayScene::sceneKeyboardHandler(bool* keys, int key, int scancode, i
         nextScene_ = pauseScene;
     }
 
+    if (keys[GLFW_KEY_ENTER] && action == GLFW_PRESS)
+    {
+        missileFIRE();
+    }
+
     if (action == GLFW_PRESS)
     {
         keysEnable_.insert(key);
@@ -143,4 +148,13 @@ void GT_GameplayScene::renderAircrafts()
 {
     for (int i = 0; i < aircrafts_.size(); i++)
         aircrafts_[i]->Draw(sceneCamera_);
+}
+
+void GT_GameplayScene::missileFIRE()
+{
+    std::cout << "FOX ONE "<< std::endl;
+    for( auto it = aircrafts_.begin(); it != aircrafts_.end(); it++)
+    {
+        (*it)->fireMissile();
+    }
 }

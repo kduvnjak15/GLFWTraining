@@ -6,7 +6,8 @@ GT_Missile::GT_Missile(GT_Model *missileModel, void* ownerPtr, GLuint missileInd
     :
       GT_Actor(missileModel),
       ownerPtr_(ownerPtr),
-      missileIndex_(missileIndex)
+      missileIndex_(missileIndex),
+      fired_(false)
 
 {
     actorShader_ = new GT_Shader(enemyShader, "../Shaders/actorShader.vs", "../Shaders/actorShader.fs");
@@ -80,19 +81,31 @@ void GT_Missile::Draw(GT_Camera *tempCam)
 
     actorModel_->Draw(*actorShader_);
 
+    std::cout << fired_ << std::endl;
+
+}
+
+void GT_Missile::FIRE()
+{
+    fired_ = true;
 }
 
 
 void GT_Missile::Integrate(GT_Camera* tempCam, GLfloat DX_)
 {
-    position_   = ((GT_Aircraft*)ownerPtr_)->getPosition();
-    this->front_      = tempCam->getCameraFront();
-    this->up_         = tempCam->getCameraUp();
-    this->right_      = tempCam->getCameraRight();
+    if (!fired_)
+    {
+        position_   = ((GT_Aircraft*)ownerPtr_)->getPosition();
+        this->front_      = tempCam->getCameraFront();
+        this->up_         = tempCam->getCameraUp();
+        this->right_      = tempCam->getCameraRight();
 
-    position_ += this->right_ * missileOffset_.x;
-    position_ += this->up_    * missileOffset_.y;
-    position_ += this->front_ * missileOffset_.z;
-
-
+        position_ += this->right_ * missileOffset_.x;
+        position_ += this->up_    * missileOffset_.y;
+        position_ += this->front_ * missileOffset_.z;
+    }
+    else
+    {
+        position_ += this->front_ * DX_ * MISSILE_SPEED;
+    }
 }

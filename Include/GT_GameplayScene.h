@@ -23,7 +23,7 @@ private:
     void integrateAircrafts(GLfloat deltaTime);
     void renderAircrafts();
 
-
+    void missileFIRE();
 
     GT_Skybox* skybox_;
     GT_Ocean* ocean_;
