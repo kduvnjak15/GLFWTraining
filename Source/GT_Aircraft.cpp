@@ -14,11 +14,12 @@ GT_Aircraft::GT_Aircraft(GT_Model *aircraftModel, GT_Model* missileModel, GLuint
       GT_Actor(aircraftModel),
       numOfMissiles_(missileCount),
       missileModel_(missileModel),
-      aircraftSpeed_(10.0f)
+      aircraftSpeed_(10.0f),
+      explode_(false)
 {
     position_    = glm::vec3(0.0f);
     actorModel_  = aircraftModel;
-    actorShader_ = new GT_Shader(aircraftShader, "../Shaders/aircraftShader.vs", "../Shaders/aircraftShader.fs");
+    actorShader_ = new GT_Shader(aircraftShader, "../Shaders/aircraftShader.vs", "../Shaders/aircraftShader.fs", "../Shaders/aircraftShader.gs");
 
     for (int i = 0 ; i < numOfMissiles_; i++)
     {
@@ -53,6 +54,11 @@ void GT_Aircraft::Draw(GT_Camera* tempCam)
     glUniform3f(glGetUniformLocation(actorShader_->shaderProgram_, "light.specular"), 0.1, 0.1f, 0.1f);
     // Set material properties
     glUniform1f(glGetUniformLocation(actorShader_->shaderProgram_, "material.shininess"), 1.0f);
+
+    explodeLoc_ = glGetUniformLocation(actorShader_->shaderProgram_, "isHit");
+    glUniform1i(explodeLoc_, explode_);
+    glUniform1f(glGetUniformLocation(actorShader_->shaderProgram_, "time"), glfwGetTime());
+
     glm::mat4 model = glm::mat4(1.0f);
 
     glm::mat4 sc  = glm::scale(glm::mat4(1.0f), glm::vec3(1.0f));
@@ -112,6 +118,7 @@ void GT_Aircraft::Integrate(GT_Camera* tempCam, GLfloat DT_)
 
 void GT_Aircraft::fireMissile()
 {
+    this->explode_ = 10;
     for (int i = 0; i < missiles_.size(); i++)
         if (missiles_[i]->isFired())
             continue;

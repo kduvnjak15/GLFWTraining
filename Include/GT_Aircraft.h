@@ -29,9 +29,13 @@ public:
 
 protected:
 
+    GLuint explodeLoc_;
+    GLuint explode_;
 
     GT_Model* missileModel_;
     std::vector<GT_Missile* > missiles_;
 
     GLfloat aircraftSpeed_;
+
+
 };
