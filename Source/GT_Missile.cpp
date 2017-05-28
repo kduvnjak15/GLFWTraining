@@ -80,9 +80,6 @@ void GT_Missile::Draw(GT_Camera *tempCam)
     glUniformMatrix4fv(projLoc_,  1, GL_FALSE, glm::value_ptr(projection));
 
     actorModel_->Draw(*actorShader_);
-
-    std::cout << fired_ << std::endl;
-
 }
 
 void GT_Missile::FIRE()
