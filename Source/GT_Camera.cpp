@@ -21,6 +21,7 @@ GT_Camera::GT_Camera()
 
 {
     cameraRight = glm::normalize(glm::cross(cameraFront, cameraUp));
+    this->cameraInstance_ = this;
 }
 
 
@@ -210,3 +211,6 @@ inline GLfloat GT_Camera::getSpeedOffset()
 {
      return ((speed_ - MAX_SPEED/4.0f)/MAX_SPEED)*CAMERA_OFFSET/3.0f + CAMERA_OFFSET;
 }
+
+
+GT_Camera* GT_Camera::cameraInstance_;

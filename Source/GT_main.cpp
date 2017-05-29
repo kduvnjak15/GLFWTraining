@@ -12,6 +12,7 @@
 #include "GT_MenuScene.h"
 #include "GT_GameplayScene.h"
 #include "GT_PauseScene.h"
+#include "GT_Locator.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -99,7 +100,6 @@ public:
     }
     virtual ~GAME()
     {
-        delete camera_;
         delete windowPtr_;
     }
 
@@ -145,14 +145,6 @@ public:
         glfwSwapInterval(1);
         loadGame();
 
-        std::cout << "Loading scenes "<< std::endl;
-
-        scenes_.push_back(new GT_MenuScene(camera_, warehouse_));
-        scenes_.push_back(new GT_GameplayScene(camera_, warehouse_));
-        scenes_.push_back(new GT_PauseScene(camera_, warehouse_));
-        curScene_ = scenes_[0];
-
-
         std::cout << "Starting GAME LOOP "<< std::endl;
         while (!glfwWindowShouldClose(windowPtr_))
         {
@@ -163,10 +155,7 @@ public:
 
             //////////////////    game rules          /////////////
 
-
-
             //////////////////    camera movement    ///////////////
-            glm::mat4 projection = glm::perspective(ZOOM, (window_width*1.0f)/window_height, 0.1f, horizon);
 
             /////////////////////    rendering    //////////////////
 
@@ -178,12 +167,13 @@ public:
             {
                 if (curScene_->nextScene_ == gameplay)
                 {
-                    std::cout << "next scene gameplay"<< std::endl;
+                    std::cout << "Next scene gameplay"<< std::endl;
                     curScene_->nextScene_ = nonType;
                     curScene_ = scenes_[1];
                 }
                 else if (curScene_->nextScene_ == menuScene)
                 {
+                    std::cout << "Next scene Menuscene"<< std::endl;
                     curScene_->nextScene_ = nonType;
                     curScene_ = scenes_[0];
                 }
@@ -304,20 +294,22 @@ public:
 
     void handleCrash()
     {
-
         glfwWindowShouldClose(windowPtr_);
 
         glfwTerminate();
-        leaveGame();
     }
 
     void loadGame()
     {
-        warehouse_ = new GT_Warehouse();
-        warehouse_->loadModels();
-        warehouse_->defineActors();
+        GT_Locator_ = new GT_Locator();
 
-        camera_ = new GT_Camera();
+        std::cout << "Loading scenes "<< std::endl;
+
+        scenes_.push_back(new GT_MenuScene());
+        scenes_.push_back(new GT_GameplayScene());
+        scenes_.push_back(new GT_PauseScene());
+        curScene_ = scenes_[0];
+
     }
 
 
@@ -390,11 +382,8 @@ private:
     std::vector<GT_Scene*> scenes_;
     GT_Scene* curScene_;
 
-    GT_Warehouse* warehouse_;
+    GT_Locator* GT_Locator_;
 
-    // classes
-    GT_Camera* camera_;
-    void* functors;
 
     std::vector<GT_Aircraft*> aircafts_;
     std::vector<GT_Model*> actors_;

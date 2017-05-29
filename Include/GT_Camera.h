@@ -85,6 +85,7 @@ public:
     void bounceBBox() {cameraFront = - cameraFront; cameraRight = -cameraRight; }
     void enforceGravity(GLfloat factor) { cameraPos += glm::vec3(0.0f, -1.0f, 0.0f)*factor;}
 
+    static GT_Camera* getCamera() { return cameraInstance_; }
 
 
 private:
@@ -118,7 +119,5 @@ private:
 
     glm::vec3 getRotatedVector();
 
-
-
-
+    static GT_Camera* cameraInstance_;
 };

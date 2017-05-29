@@ -7,7 +7,7 @@
 class GT_PauseScene : public GT_Scene
 {
 public:
-    GT_PauseScene(GT_Camera* tempCam, GT_Warehouse* warehouse);
+    GT_PauseScene();
 
     void renderScene();
 

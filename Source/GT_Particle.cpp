@@ -5,7 +5,7 @@
 
 
 GT_Particle::GT_Particle()
-    : GT_Primitive("../Content/circle.png")
+    : GT_Primitive("../Content/fog.png")
 {
     initValues();
     defineTexture();

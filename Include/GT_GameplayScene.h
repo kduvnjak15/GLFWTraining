@@ -8,7 +8,7 @@
 class GT_GameplayScene : public GT_Scene
 {
 public:
-    GT_GameplayScene(GT_Camera* tempCam, GT_Warehouse* warehouse);
+    GT_GameplayScene();
 
     void renderScene();
 

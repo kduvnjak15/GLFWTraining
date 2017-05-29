@@ -33,6 +33,8 @@ GT_Ocean::GT_Ocean(const char* textureImage)
     defineTexture();
     defineVAO();
     defineShader();
+
+    std::cout << "GT_Ocean initialized "<< std::endl;
 }
 
 void GT_Ocean::draw(GT_Camera* tempCam)

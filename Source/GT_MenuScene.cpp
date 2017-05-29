@@ -1,23 +1,21 @@
 #include <iostream>
 
 #include "GT_MenuScene.h"
+#include "GT_Locator.h"
 
-GT_MenuScene::GT_MenuScene(GT_Camera* tempCam, GT_Warehouse *warehousePtr)
+GT_MenuScene::GT_MenuScene()
     :
-      GT_Scene(tempCam, menuScene),
+      GT_Scene(menuScene),
       currButton_(0),
-      skybox_(new GT_Skybox()),
-      ocean_(new GT_Ocean())
+      skybox_(GT_Locator::getSkybox()),
+      ocean_(GT_Locator::getOcean())
 {
     buttons_.push_back("PLAY GAME");
     buttons_.push_back("OPTIONS");
     buttons_.push_back("QUIT GAME");
 
-    // mem leak ?
-    skybox_ = new GT_Skybox();
-    ocean_  = new GT_Ocean();
-    requisite_ = new GT_Actor( warehousePtr->getModel(F22));
-    requisite_->setPosition(glm::vec3(0.0f, 450.f, 0.0f));
+    requisite_ = GT_Locator::getActor(USS);
+    requisite_->setPosition(glm::vec3(-1000.0f, 400.0f, -400.0f));
 
     nextScene_ = menuScene;
 
@@ -123,6 +121,7 @@ void GT_MenuScene::renderScene()
 
     skybox_->Draw(sceneCamera_);
     ocean_->draw(sceneCamera_);
+
     requisite_->Draw(sceneCamera_);
 
     ///////////////////////////////////////////////////////////////////////

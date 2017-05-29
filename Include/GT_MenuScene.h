@@ -7,7 +7,7 @@
 class GT_MenuScene : public GT_Scene
 {
     public:
-    GT_MenuScene(GT_Camera *tempCam, GT_Warehouse* warehousePtr);
+    GT_MenuScene();
 
     void renderScene();
 
@@ -25,5 +25,5 @@ private:
     GT_Ocean* ocean_;
     GT_Actor* requisite_;
 
-    const GLfloat SPINFACTOR_ = 0.5f;
+    const GLfloat SPINFACTOR_ = 0.1f;
 };

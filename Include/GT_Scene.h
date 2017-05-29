@@ -30,7 +30,7 @@ class GT_Scene
 {
 
 public:
-    GT_Scene(GT_Camera* tempCam, sceneType sceneEnum);
+    GT_Scene(sceneType sceneEnum);
 
     virtual ~GT_Scene();
 

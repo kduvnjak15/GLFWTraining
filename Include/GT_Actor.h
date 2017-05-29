@@ -25,6 +25,7 @@ public:
     void setFront(glm::vec3 frontVec_);
     void setUp(glm::vec3 up_);
     void setRight(glm::vec3 right_);
+    void setScale(GLfloat scaleFactor) { scaleActor_ = scaleFactor; }
 
 protected:
 
@@ -35,6 +36,8 @@ protected:
     glm::vec3 front_;
     glm::vec3 up_;
     glm::vec3 right_;
+
+    GLfloat scaleActor_;
 
     GLuint modelLoc_;
     GLuint viewLoc_;

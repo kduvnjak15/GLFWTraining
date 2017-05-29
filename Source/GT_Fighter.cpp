@@ -1,8 +1,9 @@
 #include "GT_Fighter.h"
+#include "GT_Locator.h"
 
-GT_Fighter::GT_Fighter(GT_Warehouse *warehouse)
+GT_Fighter::GT_Fighter()
     :
-      GT_Aircraft(warehouse->getModel(F18), warehouse->getModel(AIM), 10)
+      GT_Aircraft(GT_Locator::getModel(F18), GT_Locator::getModel(AIM), 10)
 {
 
 

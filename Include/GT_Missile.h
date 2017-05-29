@@ -1,10 +1,13 @@
 #pragma once
 
 #include "GT_Actor.h"
+#include "GT_Particle.h"
 
 #include <glm/glm.hpp>
+#include <list>
 
-const GLfloat MISSILE_SPEED = 50.0f;
+const GLfloat MISSILE_SPEED = 250.0f;
+const GLfloat MISSILE_LIFE = 5.0f;
 
 class GT_Missile : public GT_Actor
 {
@@ -18,6 +21,8 @@ public:
 
     void FIRE();
     bool isFired() { return fired_; }
+    GLboolean isDead() { return dead_;}
+
 
 protected:
 
@@ -28,5 +33,12 @@ protected:
 private:
 
     bool fired_;
+    bool dead_;
+    GLfloat birthday_;
+
+    std::list<glm::vec3> contrail_;
+    GLuint contrailRate_;
+
+    GT_Particle* particle_;
 
 };

@@ -2,22 +2,21 @@
 
 #include "GT_PauseScene.h"
 
-GT_PauseScene::GT_PauseScene(GT_Camera *tempCam, GT_Warehouse *warehouse)
+#include "GT_Locator.h"
+
+GT_PauseScene::GT_PauseScene()
     :
-      GT_Scene(tempCam, pauseScene),
+      GT_Scene(pauseScene),
       currButton_(0),
-      skybox_(new GT_Skybox()),
-      ocean_(new GT_Ocean())
+      skybox_(GT_Locator::getSkybox()),
+      ocean_(GT_Locator::getOcean())
 {
     buttons_.push_back("Resume Game");
     buttons_.push_back("Leave Game");
 
-    skybox_= new GT_Skybox();
-    ocean_= new GT_Ocean();
-
     nextScene_ = pauseScene;
 
-    requisite_ = new GT_Actor(warehouse->getModel(USS));
+    requisite_ = new GT_Actor(GT_Locator::getModel(USS));
     std::cout << " GT_PauseScene initialized " << std::endl;
 
 }
@@ -121,8 +120,6 @@ void GT_PauseScene::sceneKeyboardHandler(bool* keys, int key, int scancode, int 
             nextScene_ = gameplay;
         else if (currButton_ == 1)
             nextScene_ = menuScene;
-    }
-
-    std::cout << "cB "<< currButton_ <<std::endl;
+    }    
 }
 

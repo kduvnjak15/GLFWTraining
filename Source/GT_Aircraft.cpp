@@ -15,11 +15,18 @@ GT_Aircraft::GT_Aircraft(GT_Model *aircraftModel, GT_Model* missileModel, GLuint
       numOfMissiles_(missileCount),
       missileModel_(missileModel),
       aircraftSpeed_(10.0f),
-      explode_(false)
+      explode_(0)
+
 {
     position_    = glm::vec3(0.0f);
     actorModel_  = aircraftModel;
     actorShader_ = new GT_Shader(aircraftShader, "../Shaders/aircraftShader.vs", "../Shaders/aircraftShader.fs", "../Shaders/aircraftShader.gs");
+    modelLoc_ = glGetUniformLocation(actorShader_->shaderProgram_, "model");
+    viewLoc_ = glGetUniformLocation(actorShader_->shaderProgram_, "view");
+    projLoc_  = glGetUniformLocation(actorShader_->shaderProgram_, "projection");
+    lightPosLoc_ = glGetUniformLocation(actorShader_->shaderProgram_, "light.position");
+    viewPosLoc_ = glGetUniformLocation(actorShader_->shaderProgram_, "viewPos");
+    explodeLoc_ = glGetUniformLocation(actorShader_->shaderProgram_, "isHit");
 
     for (int i = 0 ; i < numOfMissiles_; i++)
     {
@@ -39,13 +46,10 @@ void GT_Aircraft::Draw(GT_Camera* tempCam)
     }
 
     this->actorShader_->Use();
-    modelLoc_  = glGetUniformLocation(actorShader_->shaderProgram_, "model");
-    viewLoc_   = glGetUniformLocation(actorShader_->shaderProgram_, "view");
-    projLoc_   = glGetUniformLocation(actorShader_->shaderProgram_, "projection");
+
     glUniform1i(glGetUniformLocation(actorShader_->shaderProgram_, "material.diffuse"),  0);
     glUniform1i(glGetUniformLocation(actorShader_->shaderProgram_, "material.specular"), 1);
-    lightPosLoc_    = glGetUniformLocation(actorShader_->shaderProgram_, "light.position");
-    viewPosLoc_     = glGetUniformLocation(actorShader_->shaderProgram_, "viewPos");
+
     glUniform3f(lightPosLoc_,    lightPos.x, lightPos.y, lightPos.z);
     glUniform3f(viewPosLoc_,     tempCam->getCameraPos().x, tempCam->getCameraPos().y, tempCam->getCameraPos().z);
     // Set lights properties
@@ -55,7 +59,6 @@ void GT_Aircraft::Draw(GT_Camera* tempCam)
     // Set material properties
     glUniform1f(glGetUniformLocation(actorShader_->shaderProgram_, "material.shininess"), 1.0f);
 
-    explodeLoc_ = glGetUniformLocation(actorShader_->shaderProgram_, "isHit");
     glUniform1i(explodeLoc_, explode_);
     glUniform1f(glGetUniformLocation(actorShader_->shaderProgram_, "time"), glfwGetTime());
 
@@ -68,7 +71,7 @@ void GT_Aircraft::Draw(GT_Camera* tempCam)
 //    glm::mat4 pitchRot = glm::rotate(glm::mat4(1.0f), (GLfloat) 3.14159/72.0f * tempCam->pitchDelay_, glm::vec3(1.0f, 0.0f, 0.0f) );
 
     glm::mat4 yawRot   = glm::rotate(glm::mat4(1.0f), (GLfloat) 3.14159/48.0f * tempCam->yawDelay_,   this->up_ );
-    glm::mat4 rollRot  = glm::rotate(glm::mat4(1.0f), (GLfloat)-3.14159/48.0f * tempCam->rollDelay_,  this->front_ );
+    glm::mat4 rollRot  = glm::rotate(glm::mat4(1.0f), (GLfloat) 3.14159/48.0f * tempCam->rollDelay_,  this->front_ );
     glm::mat4 pitchRot = glm::rotate(glm::mat4(1.0f), (GLfloat) 3.14159/48.0f * tempCam->pitchDelay_, tempCam->getCameraRight() );
 
   //  glm::mat4 tr  = glm::translate(glm::mat4(1.0f), position_ + glm::vec3(0.0f, -5.0f, -tempCam->getSpeedOffset()));
@@ -86,13 +89,14 @@ void GT_Aircraft::Draw(GT_Camera* tempCam)
     glUniformMatrix4fv(viewLoc_,  1, GL_FALSE, glm::value_ptr(view));
     glUniformMatrix4fv(projLoc_,  1, GL_FALSE, glm::value_ptr(projection));
 
+
     actorModel_->Draw(*actorShader_);
 
     int br = 0;
-    for (int i = 0; i < missiles_.size() ; i++)
+    for (auto mit = missiles_.begin(); mit != missiles_.end() ; mit++)
     {
-        missiles_[i]->Draw(tempCam);
-        if (!missiles_[i]->isFired())
+        (*mit)->Draw(tempCam);
+        if (!(*mit)->isFired())
             br++;
 
         if (br>1)
@@ -109,9 +113,9 @@ void GT_Aircraft::Integrate(GT_Camera* tempCam, GLfloat DT_)
 
     //movement
 
-    for (int i = 0; i < missiles_.size(); i++)
+    for (auto mit = missiles_.begin(); mit != missiles_.end(); mit++)
     {
-        missiles_[i]->Integrate(tempCam, DT_);
+        (*mit)->Integrate(tempCam, DT_);
     }
 
 }

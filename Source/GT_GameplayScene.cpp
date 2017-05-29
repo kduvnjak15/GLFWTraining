@@ -1,31 +1,24 @@
 #include "GT_GameplayScene.h"
 #include "GT_Aircraft.h"
 
+#include "GT_Locator.h"
 #include <set>
 
-GT_GameplayScene::GT_GameplayScene(GT_Camera *camera_, GT_Warehouse* warehouse)
+GT_GameplayScene::GT_GameplayScene()
     :
-      GT_Scene(camera_, gameplay),
-      skybox_(new GT_Skybox()),
-      ocean_(new GT_Ocean())
+      GT_Scene(gameplay),
+      skybox_(GT_Locator::getSkybox()),
+      ocean_(GT_Locator::getOcean())
 {
 
-//    actors_.push_back(new GT_Actor(warehouse->getModel(F22)));
-//    actors_.push_back(new GT_Actor(warehouse->getModel(F18)));
+    aircrafts_.push_back(new GT_Aircraft(GT_Locator::getModel(F22), GT_Locator::getModel(AIM)));
+    aircrafts_.push_back(new GT_Aircraft(GT_Locator::getModel(F22), GT_Locator::getModel(AIM)));
+    aircrafts_.push_back(new GT_Aircraft(GT_Locator::getModel(F22), GT_Locator::getModel(AIM)));
+    aircrafts_.push_back(new GT_Aircraft(GT_Locator::getModel(F18), GT_Locator::getModel(AIM)));
+    aircrafts_.push_back(new GT_Aircraft(GT_Locator::getModel(F18), GT_Locator::getModel(AIM)));
+    aircrafts_.push_back(new GT_Aircraft(GT_Locator::getModel(F22), GT_Locator::getModel(AIM)));
 
-//    actors_.push_back(new GT_Actor(warehouse->getModel(F22)));
-//    actors_.push_back(new GT_Actor(warehouse->getModel(F18)));
-
-//    actors_.push_back(new GT_Aircraft(warehouse->getModel(F22)));
-//    actors_.push_back(new GT_Aircraft(warehouse->getModel(F22)));
-    aircrafts_.push_back(new GT_Aircraft(warehouse->getModel(F22), warehouse->getModel(AIM)));
-    aircrafts_.push_back(new GT_Aircraft(warehouse->getModel(F22), warehouse->getModel(AIM)));
-    aircrafts_.push_back(new GT_Aircraft(warehouse->getModel(F22), warehouse->getModel(AIM)));
-    aircrafts_.push_back(new GT_Aircraft(warehouse->getModel(F18), warehouse->getModel(AIM)));
-    aircrafts_.push_back(new GT_Aircraft(warehouse->getModel(F18), warehouse->getModel(AIM)));
-    aircrafts_.push_back(new GT_Aircraft(warehouse->getModel(F22), warehouse->getModel(AIM)));
-
-    fighter_= new GT_Fighter(warehouse);
+    fighter_= new GT_Fighter();
 
     nextScene_ = gameplay;
 }
@@ -82,7 +75,7 @@ void GT_GameplayScene::renderScene()
     font_->PrintLine( std::to_string(sceneCamera_->getCameraRight().y), 250.0f, 430.0f, .40f, glm::vec3(0.5, 0.8f, 0.2f));
     font_->PrintLine( std::to_string(sceneCamera_->getCameraRight().z), 250.0f, 400.0f, .40f, glm::vec3(0.5, 0.8f, 0.2f));
 
-    font_->PrintLine("GAMEPLAY", 600.0f, 400.0f, 1.0f, glm::vec3(1.0, 0.1f, 0.1f));
+//    font_->PrintLine("GAMEPLAY", 600.0f, 400.0f, 1.0f, glm::vec3(1.0, 0.1f, 0.1f));
 
     ////////////////////////   rendering phase   /////////////////////////////
 
