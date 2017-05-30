@@ -16,7 +16,7 @@ public:
     GT_Aircraft(GT_Model* aircraftModel, GT_Model* missileModel, GLuint missileCount);
     ~GT_Aircraft();
 
-    void Draw(GT_Camera *tempCam);
+    virtual void Draw(GT_Camera *tempCam);
 
     void Integrate(GT_Camera* tempCam,  GLfloat DT_);
 

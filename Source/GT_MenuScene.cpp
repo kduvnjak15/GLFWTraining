@@ -122,6 +122,7 @@ void GT_MenuScene::renderScene()
     skybox_->Draw(sceneCamera_);
     ocean_->draw(sceneCamera_);
 
+
     requisite_->Draw(sceneCamera_);
 
     ///////////////////////////////////////////////////////////////////////

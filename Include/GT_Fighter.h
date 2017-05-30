@@ -8,4 +8,7 @@ public:
 
     GT_Fighter();
 
+    void Draw(GT_Camera *tempCam);
+
+
 };
