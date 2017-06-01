@@ -6,6 +6,9 @@
 #include "GT_Skybox.h"
 #include "GT_Aircraft.h"
 #include "GT_Particle.h"
+#include "GT_Alphabet.h"
+#include "GT_Fighter.h"
+#include "GT_USSCarrier.h"
 
 class Audio
 {
@@ -48,6 +51,7 @@ public:
         particle_  = new GT_Particle();
         gameCamera_ = new GT_Camera();
         menuCamera_ = new GT_Camera();
+        fonts_      = new GT_Alphabet(menuCamera_);
 
         models_.push_back(new GT_Model("../Content/FA-22_Raptor/FA-22_Raptor.obj"));
         modelMap_.insert(std::pair<MODEL_TYPE, GT_Model*>(F22, models_[0]));
@@ -66,6 +70,10 @@ public:
         actors_.push_back(new GT_Actor(modelMap_[USS]));
         actorMap_.insert(std::pair<MODEL_TYPE, GT_Actor*>(USS, actors_[2]));
         std::cout <<" GT_Locator constructor " << std::endl;
+
+        fighter_ = new GT_Fighter();
+        ussCarrier_ = new GT_USSCarrier();
+
     }
 
     //getters
@@ -110,6 +118,20 @@ public:
         return menuCamera_;
     }
 
+    static GT_Alphabet* getFonts()
+    {
+        return fonts_;
+    }
+
+    static GT_Fighter* getFighter()
+    {
+        return fighter_;
+    }
+
+    static GT_USSCarrier* getUSSCarrier()
+    {
+        return ussCarrier_;
+    }
 
     // providers
 
@@ -144,11 +166,16 @@ private:
     static GT_Particle* particle_;
     static GT_Camera*   gameCamera_;
     static GT_Camera*   menuCamera_;
+    static GT_Alphabet* fonts_;
+
+    static GT_Fighter*  fighter_;
+    static GT_USSCarrier*   ussCarrier_;
 
     static std::vector<GT_Model*> models_;
     static std::map<MODEL_TYPE, GT_Model*> modelMap_;
     static std::map<MODEL_TYPE, GT_Actor*> actorMap_;
     static std::vector<GT_Actor*> actors_;
+
 
 };
 

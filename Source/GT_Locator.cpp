@@ -6,6 +6,10 @@ GT_Skybox*   GT_Locator::skybox_;
 GT_Particle* GT_Locator::particle_;
 GT_Camera*   GT_Locator::gameCamera_;
 GT_Camera*   GT_Locator::menuCamera_;
+GT_Alphabet* GT_Locator::fonts_;
+
+GT_Fighter*  GT_Locator::fighter_;
+GT_USSCarrier*  GT_Locator::ussCarrier_;
 
 std::vector<GT_Model*>          GT_Locator::models_;
 std::map<MODEL_TYPE, GT_Model*> GT_Locator::modelMap_;

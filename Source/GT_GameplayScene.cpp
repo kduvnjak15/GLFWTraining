@@ -1,6 +1,6 @@
 #include "GT_GameplayScene.h"
 #include "GT_Aircraft.h"
-
+#include "GT_USSCarrier.h"
 #include "GT_Locator.h"
 #include <set>
 
@@ -18,7 +18,8 @@ GT_GameplayScene::GT_GameplayScene()
     aircrafts_.push_back(new GT_Aircraft(GT_Locator::getModel(F18), GT_Locator::getModel(AIM)));
     aircrafts_.push_back(new GT_Aircraft(GT_Locator::getModel(F22), GT_Locator::getModel(AIM)));
 
-    fighter_= new GT_Fighter();
+    fighter_= GT_Locator::getFighter();
+    ussCarrier_ = GT_Locator::getUSSCarrier();
 
     nextScene_ = gameplay;
 }
@@ -64,6 +65,12 @@ void GT_GameplayScene::renderScene()
     font_->PrintLine( std::to_string(sceneCamera_->getSpeed()), 120.0f, 75.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
     font_->PrintLine("Altitude: ", 25.0f, 100.0f, .50f, glm::vec3(1.0, 0.1f, 0.1f));
     font_->PrintLine( std::to_string(sceneCamera_->getCameraPos().y), 120.0f, 100.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
+
+    font_->PrintLine("Pos", 120.0f, 380.0f, .50f, glm::vec3(1.0, 0.1f, 0.1f));
+    font_->PrintLine( std::to_string(sceneCamera_->getCameraPos().x), 20.0f, 460.0f, .40f, glm::vec3(0.5, 0.8f, 0.2f));
+    font_->PrintLine( std::to_string(sceneCamera_->getCameraPos().y), 20.0f, 430.0f, .40f, glm::vec3(0.5, 0.8f, 0.2f));
+    font_->PrintLine( std::to_string(sceneCamera_->getCameraPos().z), 20.0f, 400.0f, .40f, glm::vec3(0.5, 0.8f, 0.2f));
+
 
     font_->PrintLine("Front ", 120.0f, 380.0f, .50f, glm::vec3(1.0, 0.1f, 0.1f));
     font_->PrintLine( std::to_string(sceneCamera_->getCameraFront().x), 120.0f, 460.0f, .40f, glm::vec3(0.5, 0.8f, 0.2f));
@@ -132,7 +139,6 @@ void GT_GameplayScene::integrateScene(GLfloat deltaTime)
 
 void GT_GameplayScene::integrateAircrafts(GLfloat deltaTime)
 {
-    fighter_->setPosition(sceneCamera_->getCameraPos() + sceneCamera_->getCameraUp()*-3.0f);
     fighter_->Integrate(sceneCamera_, deltaTime);
     fighter_->setPosition(sceneCamera_->getCameraPos() + sceneCamera_->getCameraUp()*-3.0f);
 
@@ -146,6 +152,7 @@ void GT_GameplayScene::integrateAircrafts(GLfloat deltaTime)
 void GT_GameplayScene::renderAircrafts()
 {
     fighter_->Draw(sceneCamera_);
+    ussCarrier_->Draw(sceneCamera_);
 
     for (int i = 0; i < aircrafts_.size(); i++)
         aircrafts_[i]->Draw(sceneCamera_);

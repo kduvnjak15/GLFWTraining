@@ -46,7 +46,6 @@ void GT_Aircraft::Draw(GT_Camera* tempCam)
     }
 
     this->actorShader_->Use();
-
     glUniform1i(glGetUniformLocation(actorShader_->shaderProgram_, "material.diffuse"),  0);
     glUniform1i(glGetUniformLocation(actorShader_->shaderProgram_, "material.specular"), 1);
 
@@ -91,7 +90,7 @@ void GT_Aircraft::Draw(GT_Camera* tempCam)
 
         if (br>1)
             break;
-    }
+    }    
 }
 
 void GT_Aircraft::Integrate(GT_Camera* tempCam, GLfloat DT_)

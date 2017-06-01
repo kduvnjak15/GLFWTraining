@@ -113,7 +113,7 @@ public:
         glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 
         // CreateWindow
-        windowPtr_ = glfwCreateWindow(window_width, window_height, "SkyKnights", NULL, NULL);
+        windowPtr_ = glfwCreateWindow(window_width, window_height, "SkyKnightsDEMO", NULL, NULL);
         if (windowPtr_ == NULL)
         {
             std::cout<<"Failed to create GLFW window"<<std::endl;

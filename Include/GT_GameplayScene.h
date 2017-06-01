@@ -3,6 +3,7 @@
 #include "GT_Scene.h"
 
 #include "GT_Fighter.h"
+#include "GT_USSCarrier.h"
 
 
 class GT_GameplayScene : public GT_Scene
@@ -29,6 +30,7 @@ private:
     GT_Ocean* ocean_;
 
     GT_Fighter* fighter_;
+    GT_USSCarrier* ussCarrier_;
 
     std::vector<GT_Actor*> actors_;
     std::vector<GT_Aircraft*> aircrafts_;

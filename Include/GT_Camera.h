@@ -51,6 +51,11 @@ class GT_Camera
 public:
     GT_Camera(); // c-tor
 
+    void setCameraPos(glm::vec3 camPosition)    { cameraPos     = camPosition; }
+    void setCameraFront(glm::vec3 camFront)     { cameraFront   = camFront; }
+    void setCameraRight(glm::vec3 camRight)     { cameraRight   = camRight; }
+    void setCameraUp(glm::vec3 camUp)           { cameraUp      = camUp;    }
+
     glm::vec3 getCameraPos()        { return cameraPos; }
     glm::vec3 getCameraFront()      { return cameraFront; }
     glm::vec3 getCameraUp()         { return cameraUp; }

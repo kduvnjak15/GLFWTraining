@@ -23,6 +23,9 @@ public:
     void fireMissile();
 
     glm::vec3 getPosition() { return position_; }
+    glm::vec3 getFront()    { return front_; }
+    glm::vec3 getRight()    { return right_; }
+    glm::vec3 getUp()       { return up_; }
     glm::vec3 setPosition(glm::vec3 positionSetter_) { position_ = positionSetter_;}
 
     GLuint numOfMissiles_;

@@ -91,7 +91,7 @@ void GT_Skybox::Draw(GT_Camera* tempCam)
     glBindTexture(GL_TEXTURE_CUBE_MAP, this->skyboxTexID);
     glDrawArrays(GL_TRIANGLES, 0, 36);
     glBindVertexArray(0);
-    glDepthFunc(GL_LESS);
+  //  glDepthFunc(GL_LESS);
 
 
 

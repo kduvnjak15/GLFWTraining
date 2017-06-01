@@ -5,6 +5,10 @@ GT_Fighter::GT_Fighter()
     :
       GT_Aircraft(GT_Locator::getModel(F18), GT_Locator::getModel(AIM), 10)
 {
+    this->position_ = glm::vec3(170.0f, 57.0f, -32.0f);
+    this->front_    = glm::vec3(1.0f, 0.0f, 0.0f);
+    this->right_    = glm::vec3(0.0f, 0.0f, 1.0f);
+    this->up_       = glm::vec3(0.0f, 1.0f, 0.0f);
     std::cout << "GT_Fighter initialized " << std::endl;
 }
 
@@ -37,7 +41,7 @@ void GT_Fighter::Draw(GT_Camera *tempCam)
 
     glm::mat4 model = glm::mat4(1.0f);
 
-    glm::mat4 sc  = glm::scale(glm::mat4(1.0f), glm::vec3(1.0f));
+    glm::mat4 sc  = glm::scale(glm::mat4(1.0f), glm::vec3(scaleActor_));
     glm::mat4 rot = glm::rotate(glm::mat4(1.0f), (GLfloat)-3.14159/2.0f, glm::vec3(1.0f, 0.0f, 0.0f));
 
     glm::mat4 yawRot   = glm::rotate(glm::mat4(1.0f), (GLfloat) 3.14159/48.0f * tempCam->yawDelay_,   this->up_ );

@@ -1,14 +1,16 @@
 #pragma once
 
-#include "GT_Enemy.h"
+#include "GT_Aircraft.h"
 
-class GT_USSCarrier : public GT_Enemy
+
+class GT_USSCarrier : public GT_Aircraft
 {
 public:
-    GT_USSCarrier(const char *modelPath);
+    GT_USSCarrier();
 
     void Draw(GT_Camera *tempCam);
 
 private:
+
 
 };

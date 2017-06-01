@@ -2,7 +2,7 @@
 #include "GT_Radar.h"
 
 #include "GT_Raptor.h"
-#include "GT_USSCarrier.h"
+//#include "GT_USSCarrier.h"
 #include "GT_Rocket.h"
 
 #include "glm/gtx/vector_angle.hpp"
@@ -58,14 +58,14 @@ void GT_Radar::scanRadar(GT_Camera* tempCam)
             else
                 coordinates_.push_back(glm::vec3(angle, radius, -2));
         }
-        else if (dynamic_cast<GT_USSCarrier*> (radarActorList_[i]))
-        {
-            GT_USSCarrier* dinCarrier = dynamic_cast<GT_USSCarrier*> (radarActorList_[i]);
-            if (!dinCarrier->isHit())
-                coordinates_.push_back(glm::vec3(angle, radius, 3));
-            else
-                coordinates_.push_back(glm::vec3(angle, radius, -3));
-        }
+//        else if (dynamic_cast<GT_USSCarrier*> (radarActorList_[i]))
+//        {
+//            GT_USSCarrier* dinCarrier = dynamic_cast<GT_USSCarrier*> (radarActorList_[i]);
+//            if (!dinCarrier->isHit())
+//                coordinates_.push_back(glm::vec3(angle, radius, 3));
+//            else
+//                coordinates_.push_back(glm::vec3(angle, radius, -3));
+//        }
     }
 }
 

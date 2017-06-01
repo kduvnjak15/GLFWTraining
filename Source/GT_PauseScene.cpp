@@ -16,7 +16,7 @@ GT_PauseScene::GT_PauseScene()
 
     nextScene_ = pauseScene;
 
-    requisite_ = new GT_Actor(GT_Locator::getModel(USS));
+    requisite_ = new GT_Aircraft(GT_Locator::getModel(F22), GT_Locator::getModel(AIM));
     std::cout << " GT_PauseScene initialized " << std::endl;
 
 }
@@ -73,14 +73,14 @@ void GT_PauseScene::renderScene()
     font_->PrintLine("Altitude: ", 25.0f, 100.0f, .50f, glm::vec3(1.0, 0.1f, 0.1f));
     font_->PrintLine( std::to_string(sceneCamera_->getCameraPos().y), 120.0f, 100.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
 
-    font_->PrintLine("PAUSE ", 600.0f, 400.0f, 1.0f, glm::vec3(1.0, 0.1f, 0.1f));
+//    font_->PrintLine("PAUSE ", 600.0f, 400.0f, 1.0f, glm::vec3(1.0, 0.1f, 0.1f));
 
 
     ////////////////////////   rendering phase   /////////////////////////////
 
     skybox_->Draw(sceneCamera_);
     ocean_->draw(sceneCamera_);
-//    requisite_->Draw(sceneCamera_);
+    requisite_->Draw(sceneCamera_);
 
 }
 
@@ -92,6 +92,7 @@ void GT_PauseScene::integrateScene(GLfloat deltaTime)
     else
         sceneCamera_->keyboardHandler(YAW_R, deltaTime);
 
+    requisite_->setPosition(sceneCamera_->getCameraPos() + sceneCamera_->getCameraFront()*200.0f);
 }
 
 

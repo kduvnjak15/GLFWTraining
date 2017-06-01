@@ -17,10 +17,13 @@ GT_Scene::GT_Scene(sceneType sceneEnum)
 
     if (sceneEnum == gameplay)
         sceneCamera_ = GT_Locator::getGameCamera();
-    if (sceneEnum == pauseScene || sceneEnum == menuScene)
+    else if (sceneEnum == pauseScene || sceneEnum == menuScene)
+    {
+        std::cout << "GT_MENUSCENE" << std::endl;
         sceneCamera_ = GT_Locator::getMenuCamera();
+    }
 
-    font_ = new GT_Alphabet(sceneCamera_);
+    font_ = GT_Locator::getFonts();
 
     std::cout << "Scene initialized " << this << std::endl;
 }
