@@ -4,6 +4,8 @@
 
 #include "GT_Locator.h"
 
+#include "GT_Enemy.h"
+
 GT_Missile::GT_Missile(GT_Model *missileModel, void* ownerPtr, GLuint missileIndex)
     :
       GT_Actor(missileModel),
@@ -105,10 +107,12 @@ void GT_Missile::Draw(GT_Camera *tempCam)
 
 }
 
-void GT_Missile::FIRE()
+void GT_Missile::FIRE(void* enemyPtr)
 {
     fired_ = true;
     birthday_ = glfwGetTime();
+
+    target_ = enemyPtr;
 }
 
 
@@ -134,7 +138,6 @@ void GT_Missile::Integrate(GT_Camera* tempCam, GLfloat DX_)
             dead_ = true;
             return;
         }
-
 
         position_ += this->front_ * DX_ * MISSILE_SPEED;
         contrailRate_++;

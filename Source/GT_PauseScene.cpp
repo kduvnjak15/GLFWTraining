@@ -6,19 +6,20 @@
 
 GT_PauseScene::GT_PauseScene()
     :
-      GT_Scene(pauseScene),
+      GT_Scene(menuScene),
       currButton_(0),
       skybox_(GT_Locator::getSkybox()),
       ocean_(GT_Locator::getOcean())
 {
-    buttons_.push_back("Resume Game");
-    buttons_.push_back("Leave Game");
+    buttons_.push_back("RESUME GAME");
+    buttons_.push_back("LEAVE GAME");
+
+    carrier_ = GT_Locator::getUSSCarrier();
+    fighter_ = GT_Locator::getFighter();
 
     nextScene_ = pauseScene;
 
-    requisite_ = new GT_Aircraft(GT_Locator::getModel(F22), GT_Locator::getModel(AIM));
     std::cout << " GT_PauseScene initialized " << std::endl;
-
 }
 
 void GT_PauseScene::checkKeyboardInput()
@@ -26,9 +27,9 @@ void GT_PauseScene::checkKeyboardInput()
     if (keys_ != nullptr)
     {
         if (keys_[GLFW_KEY_Q])
-            sceneCamera_->keyboardHandler(YAW_L, deltaTime_);
+            camTimer_-=3.0f;
         if (keys_[GLFW_KEY_E])
-            sceneCamera_->keyboardHandler(YAW_R, deltaTime_*2);
+            camTimer_+=1.0f;
     }
 }
 
@@ -75,24 +76,26 @@ void GT_PauseScene::renderScene()
 
 //    font_->PrintLine("PAUSE ", 600.0f, 400.0f, 1.0f, glm::vec3(1.0, 0.1f, 0.1f));
 
-
     ////////////////////////   rendering phase   /////////////////////////////
 
     skybox_->Draw(sceneCamera_);
     ocean_->draw(sceneCamera_);
-    requisite_->Draw(sceneCamera_);
 
+    fighter_->Draw(sceneCamera_);
+    carrier_->Draw(sceneCamera_);
+
+}
+
+void GT_PauseScene::animateCam()
+{
+    sceneCamera_->setCameraPos(fighter_->getPosition() +  glm::vec3(sin(camTimer_*SPINFACTOR_), 0.0f, cos(camTimer_*SPINFACTOR_))*10.0f);
+    sceneCamera_->setCameraFront(glm::normalize(fighter_->getPosition() - sceneCamera_->getCameraPos()));
 }
 
 void GT_PauseScene::integrateScene(GLfloat deltaTime)
 {
-    deltaTime *= SPINFACTOR_;
-    if (sin(glfwGetTime()*0.01)> 0)
-        sceneCamera_->keyboardHandler(YAW_L, deltaTime);
-    else
-        sceneCamera_->keyboardHandler(YAW_R, deltaTime);
-
-    requisite_->setPosition(sceneCamera_->getCameraPos() + sceneCamera_->getCameraFront()*200.0f);
+    camTimer_ += 1.0f;
+    animateCam();
 }
 
 
@@ -100,7 +103,7 @@ void GT_PauseScene::sceneKeyboardHandler(bool* keys, int key, int scancode, int 
 {
     keys_ = keys;
 
-    if (keys[GLFW_KEY_LEFT]  && action == GLFW_PRESS)
+    if (keys[GLFW_KEY_LEFT] || keys[GLFW_KEY_DOWN] && action == GLFW_PRESS)
     {
         if (currButton_ == 0)
             currButton_ = buttons_.size() - 1;
@@ -110,7 +113,7 @@ void GT_PauseScene::sceneKeyboardHandler(bool* keys, int key, int scancode, int 
         }
     }
 
-    if (keys[GLFW_KEY_RIGHT] && action == GLFW_PRESS)
+    if (keys[GLFW_KEY_RIGHT] || keys[GLFW_KEY_DOWN] && action == GLFW_PRESS)
     {
         currButton_ = ++currButton_ % buttons_.size();
     }

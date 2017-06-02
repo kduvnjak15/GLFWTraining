@@ -1,39 +1,11 @@
 #pragma once
 
+#include "GT_Aircraft.h"
 
-#include "GT_Shader.h"
-#include "GT_Model.h"
-
-#include "GT_Camera.h"
-
-class GT_Enemy : public GT_Model
+class GT_Enemy : public GT_Aircraft
 {
 public:
 
-    GT_Enemy(const char* modelPath);
-    ~GT_Enemy();
-
-    bool isHit();
-    void explode();
-
-    GT_Shader* getShader() { return enemyShader_; }
-
-    GLuint hitLoc_;
-    GLuint timeLoc_;
-
-    void falloutMove(); // after hit
-
-    virtual void Draw(GT_Camera* tempCam) = 0;
-
-protected:
-    GT_Shader* enemyShader_;
-    bool gotHit_;
-    GLfloat hitTime_;
-    GLfloat explosionTime() { return glfwGetTime() - hitTime_ ;}
-
-
-private:
-    void defineEnemyShader();
-
+    GT_Enemy();
 
 };

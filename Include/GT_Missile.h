@@ -19,7 +19,7 @@ public:
     void Draw(GT_Camera* tempCam);
     void Integrate(GT_Camera* tempCam, GLfloat DX_);
 
-    void FIRE();
+    void FIRE(void *enemyPtr );
     bool isFired() { return fired_; }
     GLboolean isDead() { return dead_;}
 
@@ -41,4 +41,5 @@ private:
 
     GT_Particle* particle_;
 
+    void* target_;
 };

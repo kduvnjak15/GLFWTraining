@@ -111,13 +111,12 @@ void GT_Aircraft::Integrate(GT_Camera* tempCam, GLfloat DT_)
 
 void GT_Aircraft::fireMissile()
 {
-
     for (int i = 0; i < missiles_.size(); i++)
         if (missiles_[i]->isFired())
             continue;
         else
         {
-            missiles_[i]->FIRE();
+            missiles_[i]->FIRE(nullptr);
             break;
         }
 }

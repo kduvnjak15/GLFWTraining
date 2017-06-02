@@ -2,7 +2,7 @@
 
 #include "GT_Scene.h"
 
-#include "GT_Warehouse.h"
+#include "GT_Locator.h"
 
 class GT_PauseScene : public GT_Scene
 {
@@ -19,12 +19,19 @@ public:
 
 private:
 
+    void animateCam();
+
     std::vector<const char* > buttons_;
     int currButton_;
-    GT_Skybox* skybox_;
-    GT_Ocean* ocean_;
-    GT_Aircraft* requisite_;
 
-    const GLfloat SPINFACTOR_ = 0.5f;
+    GT_Skybox*      skybox_;
+    GT_Ocean*       ocean_;
+    GT_USSCarrier*  carrier_;
+    GT_Fighter*     fighter_;
+
+    glm::vec3 menuCamFront_;
+    GLfloat camTimer_;
+
+    const GLfloat SPINFACTOR_ = 0.01f;
 
 };

@@ -1,10 +1,5 @@
 
 #include "GT_Radar.h"
-
-#include "GT_Raptor.h"
-//#include "GT_USSCarrier.h"
-#include "GT_Rocket.h"
-
 #include "glm/gtx/vector_angle.hpp"
 #include "glm/trigonometric.hpp"
 
@@ -26,47 +21,47 @@ GT_Radar::GT_Radar()
 
 void GT_Radar::scanRadar(GT_Camera* tempCam)
 {
-    coordinates_.clear();
-    glm::vec3 front = tempCam->getCameraFront();
-    for (int i = 1; i < radarActorList_.size(); i++)
-    {
-        glm::vec3 dir = radarActorList_[i]->modelPos - tempCam->getCameraPos();
-        front.y = 0.0;
-        dir.y   = 0.0;
+//    coordinates_.clear();
+//    glm::vec3 front = tempCam->getCameraFront();
+//    for (int i = 1; i < radarActorList_.size(); i++)
+//    {
+//        glm::vec3 dir = radarActorList_[i]->modelPos - tempCam->getCameraPos();
+//        front.y = 0.0;
+//        dir.y   = 0.0;
 
-        GLfloat radius = glm::length(dir) / 10000.0f;
-        if (radius > 0.13)
-            radius = 0.13;
+//        GLfloat radius = glm::length(dir) / 10000.0f;
+//        if (radius > 0.13)
+//            radius = 0.13;
 
-        dir   = glm::normalize(dir);
-        front = glm::normalize(front);
-        GLfloat angle = glm::orientedAngle(front, dir, glm::vec3(0.0f, 1.0f, 0.0f));
+//        dir   = glm::normalize(dir);
+//        front = glm::normalize(front);
+//        GLfloat angle = glm::orientedAngle(front, dir, glm::vec3(0.0f, 1.0f, 0.0f));
 
-        if (dynamic_cast<GT_Rocket*> (radarActorList_[i]) )
-        {
-            GT_Rocket* dinRocket = dynamic_cast<GT_Rocket*> (radarActorList_[i]);
-            if (dinRocket->isFired() && !dinRocket->dead_)
-                coordinates_.push_back(glm::vec3(angle, radius, 1));
-            else
-                coordinates_.push_back(glm::vec3(angle, radius, -1));
-        }
-        else if (dynamic_cast<GT_Raptor*> (radarActorList_[i]))
-        {
-            GT_Raptor* dinRaptor = dynamic_cast<GT_Raptor*> (radarActorList_[i]);
-            if (!dinRaptor->isHit())
-                coordinates_.push_back(glm::vec3(angle, radius, 2));
-            else
-                coordinates_.push_back(glm::vec3(angle, radius, -2));
-        }
-//        else if (dynamic_cast<GT_USSCarrier*> (radarActorList_[i]))
+//        if (dynamic_cast<GT_Rocket*> (radarActorList_[i]) )
 //        {
-//            GT_USSCarrier* dinCarrier = dynamic_cast<GT_USSCarrier*> (radarActorList_[i]);
-//            if (!dinCarrier->isHit())
-//                coordinates_.push_back(glm::vec3(angle, radius, 3));
+//            GT_Rocket* dinRocket = dynamic_cast<GT_Rocket*> (radarActorList_[i]);
+//            if (dinRocket->isFired() && !dinRocket->dead_)
+//                coordinates_.push_back(glm::vec3(angle, radius, 1));
 //            else
-//                coordinates_.push_back(glm::vec3(angle, radius, -3));
+//                coordinates_.push_back(glm::vec3(angle, radius, -1));
 //        }
-    }
+//        else if (dynamic_cast<GT_Raptor*> (radarActorList_[i]))
+//        {
+//            GT_Raptor* dinRaptor = dynamic_cast<GT_Raptor*> (radarActorList_[i]);
+//            if (!dinRaptor->isHit())
+//                coordinates_.push_back(glm::vec3(angle, radius, 2));
+//            else
+//                coordinates_.push_back(glm::vec3(angle, radius, -2));
+//        }
+////        else if (dynamic_cast<GT_USSCarrier*> (radarActorList_[i]))
+////        {
+////            GT_USSCarrier* dinCarrier = dynamic_cast<GT_USSCarrier*> (radarActorList_[i]);
+////            if (!dinCarrier->isHit())
+////                coordinates_.push_back(glm::vec3(angle, radius, 3));
+////            else
+////                coordinates_.push_back(glm::vec3(angle, radius, -3));
+////        }
+//    }
 }
 
 void GT_Radar::draw(GT_Camera *tempCam)

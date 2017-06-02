@@ -1,22 +1,16 @@
 #include "GT_GameplayScene.h"
-#include "GT_Aircraft.h"
-#include "GT_USSCarrier.h"
-#include "GT_Locator.h"
+
 #include <set>
 
 GT_GameplayScene::GT_GameplayScene()
     :
       GT_Scene(gameplay),
       skybox_(GT_Locator::getSkybox()),
-      ocean_(GT_Locator::getOcean())
+      ocean_(GT_Locator::getOcean()),
+      level_(0)
 {
 
-    aircrafts_.push_back(new GT_Aircraft(GT_Locator::getModel(F22), GT_Locator::getModel(AIM)));
-    aircrafts_.push_back(new GT_Aircraft(GT_Locator::getModel(F22), GT_Locator::getModel(AIM)));
-    aircrafts_.push_back(new GT_Aircraft(GT_Locator::getModel(F22), GT_Locator::getModel(AIM)));
-    aircrafts_.push_back(new GT_Aircraft(GT_Locator::getModel(F18), GT_Locator::getModel(AIM)));
-    aircrafts_.push_back(new GT_Aircraft(GT_Locator::getModel(F18), GT_Locator::getModel(AIM)));
-    aircrafts_.push_back(new GT_Aircraft(GT_Locator::getModel(F22), GT_Locator::getModel(AIM)));
+    enemies_.push_back(new GT_Enemy());
 
     fighter_= GT_Locator::getFighter();
     ussCarrier_ = GT_Locator::getUSSCarrier();
@@ -127,26 +121,44 @@ void GT_GameplayScene::sceneKeyboardHandler(bool* keys, int key, int scancode, i
 
 }
 
+void GT_GameplayScene::checkCrosshair()
+{
+    GT_Enemy* locked_ = nullptr;
+    glm::vec3 dir;
+    for (auto mit = enemies_.begin(); mit != enemies_.end(); mit++)
+    {
+        dir = (*mit)->getPosition() - fighter_->getPosition() ;
+        dir = glm::normalize(dir);
+
+        if ( glm::dot(dir, sceneCamera_->getCameraFront()) > 0.99 )
+               locked_ = *mit;
+    }
+
+    std::cout << dir.x << ", "<< dir.y << ", "<< dir.z << std::endl;
+
+    fighter_->lock(locked_);
+}
+
 void GT_GameplayScene::integrateScene(GLfloat deltaTime)
 {
-
     // Fly movement
     sceneCamera_->keyboardHandler(FORWARD, deltaTime);
 
     integrateAircrafts(deltaTime);
-
 }
 
 void GT_GameplayScene::integrateAircrafts(GLfloat deltaTime)
 {
-    fighter_->Integrate(sceneCamera_, deltaTime);
     fighter_->setPosition(sceneCamera_->getCameraPos() + sceneCamera_->getCameraUp()*-3.0f);
+    fighter_->Integrate(sceneCamera_, deltaTime);
 
-    for (int i = 0; i < aircrafts_.size(); i++)
+    for (int i = 0; i < enemies_.size(); i++)
     {
-        aircrafts_[i]->Integrate(sceneCamera_, deltaTime);
-        aircrafts_[i]->setPosition(glm::vec3(100.0f * i, 400.0f, 0.0f));
+        enemies_[i]->Integrate(sceneCamera_, deltaTime);
+        enemies_[i]->setPosition(glm::vec3(100.0f * i, 400.0f, 0.0f));
     }
+
+    checkCrosshair();
 }
 
 void GT_GameplayScene::renderAircrafts()
@@ -154,13 +166,13 @@ void GT_GameplayScene::renderAircrafts()
     fighter_->Draw(sceneCamera_);
     ussCarrier_->Draw(sceneCamera_);
 
-    for (int i = 0; i < aircrafts_.size(); i++)
-        aircrafts_[i]->Draw(sceneCamera_);
+    for (int i = 0; i < enemies_.size(); i++)
+        enemies_[i]->Draw(sceneCamera_);
 }
 
 void GT_GameplayScene::missileFIRE()
 {
-    for( auto it = aircrafts_.begin(); it != aircrafts_.end(); it++)
+    for( auto it = enemies_.begin(); it != enemies_.end(); it++)
     {
         (*it)->fireMissile();
     }

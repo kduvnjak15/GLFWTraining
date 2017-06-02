@@ -1,10 +1,7 @@
 #pragma once
 
 #include "GT_Scene.h"
-
-#include "GT_Fighter.h"
-#include "GT_USSCarrier.h"
-
+#include "GT_Locator.h"
 
 class GT_GameplayScene : public GT_Scene
 {
@@ -19,12 +16,16 @@ public:
 
 private:
 
+    void checkCrosshair();
+
     void integrateScene(GLfloat deltaTime);
 
     void integrateAircrafts(GLfloat deltaTime);
     void renderAircrafts();
 
     void missileFIRE();
+
+    GLuint level_;
 
     GT_Skybox* skybox_;
     GT_Ocean* ocean_;
@@ -33,7 +34,7 @@ private:
     GT_USSCarrier* ussCarrier_;
 
     std::vector<GT_Actor*> actors_;
-    std::vector<GT_Aircraft*> aircrafts_;
+    std::vector<GT_Enemy*> enemies_;
 
 };
 

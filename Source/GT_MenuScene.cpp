@@ -7,6 +7,7 @@ GT_MenuScene::GT_MenuScene()
     :
       GT_Scene(menuScene),
       currButton_(0),
+      camTimer_(0.0f),
       skybox_(GT_Locator::getSkybox()),
       ocean_(GT_Locator::getOcean()),
       menuCamFront_(glm::vec3(0.0f, 0.0f, 1.0f)),
@@ -25,6 +26,16 @@ GT_MenuScene::GT_MenuScene()
     std::cout << " GT_MenuScene initialized " << std::endl;
 }
 
+void GT_MenuScene::checkKeyboardInput()
+{
+    if (keys_ != nullptr)
+    {
+        if (keys_[GLFW_KEY_Q])
+            camTimer_-=3.0f;
+        if (keys_[GLFW_KEY_E])
+            camTimer_+=1.0f;
+    }
+}
 
 void GT_MenuScene::sceneKeyboardHandler(bool* keys, int key, int scancode, int action, int mode)
 {
@@ -41,7 +52,7 @@ void GT_MenuScene::sceneKeyboardHandler(bool* keys, int key, int scancode, int a
         }
     }
 
-    if (keys[GLFW_KEY_RIGHT] || keys[GLFW_KEY_DOWN]&& action == GLFW_PRESS)
+    if (keys[GLFW_KEY_RIGHT] || keys[GLFW_KEY_DOWN] && action == GLFW_PRESS)
     {
         currButton_ = ++currButton_ % buttons_.size();
     }
@@ -51,22 +62,8 @@ void GT_MenuScene::sceneKeyboardHandler(bool* keys, int key, int scancode, int a
         if (currButton_ == 0)
         {
             startAnimateGameplay_ = true;
-
-            if (startAnimateGameplay_)
-                if( stopAnimateGameplay_)
-                {
-                    nextScene_ = gameplay;
-                    GT_Locator::getGameCamera()->setCameraPos(fighter_->getPosition());
-                    GT_Locator::getGameCamera()->setCameraFront(fighter_->getFront());
-                    GT_Locator::getGameCamera()->setCameraRight(fighter_->getRight());
-                    GT_Locator::getGameCamera()->setCameraUp(fighter_->getUp());
-
-                }
-
-                else
-                    nextScene_ = menuScene;
-            else
-                nextScene_ = menuScene;
+            if (stopAnimateGameplay_)
+                nextScene_ = gameplay;
         }
 
         if (currButton_ == 1)
@@ -76,41 +73,38 @@ void GT_MenuScene::sceneKeyboardHandler(bool* keys, int key, int scancode, int a
     }
 }
 
-void GT_MenuScene::checkKeyboardInput()
+
+void GT_MenuScene::initGameplayScene()
 {
-    return;
-    if (keys_ != nullptr)
-    {
-        if (keys_[GLFW_KEY_Q])
-            sceneCamera_->keyboardHandler(YAW_L, deltaTime_);
-        if (keys_[GLFW_KEY_E])
-            sceneCamera_->keyboardHandler(YAW_R, deltaTime_*2);
-        if (keys_[GLFW_KEY_W])
-            sceneCamera_->keyboardHandler(PITCH_D, deltaTime_);
-        if (keys_[GLFW_KEY_S])
-            sceneCamera_->keyboardHandler(PITCH_U, deltaTime_);
-    }
+    nextScene_ = gameplay;
+    GT_Locator::getGameCamera()->setCameraPos(fighter_->getPosition());
+    GT_Locator::getGameCamera()->setCameraFront(fighter_->getFront());
+    GT_Locator::getGameCamera()->setCameraRight(fighter_->getRight());
+    GT_Locator::getGameCamera()->setCameraUp(fighter_->getUp());
 }
 
 void GT_MenuScene::animateCam()
 {
-    sceneCamera_->setCameraPos(fighter_->getPosition() +  glm::vec3(sin(glfwGetTime()*SPINFACTOR_), 0.0f, cos(glfwGetTime()*SPINFACTOR_))*10.0f);
+    sceneCamera_->setCameraPos(fighter_->getPosition() +  glm::vec3(sin(camTimer_*SPINFACTOR_), 0.0f, cos(camTimer_*SPINFACTOR_))*10.0f);
     sceneCamera_->setCameraFront(glm::normalize(fighter_->getPosition() - sceneCamera_->getCameraPos()));
 }
 
 void GT_MenuScene::animateGameplay()
 {
-    fighter_->setPosition(fighter_->getPosition() + fighter_->getFront()*1.2f);
+    fighter_->setPosition(fighter_->getPosition() + fighter_->getFront()*5.2f);
 
-    std::cout << fighter_->getPosition().x<<std::endl;
     if (fighter_->getPosition().x > 400.0f)
+    {
+        startAnimateGameplay_ = false;
         stopAnimateGameplay_ = true;
+        initGameplayScene();
+    }
 }
 
 void GT_MenuScene::integrateScene(GLfloat deltaTime)
 {
-    deltaTime *= SPINFACTOR_;
-
+    //deltaTime *= SPINFACTOR_;
+    camTimer_ += 1.0f;
     animateCam();
     if (startAnimateGameplay_)
         animateGameplay();

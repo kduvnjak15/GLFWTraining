@@ -5,13 +5,12 @@ GT_Fighter::GT_Fighter()
     :
       GT_Aircraft(GT_Locator::getModel(F18), GT_Locator::getModel(AIM), 10)
 {
-    this->position_ = glm::vec3(170.0f, 57.0f, -32.0f);
-    this->front_    = glm::vec3(1.0f, 0.0f, 0.0f);
+    this->position_ = glm::vec3(170.0f, 58.0f, -32.0f);
+    this->front_    = glm::vec3(0.98f, 0.0f, 0.07f);
     this->right_    = glm::vec3(0.0f, 0.0f, 1.0f);
     this->up_       = glm::vec3(0.0f, 1.0f, 0.0f);
     std::cout << "GT_Fighter initialized " << std::endl;
 }
-
 
 void GT_Fighter::Draw(GT_Camera *tempCam)
 {
@@ -74,4 +73,8 @@ void GT_Fighter::Draw(GT_Camera *tempCam)
         if (br>1)
             break;
     }
+
+    if (target_)
+        GT_Locator::getFonts()->PrintLine("LOCKED \n Press Enter to FIRE! ", window_width * 0.7f, window_height* 0.1f, 0.5, glm::vec3(1.0f, 0.0f, 0.0f) );
+
 }

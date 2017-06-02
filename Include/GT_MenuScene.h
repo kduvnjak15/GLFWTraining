@@ -2,12 +2,10 @@
 
 #include "GT_Scene.h"
 #include "GT_Locator.h"
-#include "GT_USSCarrier.h"
 
 class GT_MenuScene : public GT_Scene
 {
-    public:
-
+public:
     GT_MenuScene();
 
     void renderScene();
@@ -18,11 +16,12 @@ class GT_MenuScene : public GT_Scene
 
     void integrateScene(GLfloat deltaTime);
 
-
 private:
 
     void animateCam();
     void animateGameplay();
+    void initGameplayScene();
+
 
     std::vector<const char* > buttons_;
     int currButton_;
@@ -33,8 +32,9 @@ private:
     GT_Fighter*     fighter_;
 
     glm::vec3 menuCamFront_;
+    GLfloat camTimer_;
 
-    const GLfloat SPINFACTOR_ = 0.8f;
+    const GLfloat SPINFACTOR_ = 0.01f;
     bool startAnimateGameplay_;
     bool stopAnimateGameplay_;
 };
