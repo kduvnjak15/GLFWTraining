@@ -6,13 +6,10 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
-#include "GT_Camera.h"
-#include "GT_Model.h"
-#include "GT_Aircraft.h"
+#include "GT_Locator.h"
 #include "GT_MenuScene.h"
 #include "GT_GameplayScene.h"
 #include "GT_PauseScene.h"
-#include "GT_Locator.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -23,13 +20,6 @@
 bool keys[1024];
 bool firstMouse = true;
 
-GLfloat runTime = 0.0f;
-GLfloat fps = 60.0f;
-
-GLfloat currentFrame = 0.0f;
-GLfloat deltaTime = 0.0f;
-GLfloat lastFrame = 0.0f;
-
 GLfloat lastX = window_width/2, lastY = window_height/2;
 
 class initialCallbacks
@@ -37,7 +27,6 @@ class initialCallbacks
 public:
     virtual void KeyboardCallback(GLFWwindow* window, int key, int scancode, int action, int mode) = 0;
     virtual void MouseCallback(GLFWwindow* window, double xpos, double ypos) = 0;
-    virtual void leaveGame() = 0;
 };
 
 initialCallbacks* gamePointer = NULL;
@@ -54,46 +43,11 @@ static void MouseCB(GLFWwindow* window, double xpos, double ypos)
     gamePointer->MouseCallback(window, xpos, ypos);
 }
 
-void quitGame()
-{
-    gamePointer->leaveGame();
-}
-
-static void glerror_output(GLenum source, GLenum type, GLuint eid, GLenum severity, GLsizei length, const char* message, void* ge)
-{
-    const char* typestr = (
-        (type == GL_DEBUG_TYPE_ERROR) ? "ERROR" : (
-        (type == GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR) ? "DEPRECATED" : (
-        (type == GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR) ? "UNDEFINED" : (
-        (type == GL_DEBUG_TYPE_PORTABILITY) ? "PORTABILITY" : (
-        (type == GL_DEBUG_TYPE_PERFORMANCE) ? "PERFORMANCE" : (
-        (type == GL_DEBUG_TYPE_OTHER) ? "OTHER" : (
-        (type == GL_DEBUG_TYPE_MARKER) ? "MARKER" : (
-        "UNKNOWN"
-    ))))))));
-    printf("GL %s from %04x, TYPE=%04x, ID=%04x, SEVERITY=%d, msg=%s", typestr, source, type, eid, severity, message);
-    if(message[length-1]!='\n') printf("\n");
-
-//    // nvidia performance warning when using glClear
-//    if(type==GL_DEBUG_TYPE_PERFORMANCE && eid==0x20092 && std::cout<<message <<" Shader is going to be recompiled because the shader key based on GL state mismatches"<<std::endl;
-//    return;
-
-//    // funky nvidia error when using nsight with quadro fx 580
-//    if(type==GL_DEBUG_TYPE_ERROR && eid==0x0500 &&  std::cout<< "GL_IMAGE_FORMAT_COMPATIBILITY_TYPE operation is invalid because a required extension (ARB_shader_image_load_store) is not supported"<<std::endl;)
-//    return;
-
-//    if(type != GL_DEBUG_TYPE_OTHER)
-//    {	eh_logf(ge, "GLDEBUG %s from %04x, TYPE=%04x, ID=%04x, SEVERITY=%d, msg=%s\n", typestr, source, type, eid, severity, message);
-//        DEBUG_BREAKPOINT();
-//    }
-
-}
 
 class GAME : public initialCallbacks
 {
 public:
-    GAME() : s_(0), rotate_(0), aimed_(false), crashTime_(0.0), fly_(true), currLevel_(0), levelPassed_(-1.0f)
-
+    GAME() : s_(0), crashTime_(0.0), fly_(true)
     {
         gamePointer = this;
         std::cout<<"GLFWTraining GAME class "<<std::endl;
@@ -140,6 +94,19 @@ public:
         return true;
     }
 
+    void loadGame()
+    {
+        GT_Locator_ = new GT_Locator();
+
+        std::cout << "Loading scenes "<< std::endl;
+
+        scenes_.push_back(new GT_MenuScene());
+        scenes_.push_back(new GT_GameplayScene());
+        scenes_.push_back(new GT_PauseScene());
+        curScene_ = scenes_[0];
+
+    }
+
     bool Run()
     {
         glfwSwapInterval(1);
@@ -152,10 +119,6 @@ public:
             ///////////////////////////////////////////////////////
 
             glfwPollEvents();
-
-            //////////////////    game rules          /////////////
-
-            //////////////////    camera movement    ///////////////
 
             /////////////////////    rendering    //////////////////
 
@@ -192,127 +155,12 @@ public:
 
             ////////////////////////////////////////////////////////
 
-            if (crashTime_  == 0.0f)
-            {
-                glfwSwapBuffers(windowPtr_);
-            }
-            else if (glfwGetTime() - crashTime_ > 2.0f)
-            {
-                handleCrash();
-            }
-
-
+            glfwSwapBuffers(windowPtr_);
         }
 
         glfwTerminate();
         return true;
     }
-
-    void leaveGame()
-    {
-        glfwWindowShouldClose(windowPtr_);
-    }
-
-
-//    void renderProjectiles()
-//    {
-//        glm::mat4 projection = glm::perspective(ZOOM, (window_width*1.0f)/window_height, 0.1f, horizon);
-
-//        for (int i = 0; i < rockets_.size(); i++)
-//        {
-
-//            missile_ = rockets_[i]; // Missile 0
-//            if (missile_->dead_)
-//                continue;
-
-//            glm::mat4 model = glm::mat4(1.0f);
-//            if (missile_->isFired())
-//            {
-//                glm::mat4 tran1  = glm::translate(model, missile_->modelPos);
-//                glm::mat4 tran2  = glm::translate(glm::mat4(1.0f),  missile_->wingSlotOffset);
-//                glm::mat4 align = glm::lookAt(glm::vec3(0.0f), camera_->getCameraFront(), camera_->getCameraUp());
-//                glm::mat4 rot   = glm::rotate(glm::mat4(1.0f), (GLfloat)-3.14159/2.0f, glm::vec3(0.0f, 1.0f, 0.0f));
-//                glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.3f));
-
-//                align = glm::inverse(align);
-
-//                tran2 = align * tran2;
-//                model = tran1 * tran2 * rot * scale;
-
-//            }
-//            else
-//            {
-//                missile_->modelPos = fighter_->modelPos ;
-//                glm::mat4 tran1  = glm::translate(model, fighter_->modelPos);
-//                glm::mat4 tran2  = glm::translate(glm::mat4(1.0f),  missile_->wingSlotOffset);
-//                glm::mat4 align = glm::lookAt(glm::vec3(0.0f), camera_->getCameraFront(), camera_->getCameraUp());
-//                glm::mat4 rot   = glm::rotate(glm::mat4(1.0f), (GLfloat)-3.14159/2.0f, glm::vec3(0.0f, 1.0f, 0.0f));
-//                glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.3f));
-
-//                align = glm::inverse(align);
-//                tran2 = align * tran2;
-//                model = tran1 * tran2 * rot * scale;
-
-//            }
-
-//            glm::mat4 view = camera_->GetViewMatrix();
-
-//                particle_->primitiveShader_->Use();
-
-//                const GLfloat interpolateBias = 10;
-//                std::vector<contrail> container_ = missile_->getParticles();
-//                for (int i = 1; i < container_.size(); i++)
-//                {
-//                    if (container_[i].birthday_ - glfwGetTime() < -5 )
-//                        continue;
-
-//                    for (int j = 0; j< interpolateBias; j++)
-//                    {
-//                        model = glm::mat4(1.0f);
-//                        glm::vec3 tempParticle = (container_[i].position_ - container_[i-1].position_)/interpolateBias;
-
-//                        glm::mat4 tran1  = glm::translate(model, container_[i].position_+tempParticle*((GLfloat)j));
-//                        glm::mat4 tran2  = glm::translate(glm::mat4(1.0f),  missile_->wingSlotOffset);
-//                        glm::mat4 align = glm::lookAt(glm::vec3(0.0f), camera_->getCameraFront(), camera_->getCameraUp());
-//                        glm::mat4 rot   = glm::rotate(glm::mat4(1.0f), (GLfloat)-3.14159/2.0f, glm::vec3(1.0f, 0.0f, 0.0f));
-//                        glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 0.5f, 1.0f));
-
-//                        align = glm::inverse(align);
-//                        tran2 = align * tran2;
-//                        model = tran1 * tran2 * rot * scale;
-
-
-//                        particle_->draw();
-
-//                    }
-//                }
-
-//            }
-
-//        }
-
-
-    void handleCrash()
-    {
-        glfwWindowShouldClose(windowPtr_);
-
-        glfwTerminate();
-    }
-
-    void loadGame()
-    {
-        GT_Locator_ = new GT_Locator();
-
-        std::cout << "Loading scenes "<< std::endl;
-
-        scenes_.push_back(new GT_MenuScene());
-        scenes_.push_back(new GT_GameplayScene());
-        scenes_.push_back(new GT_PauseScene());
-        curScene_ = scenes_[0];
-
-    }
-
-
 
 
 private:
@@ -348,6 +196,7 @@ private:
 
         if (curScene_)
             curScene_->sceneKeyboardHandler(keys, key, scancode, action, mode);
+
         else
         {
             std::cout << "NO CURSCENE_; CATASTRPHIC CRASH" << std::endl;
@@ -384,28 +233,11 @@ private:
 
     GT_Locator* GT_Locator_;
 
-
-    std::vector<GT_Aircraft*> aircafts_;
-    std::vector<GT_Model*> actors_;
-    GT_Model* fighter_;
-    GT_Ocean* ocean_;
-
     // uniforms
     GLfloat s_;
     GLfloat crashTime_;
     GLboolean fly_;
     GLboolean toggle_;
-
-    GLboolean aimed_;
-    GLfloat rotate_;
-
-    GLfloat blinker_ ;
-
-    // level setting
-    GLfloat levelPassed_;
-    GLuint currLevel_;
-    GLuint numOfMissiles_;
-    GLuint numOfBogies_;
 
 };
 

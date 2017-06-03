@@ -12,6 +12,7 @@ public:
     void Draw(GT_Camera *tempCam);
 
     void lock(GT_Enemy* locked) { target_ = locked; }
+    bool isLocked() { return (bool)target_; }
 
 private:
 

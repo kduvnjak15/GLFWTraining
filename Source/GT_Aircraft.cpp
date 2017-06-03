@@ -116,7 +116,7 @@ void GT_Aircraft::fireMissile()
             continue;
         else
         {
-            missiles_[i]->FIRE(nullptr);
+            missiles_[i]->FIRE();
             break;
         }
 }

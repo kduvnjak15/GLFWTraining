@@ -107,12 +107,10 @@ void GT_Missile::Draw(GT_Camera *tempCam)
 
 }
 
-void GT_Missile::FIRE(void* enemyPtr)
+void GT_Missile::FIRE()
 {
     fired_ = true;
     birthday_ = glfwGetTime();
-
-    target_ = enemyPtr;
 }
 
 
@@ -138,6 +136,11 @@ void GT_Missile::Integrate(GT_Camera* tempCam, GLfloat DX_)
             dead_ = true;
             return;
         }
+
+//        glm::vec3 dDir =glm::normalize(((GT_Aircraft*)target_)->getPosition() - this->position_);
+//        this->up_    = glm::normalize( glm::cross(this->front_ , dDir ));
+//        this->front_ = glm::normalize(dDir + this->front_ * MISSILE_AGILITY);
+//        this->right_ = glm::cross(this->front_, this->up_);
 
         position_ += this->front_ * DX_ * MISSILE_SPEED;
         contrailRate_++;

@@ -6,8 +6,9 @@
 #include <glm/glm.hpp>
 #include <list>
 
-const GLfloat MISSILE_SPEED = 250.0f;
-const GLfloat MISSILE_LIFE = 5.0f;
+const GLfloat MISSILE_SPEED    = 400.0f;
+const GLfloat MISSILE_LIFE     = 10.0f;
+const GLfloat MISSILE_AGILITY  = 2.0f;
 
 class GT_Missile : public GT_Actor
 {
@@ -19,7 +20,7 @@ public:
     void Draw(GT_Camera* tempCam);
     void Integrate(GT_Camera* tempCam, GLfloat DX_);
 
-    void FIRE(void *enemyPtr );
+    void FIRE();
     bool isFired() { return fired_; }
     GLboolean isDead() { return dead_;}
 
@@ -41,5 +42,4 @@ private:
 
     GT_Particle* particle_;
 
-    void* target_;
 };
