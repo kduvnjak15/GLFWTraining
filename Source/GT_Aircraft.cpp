@@ -2,18 +2,9 @@
 
 #include "GT_Aircraft.h"
 
-GT_Aircraft::GT_Aircraft(GT_Model *aircraftModel, GT_Model* missileModel)
-    :
-      GT_Aircraft(aircraftModel, missileModel, 2)
-{
-
-}
-
-GT_Aircraft::GT_Aircraft(GT_Model *aircraftModel, GT_Model* missileModel, GLuint missileCount)
+GT_Aircraft::GT_Aircraft(GT_Model *aircraftModel)
     :
       GT_Actor(aircraftModel),
-      numOfMissiles_(missileCount),
-      missileModel_(missileModel),
       aircraftSpeed_(10.0f),
       explode_(0)
 
@@ -27,11 +18,6 @@ GT_Aircraft::GT_Aircraft(GT_Model *aircraftModel, GT_Model* missileModel, GLuint
     lightPosLoc_ = glGetUniformLocation(actorShader_->shaderProgram_, "light.position");
     viewPosLoc_ = glGetUniformLocation(actorShader_->shaderProgram_, "viewPos");
     explodeLoc_ = glGetUniformLocation(actorShader_->shaderProgram_, "isHit");
-
-    for (int i = 0 ; i < numOfMissiles_; i++)
-    {
-        missiles_.push_back(new GT_Missile(missileModel_, (void*)this, i));
-    }
 
     std::cout << "GT_Aircraft initialized " << this << std::endl;
 }
@@ -81,16 +67,6 @@ void GT_Aircraft::Draw(GT_Camera* tempCam)
 
     actorModel_->Draw(*actorShader_);
 
-    int br = 0;
-    for (auto mit = missiles_.begin(); mit != missiles_.end() ; mit++)
-    {
-        (*mit)->Draw(tempCam);
-        if (!(*mit)->isFired())
-            br++;
-
-        if (br>1)
-            break;
-    }    
 }
 
 void GT_Aircraft::Integrate(GT_Camera* tempCam, GLfloat DT_)
@@ -101,24 +77,6 @@ void GT_Aircraft::Integrate(GT_Camera* tempCam, GLfloat DT_)
     this->right_    = tempCam->getCameraRight();
 
     //movement
-
-    for (auto mit = missiles_.begin(); mit != missiles_.end(); mit++)
-    {
-        (*mit)->Integrate(tempCam, DT_);
-    }
-
-}
-
-void GT_Aircraft::fireMissile()
-{
-    for (int i = 0; i < missiles_.size(); i++)
-        if (missiles_[i]->isFired())
-            continue;
-        else
-        {
-            missiles_[i]->FIRE();
-            break;
-        }
 }
 
 GT_Aircraft::~GT_Aircraft()

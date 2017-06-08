@@ -10,15 +10,11 @@ GT_GameplayScene::GT_GameplayScene()
       level_(0)
 {
 
-    enemies_.push_back(new GT_Enemy());
-    enemies_.push_back(new GT_Enemy());
-    enemies_.push_back(new GT_Enemy());
-    enemies_.push_back(new GT_Enemy());
-    enemies_.push_back(new GT_Enemy());
-    enemies_.push_back(new GT_Enemy());
-
     fighter_= GT_Locator::getFighter();
     ussCarrier_ = GT_Locator::getUSSCarrier();
+
+    enemies_.push_back(new GT_Enemy());
+    enemies_[0]->setScale(100.0f);
 
     nextScene_ = gameplay;
 }
@@ -27,7 +23,6 @@ void GT_GameplayScene::checkKeyboardInput()
 {
     if (keys_ != nullptr)
     {
-
         sceneCamera_->keyboardHandler(keysEnable_, deltaTime_);
 
         if (keys_[GLFW_KEY_LEFT_CONTROL])
@@ -37,25 +32,8 @@ void GT_GameplayScene::checkKeyboardInput()
     }
 }
 
-void GT_GameplayScene::renderScene()
+void GT_GameplayScene::printMSG()
 {
-    ////////////////////////// timer //////////////////////////////////////
-    updateClock();
-    ///////////////////////////////////////////////////////////////////////
-
-    checkKeyboardInput();
-
-    //////////////////////    integration   ///////////////////////////////
-
-    integrateScene(deltaTime_);
-
-    ///////////////////////////////////////////////////////////////////////
-
-    /////////////////////   reset color     //////////////////////////////
-    glClearColor(0.0, 0.15f, 0.2f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    ///////////////////////////////////////////////////////////////////////
-
     font_->PrintLine("Time: ", 25.0f, 25.0f, .50f, glm::vec3(1.0, 0.1f, 0.1f));
     font_->PrintLine( std::to_string(glfwGetTime()), 120.0f, 25.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
     font_->PrintLine("FPS: ", 25.0f, 50.0f, .50f, glm::vec3(1.0, 0.1f, 0.1f));
@@ -82,6 +60,30 @@ void GT_GameplayScene::renderScene()
     font_->PrintLine( std::to_string(sceneCamera_->getCameraRight().z), 250.0f, 400.0f, .40f, glm::vec3(0.5, 0.8f, 0.2f));
 
 //    font_->PrintLine("GAMEPLAY", 600.0f, 400.0f, 1.0f, glm::vec3(1.0, 0.1f, 0.1f));
+
+}
+
+void GT_GameplayScene::renderScene()
+{
+    ////////////////////////// timer //////////////////////////////////////
+    updateClock();
+    ///////////////////////////////////////////////////////////////////////
+
+    checkKeyboardInput();
+
+    //////////////////////    integration   ///////////////////////////////
+
+    integrateScene(deltaTime_);
+
+    ///////////////////////////////////////////////////////////////////////
+
+    /////////////////////   reset color     //////////////////////////////
+    glClearColor(0.0, 0.15f, 0.2f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    ///////////////////////////////////////////////////////////////////////
+
+    printMSG();
+    // TODO replace with HUD
 
     ////////////////////////   rendering phase   /////////////////////////////
 
@@ -128,7 +130,7 @@ void GT_GameplayScene::sceneKeyboardHandler(bool* keys, int key, int scancode, i
 
 void GT_GameplayScene::checkCrosshair()
 {
-    GT_Enemy* locked_ = nullptr;
+    GT_Aircraft* locked_ = nullptr;
     glm::vec3 dir;
     for (auto mit = enemies_.begin(); mit != enemies_.end(); mit++)
     {
@@ -148,18 +150,17 @@ void GT_GameplayScene::integrateScene(GLfloat deltaTime)
     sceneCamera_->keyboardHandler(FORWARD, deltaTime);
 
     integrateAircrafts(deltaTime);
+
     checkCrosshair();
 }
 
 void GT_GameplayScene::integrateAircrafts(GLfloat deltaTime)
 {
-    fighter_->setPosition(sceneCamera_->getCameraPos() + sceneCamera_->getCameraUp()*-3.0f);
     fighter_->Integrate(sceneCamera_, deltaTime);
 
     for (int i = 0; i < enemies_.size(); i++)
     {
         enemies_[i]->Integrate(sceneCamera_, deltaTime);
-        enemies_[i]->setPosition(glm::vec3(100.0f * i, 400.0f, 0.0f));
     }
 }
 
@@ -174,10 +175,6 @@ void GT_GameplayScene::renderAircrafts()
 
 void GT_GameplayScene::missileFIRE()
 {
-//    for( auto it = enemies_.begin(); it != enemies_.end(); it++)
-//    {
-//        (*it)->fireMissile();
-//    }
 
     if (fighter_->isLocked())
         fighter_->fireMissile();

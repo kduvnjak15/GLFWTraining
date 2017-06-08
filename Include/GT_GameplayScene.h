@@ -2,6 +2,7 @@
 
 #include "GT_Scene.h"
 #include "GT_Locator.h"
+#include "GT_Enemy.h"
 
 class GT_GameplayScene : public GT_Scene
 {
@@ -17,6 +18,8 @@ public:
 private:
 
     void checkCrosshair();
+
+    void printMSG();
 
     void integrateScene(GLfloat deltaTime);
 

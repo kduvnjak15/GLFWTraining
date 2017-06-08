@@ -1,9 +1,9 @@
 #pragma once
 
-#include "GT_Enemy.h"
+#include "GT_Aircraft.h"
+#include "GT_Weapon.h"
 
-
-class GT_Fighter : public GT_Aircraft
+class GT_Fighter : public GT_Aircraft ,  public GT_Weapon
 {
 public:
 
@@ -11,10 +11,8 @@ public:
 
     void Draw(GT_Camera *tempCam);
 
-    void lock(GT_Enemy* locked) { target_ = locked; }
-    bool isLocked() { return (bool)target_; }
+    void Integrate(GT_Camera* tempCam, GLfloat DT_);
 
 private:
 
-    GT_Enemy* target_;
 };

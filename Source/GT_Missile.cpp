@@ -6,7 +6,7 @@
 
 #include "GT_Enemy.h"
 
-GT_Missile::GT_Missile(GT_Model *missileModel, void* ownerPtr, GLuint missileIndex)
+GT_Missile::GT_Missile(GT_Model *missileModel, GT_Aircraft* ownerPtr, GLuint missileIndex)
     :
       GT_Actor(missileModel),
       ownerPtr_(ownerPtr),
@@ -15,10 +15,10 @@ GT_Missile::GT_Missile(GT_Model *missileModel, void* ownerPtr, GLuint missileInd
       fired_(false),
       birthday_(0.0f),
       dead_(false)
-
 {
 
-    position_ = ((GT_Aircraft*)ownerPtr_)->getPosition();
+    position_ = ownerPtr_->getPosition();
+    scaleActor_ = 0.1f;
 
     if ( missileIndex_ % 2 == 0)
         missileOffset_ = glm::vec3(-2.0f, 0.0f, -1.0f);
@@ -60,20 +60,14 @@ void GT_Missile::Draw(GT_Camera *tempCam)
     glUniform1f(glGetUniformLocation(actorShader_->shaderProgram_, "material.shininess"), 1.0f);
     glm::mat4 model = glm::mat4(1.0f);
 
-    glm::mat4 sc  = glm::scale(glm::mat4(1.0f), glm::vec3(0.10f));
+    glm::mat4 sc  = glm::scale(glm::mat4(1.0f), glm::vec3(scaleActor_));
     glm::mat4 rot = glm::rotate(glm::mat4(1.0f), (GLfloat)-3.14159/2.0f, glm::vec3(0.0f, 1.0f, 0.0f));
-//    glm::mat4 yawRot   = glm::rotate(glm::mat4(1.0f), (GLfloat) 3.14159/72.0f * tempCam->yawDelay_,   glm::vec3(0.0f, 1.0f, 0.0f) );
-//    glm::mat4 rollRot  = glm::rotate(glm::mat4(1.0f), (GLfloat)-3.14159/72.0f * tempCam->rollDelay_,  glm::vec3(0.0f, 0.0f, 1.0f) );
-//    glm::mat4 pitchRot = glm::rotate(glm::mat4(1.0f), (GLfloat) 3.14159/72.0f * tempCam->pitchDelay_, glm::vec3(1.0f, 0.0f, 0.0f) );
 
     glm::mat4 yawRot   = glm::rotate(glm::mat4(1.0f), (GLfloat) 3.14159/72.0f * tempCam->yawDelay_,   this->up_ );
     glm::mat4 rollRot  = glm::rotate(glm::mat4(1.0f), (GLfloat)-3.14159/72.0f * tempCam->rollDelay_,  this->front_ );
     glm::mat4 pitchRot = glm::rotate(glm::mat4(1.0f), (GLfloat) 3.14159/72.0f * tempCam->pitchDelay_, tempCam->getCameraRight() );
 
-  //  glm::mat4 tr  = glm::translate(glm::mat4(1.0f), position_ + glm::vec3(0.0f, -5.0f, -tempCam->getSpeedOffset()));
     glm::mat4 tr  = glm::translate(glm::mat4(1.0f), position_);
-//    glm::mat4 tranX  = glm::translate(glm::mat4(1.0f), this->right_ * missileOffset_.x);
-//    glm::mat4 tranY  = glm::translate(glm::mat4(1.0f), this->up_    * missileOffset_.y);
 
     glm::mat4 planeOrient = glm::lookAt(glm::vec3(0.0f), this->front_, this->up_);
 
@@ -89,6 +83,8 @@ void GT_Missile::Draw(GT_Camera *tempCam)
     glActiveTexture(GL_TEXTURE0);
 
     actorModel_->Draw(*actorShader_);
+
+    std::cout << "crta missajl "<< this <<std::endl;
 
     particle_->primitiveShader_->Use();
     for (auto cit = contrail_.begin(); cit!= contrail_.end(); cit++)
@@ -116,8 +112,6 @@ void GT_Missile::FIRE()
 
 void GT_Missile::Integrate(GT_Camera* tempCam, GLfloat DX_)
 {
-
-
     if (!fired_)
     {
         position_   = ((GT_Aircraft*)ownerPtr_)->getPosition();
@@ -136,11 +130,6 @@ void GT_Missile::Integrate(GT_Camera* tempCam, GLfloat DX_)
             dead_ = true;
             return;
         }
-
-//        glm::vec3 dDir =glm::normalize(((GT_Aircraft*)target_)->getPosition() - this->position_);
-//        this->up_    = glm::normalize( glm::cross(this->front_ , dDir ));
-//        this->front_ = glm::normalize(dDir + this->front_ * MISSILE_AGILITY);
-//        this->right_ = glm::cross(this->front_, this->up_);
 
         position_ += this->front_ * DX_ * MISSILE_SPEED;
         contrailRate_++;

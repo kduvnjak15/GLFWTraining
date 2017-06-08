@@ -1,6 +1,6 @@
 #pragma once
 
-#include "GT_Actor.h"
+#include "GT_Aircraft.h"
 #include "GT_Particle.h"
 
 #include <glm/glm.hpp>
@@ -14,7 +14,7 @@ class GT_Missile : public GT_Actor
 {
 public:
 
-    GT_Missile(GT_Model* missileModel, void *ownerPtr, GLuint missileIndex);
+    GT_Missile(GT_Model* missileModel, GT_Aircraft* ownerPtr, GLuint missileIndex);
     ~GT_Missile();
 
     void Draw(GT_Camera* tempCam);
@@ -27,7 +27,7 @@ public:
 
 protected:
 
-    void* ownerPtr_;
+    GT_Aircraft* ownerPtr_;
     GLuint missileIndex_;
     glm::vec3 missileOffset_;
 

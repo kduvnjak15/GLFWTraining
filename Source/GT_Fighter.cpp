@@ -3,13 +3,18 @@
 
 GT_Fighter::GT_Fighter()
     :
-      GT_Aircraft(GT_Locator::getModel(F18), GT_Locator::getModel(AIM), 10)
+      GT_Aircraft(GT_Locator::getModel(F18)),
+       GT_Weapon(10, this)
 {
     this->position_ = glm::vec3(170.0f, 58.0f, -32.0f);
     this->front_    = glm::vec3(0.98f, 0.0f, 0.07f);
     this->right_    = glm::vec3(0.0f, 0.0f, 1.0f);
     this->up_       = glm::vec3(0.0f, 1.0f, 0.0f);
+
+    std::cout << "fajter"<< this <<std::endl;
+
     std::cout << "GT_Fighter initialized " << std::endl;
+
 }
 
 void GT_Fighter::Draw(GT_Camera *tempCam)
@@ -63,18 +68,17 @@ void GT_Fighter::Draw(GT_Camera *tempCam)
 
     actorModel_->Draw(*actorShader_);
 
-    int br = 0;
-    for (auto mit = missiles_.begin(); mit != missiles_.end() ; mit++)
-    {
-        (*mit)->Draw(tempCam);
-        if (!(*mit)->isFired())
-            br++;
-
-        if (br>1)
-            break;
-    }
+    GT_Weapon::Draw(tempCam);
 
     if (target_)
         GT_Locator::getFonts()->PrintLine("LOCKED \n Press Enter to FIRE! ", window_width * 0.7f, window_height* 0.1f, 0.5, glm::vec3(1.0f, 0.0f, 0.0f) );
 
+}
+
+
+void GT_Fighter::Integrate(GT_Camera *tempCam, GLfloat DT_)
+{
+    this->setPosition(tempCam->getCameraPos());
+    GT_Aircraft::Integrate(tempCam, DT_);
+    GT_Weapon::Integrate(tempCam, DT_);
 }

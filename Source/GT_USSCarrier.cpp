@@ -3,7 +3,7 @@
 
 GT_USSCarrier::GT_USSCarrier()
     :
-      GT_Aircraft(GT_Locator::getModel(USS), GT_Locator::getModel(AIM))
+      GT_Aircraft(GT_Locator::getModel(USS))
 {
     this->position_ = glm::vec3(0.0f, 80.0f, 0.0f);
     this->scaleActor_ = 200.0f;
