@@ -17,15 +17,17 @@ GT_Missile::GT_Missile(GT_Model *missileModel, GT_Aircraft* ownerPtr, GLuint mis
       dead_(false)
 {
 
-    position_ = ownerPtr_->getPosition();
+    if ( missileIndex_ % 2 == 0)
+        missileOffset_ = glm::vec3(-2.35f, 0.4f, -1.7f);
+    else
+        missileOffset_ = glm::vec3( 3.65f, 0.4f, -1.7f);
+
+    position_ = ownerPtr_->getPosition() + missileOffset_;
     scaleActor_ = 0.1f;
 
-    if ( missileIndex_ % 2 == 0)
-        missileOffset_ = glm::vec3(-2.0f, 0.0f, -1.0f);
-    else
-        missileOffset_ = glm::vec3( 3.0f, 0.0f, -1.0f);
-
     particle_ = GT_Locator::getParticle();
+
+
 
     std::cout << "GT_Missile initialized "<< this << std::endl;
 }
@@ -84,8 +86,6 @@ void GT_Missile::Draw(GT_Camera *tempCam)
 
     actorModel_->Draw(*actorShader_);
 
-    std::cout << "crta missajl "<< this <<std::endl;
-
     particle_->primitiveShader_->Use();
     for (auto cit = contrail_.begin(); cit!= contrail_.end(); cit++)
     {
@@ -110,14 +110,14 @@ void GT_Missile::FIRE()
 }
 
 
-void GT_Missile::Integrate(GT_Camera* tempCam, GLfloat DX_)
+void GT_Missile::Integrate(GLfloat DX_)
 {
     if (!fired_)
     {
         position_   = ((GT_Aircraft*)ownerPtr_)->getPosition();
-        this->front_      = tempCam->getCameraFront();
-        this->up_         = tempCam->getCameraUp();
-        this->right_      = tempCam->getCameraRight();
+        this->front_      = ((GT_Aircraft*)ownerPtr_)->getFront();
+        this->up_         = ((GT_Aircraft*)ownerPtr_)->getUp();
+        this->right_      = ((GT_Aircraft*)ownerPtr_)->getRight();
 
         position_ += this->right_ * missileOffset_.x;
         position_ += this->up_    * missileOffset_.y;

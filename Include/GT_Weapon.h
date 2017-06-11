@@ -11,7 +11,7 @@ public:
     GT_Weapon(GLuint numOfMissiles, GT_Aircraft* ownerPtr);
 
     void Draw(GT_Camera* tempCam);
-    void Integrate(GT_Camera* tempCam, GLfloat DT_);
+    void Integrate(GLfloat DT_);
 
 
     GT_Aircraft* target_;

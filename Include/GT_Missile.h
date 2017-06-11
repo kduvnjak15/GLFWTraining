@@ -18,7 +18,7 @@ public:
     ~GT_Missile();
 
     void Draw(GT_Camera* tempCam);
-    void Integrate(GT_Camera* tempCam, GLfloat DX_);
+    void Integrate(GLfloat DX_);
 
     void FIRE();
     bool isFired() { return fired_; }

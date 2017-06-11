@@ -12,8 +12,10 @@ GT_Weapon::GT_Weapon(GLuint numOfMissiles, GT_Aircraft *ownerPtr)
 
 void GT_Weapon::Draw(GT_Camera *tempCam)
 {
+
+    Integrate(0.0f);
+
     int br = 0;
-    std::cout << "miss" << missiles_.size() << std::endl;
     for (auto mit = missiles_.begin(); mit != missiles_.end() ; mit++)
     {
         if ((*mit)->isDead())
@@ -28,11 +30,11 @@ void GT_Weapon::Draw(GT_Camera *tempCam)
     }
 }
 
-void GT_Weapon::Integrate(GT_Camera* tempCam, GLfloat DT_)
+void GT_Weapon::Integrate(GLfloat DT_)
 {
     for (auto mit = missiles_.begin(); mit != missiles_.end(); mit++)
     {
-        (*mit)->Integrate(tempCam, DT_);
+        (*mit)->Integrate(DT_);
     }
 }
 

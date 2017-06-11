@@ -47,7 +47,7 @@ static void MouseCB(GLFWwindow* window, double xpos, double ypos)
 class GAME : public initialCallbacks
 {
 public:
-    GAME() : s_(0), crashTime_(0.0), fly_(true)
+    GAME()
     {
         gamePointer = this;
         std::cout<<"GLFWTraining GAME class "<<std::endl;
@@ -110,9 +110,11 @@ public:
     bool Run()
     {
         glfwSwapInterval(1);
+
         loadGame();
 
         std::cout << "Starting GAME LOOP "<< std::endl;
+
         while (!glfwWindowShouldClose(windowPtr_))
         {
 
@@ -184,11 +186,6 @@ private:
             glfwSetWindowShouldClose(window, GL_TRUE);
         }
 
-        if (key == GLFW_KEY_T )
-        {
-            toggle_ = !toggle_;
-        }
-
         if(action == GLFW_PRESS)
             keys[key] = true;
         else if(action == GLFW_RELEASE)
@@ -196,7 +193,6 @@ private:
 
         if (curScene_)
             curScene_->sceneKeyboardHandler(keys, key, scancode, action, mode);
-
         else
         {
             std::cout << "NO CURSCENE_; CATASTRPHIC CRASH" << std::endl;
@@ -232,13 +228,6 @@ private:
     GT_Scene* curScene_;
 
     GT_Locator* GT_Locator_;
-
-    // uniforms
-    GLfloat s_;
-    GLfloat crashTime_;
-    GLboolean fly_;
-    GLboolean toggle_;
-
 };
 
 int main(int argc, char** argv)

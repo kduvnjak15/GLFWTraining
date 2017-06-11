@@ -11,7 +11,7 @@ GT_Fighter::GT_Fighter()
     this->right_    = glm::vec3(0.0f, 0.0f, 1.0f);
     this->up_       = glm::vec3(0.0f, 1.0f, 0.0f);
 
-    std::cout << "fajter"<< this <<std::endl;
+    GT_Weapon::Integrate(0.0f);
 
     std::cout << "GT_Fighter initialized " << std::endl;
 
@@ -80,5 +80,5 @@ void GT_Fighter::Integrate(GT_Camera *tempCam, GLfloat DT_)
 {
     this->setPosition(tempCam->getCameraPos());
     GT_Aircraft::Integrate(tempCam, DT_);
-    GT_Weapon::Integrate(tempCam, DT_);
+    GT_Weapon::Integrate(DT_);
 }
