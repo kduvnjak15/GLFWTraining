@@ -45,7 +45,7 @@ void GT_Aircraft::Draw(GT_Camera* tempCam)
     glUniform1f(glGetUniformLocation(actorShader_->shaderProgram_, "material.shininess"), 1.0f);
 
     glUniform1i(explodeLoc_, explode_);
-    glUniform1f(glGetUniformLocation(actorShader_->shaderProgram_, "time"), glfwGetTime());
+    glUniform1f(glGetUniformLocation(actorShader_->shaderProgram_, "time"), glfwGetTime() - explodeTime_);
 
     glm::mat4 model = glm::mat4(1.0f);
 

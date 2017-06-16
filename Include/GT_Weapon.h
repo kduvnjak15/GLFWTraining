@@ -13,7 +13,6 @@ public:
     void Draw(GT_Camera* tempCam);
     void Integrate(GLfloat DT_);
 
-
     GT_Aircraft* target_;
 
     void lock(GT_Aircraft* locked) { target_ = locked; }
@@ -28,4 +27,6 @@ protected:
     std::vector<GT_Missile* > missiles_;
 
     glm::vec3 targetPos_;
+
+    GLboolean intelligent_;
 };

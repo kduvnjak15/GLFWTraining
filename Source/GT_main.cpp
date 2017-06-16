@@ -17,6 +17,8 @@
 
 #include "SFML/Audio.hpp"
 
+#include <time.h>
+
 bool keys[1024];
 bool firstMouse = true;
 
@@ -49,6 +51,7 @@ class GAME : public initialCallbacks
 public:
     GAME()
     {
+        srand ( time(NULL) );
         gamePointer = this;
         std::cout<<"GLFWTraining GAME class "<<std::endl;
     }

@@ -22,10 +22,12 @@ public:
     glm::vec3 getRight()    { return right_; }
     glm::vec3 getUp()       { return up_; }
 
+    GLboolean explode_;
+
 protected:
 
     GLuint explodeLoc_;
-    GLuint explode_;
+    GLuint explodeTime_;
 
     GLfloat aircraftSpeed_;
 

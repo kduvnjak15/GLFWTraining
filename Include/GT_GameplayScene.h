@@ -17,6 +17,8 @@ public:
 
 private:
 
+    void nextLevel();
+
     void checkCrosshair();
 
     void printMSG();

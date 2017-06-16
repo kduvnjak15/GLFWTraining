@@ -6,7 +6,7 @@
 #include <glm/glm.hpp>
 #include <list>
 
-const GLfloat MISSILE_SPEED    = 400.0f;
+const GLfloat MISSILE_SPEED    = 600.0f;
 const GLfloat MISSILE_LIFE     = 10.0f;
 const GLfloat MISSILE_AGILITY  = 2.0f;
 
@@ -20,8 +20,9 @@ public:
     void Draw(GT_Camera* tempCam);
     void Integrate(GLfloat DX_);
 
-    void FIRE();
+    void FIRE(GT_Aircraft* target);
     bool isFired() { return fired_; }
+
     GLboolean isDead() { return dead_;}
 
 
@@ -33,9 +34,14 @@ protected:
 
 private:
 
+    void isHit();
+    void aimEnemy();
+
     bool fired_;
     bool dead_;
     GLfloat birthday_;
+    GT_Aircraft* enemyTarget_;
+
 
     std::list<glm::vec3> contrail_;
     GLuint contrailRate_;

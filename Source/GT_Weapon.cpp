@@ -45,7 +45,7 @@ void GT_Weapon::fireMissile()
             continue;
         else
         {
-            missiles_[i]->FIRE();
+            missiles_[i]->FIRE(target_);
             break;
         }
 }
