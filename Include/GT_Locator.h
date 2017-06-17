@@ -9,6 +9,7 @@
 #include "GT_Alphabet.h"
 #include "GT_Fighter.h"
 #include "GT_USSCarrier.h"
+#include "GT_HUD.h"
 
 
 class Audio
@@ -53,6 +54,7 @@ public:
         gameCamera_ = new GT_Camera();
         menuCamera_ = new GT_Camera();
         fonts_      = new GT_Alphabet(menuCamera_);
+        hud_        = new GT_HUD();
 
         models_.push_back(new GT_Model("../Content/FA-22_Raptor/FA-22_Raptor.obj"));
         modelMap_.insert(std::pair<MODEL_TYPE, GT_Model*>(F22, models_[0]));
@@ -134,6 +136,11 @@ public:
         return ussCarrier_;
     }
 
+    static GT_HUD* getHUD()
+    {
+        return hud_;
+    }
+
     // providers
 
     static void provide(Audio* service)
@@ -168,6 +175,7 @@ private:
     static GT_Camera*   gameCamera_;
     static GT_Camera*   menuCamera_;
     static GT_Alphabet* fonts_;
+    static GT_HUD*      hud_;
 
     static GT_Fighter*  fighter_;
     static GT_USSCarrier*   ussCarrier_;

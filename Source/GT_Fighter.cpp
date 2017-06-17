@@ -4,7 +4,7 @@
 GT_Fighter::GT_Fighter()
     :
       GT_Aircraft(GT_Locator::getModel(F18)),
-       GT_Weapon(10, this)
+       GT_Weapon(100, this)
 {
     this->position_ = glm::vec3(170.0f, 58.0f, -32.0f);
     this->front_    = glm::vec3(0.98f, 0.0f, 0.07f);

@@ -12,7 +12,8 @@ GT_GameplayScene::GT_GameplayScene()
 
     fighter_= GT_Locator::getFighter();
     ussCarrier_ = GT_Locator::getUSSCarrier();
-    hud_ = new GT_HUD();
+    hud_ = GT_Locator::getHUD();
+    hud_->setRadarEnemyListPtr(enemies_);
 
     nextScene_ = gameplay;
 }
@@ -181,6 +182,7 @@ void GT_GameplayScene::integrateAircrafts(GLfloat deltaTime)
     {
         if ((*eit)->isDead())
         {
+           // delete *eit;
             eit = enemies_.erase(eit);
             continue;
         }

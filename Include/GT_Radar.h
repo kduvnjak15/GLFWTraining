@@ -3,13 +3,13 @@
 #include <glm/glm.hpp>
 #include <vector>
 #include "GT_Primitive.h"
-#include "GT_Model.h"
+
+#include "GT_Enemy.h"
 
 class enemyAvatar : public GT_Primitive
 {
 public:
     friend class GT_Radar;
-
 
     enemyAvatar() : GT_Primitive()
     {
@@ -32,6 +32,7 @@ public:
 
     void draw(GT_Camera* tempCam, GLfloat angle, GLfloat radius, GLuint type)
     {
+
         this->primitiveShader_->Use();
 
         glm::mat4 model = glm::mat4(1.0f);
@@ -40,8 +41,11 @@ public:
         model = glm::translate(model, glm::vec3(0.0f, radius, 0));
         if (type == 1)
             model = glm::scale(model, glm::vec3(.005f, .005f, 1.0f));
+        else if (type == 3)
+            model = glm::scale(model, glm::vec3(.015f, .015f, 1.0f));
         else
             model = glm::scale(model, glm::vec3(.01f, .01f, 1.0f));
+
         model = glm::rotate(model, (GLfloat)-3.14159/2.0f, glm::vec3(1.0f, 0.0f, 0.0f));
 
 
@@ -83,11 +87,13 @@ private:
 
     std::vector<glm::vec3> coordinates_;
 
-    void setRadarActorList(std::vector<GT_Model*>& actors) {radarActorList_ = actors;}
+    void setRadarEnemyList(std::vector<GT_Enemy*>& enemyList) {radarEnemyList_ = &enemyList;}
+
+    glm::vec2 calcCoordinates(glm::vec3 dir);
 
     void drawAvatars(GT_Camera* tempCam);
 
-    std::vector<GT_Model*> radarActorList_;
+    std::vector<GT_Enemy*>* radarEnemyList_;
 
     glm::vec3 radarScreenPos_;
 

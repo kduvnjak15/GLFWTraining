@@ -7,6 +7,7 @@ GT_Particle* GT_Locator::particle_;
 GT_Camera*   GT_Locator::gameCamera_;
 GT_Camera*   GT_Locator::menuCamera_;
 GT_Alphabet* GT_Locator::fonts_;
+GT_HUD*      GT_Locator::hud_;
 
 GT_Fighter*  GT_Locator::fighter_;
 GT_USSCarrier*  GT_Locator::ussCarrier_;
@@ -23,7 +24,7 @@ GT_Locator::~GT_Locator()
     if (ocean_)     delete ocean_;
     if (skybox_)    delete skybox_;
     if (particle_)  delete particle_;
-
+    if (hud_)       delete hud_;
 
     for (auto it = models_.begin(); it != models_.end(); it++)
     {

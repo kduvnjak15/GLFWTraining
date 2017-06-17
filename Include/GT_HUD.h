@@ -4,6 +4,8 @@
 #include "GT_Primitive.h"
 #include "GT_Radar.h"
 
+#include "GT_Enemy.h"
+
 #include <vector>
 
 class GT_HUD : public GT_Primitive
@@ -12,7 +14,7 @@ public:
 
     GT_HUD();
 
-    void introduceActors(std::vector<GT_Model*>& actorList) { radar_->setRadarActorList(actorList);}
+    void setRadarEnemyListPtr(std::vector<GT_Enemy*> &enemyList) { radar_->setRadarEnemyList(enemyList); }
 
     void draw(GT_Camera *tempCam);
 

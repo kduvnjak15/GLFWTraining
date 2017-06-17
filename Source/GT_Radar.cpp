@@ -3,6 +3,8 @@
 #include "glm/gtx/vector_angle.hpp"
 #include "glm/trigonometric.hpp"
 
+#include "GT_Locator.h"
+
 
 GT_Radar::GT_Radar()
     : GT_Primitive("../Content/radar.png")
@@ -19,13 +21,34 @@ GT_Radar::GT_Radar()
     radarScreenPos_ =  glm::vec3(0.7f, 0.4f, -0.999f);
 }
 
+glm::vec2 GT_Radar::calcCoordinates(glm::vec3 dir)
+{
+    glm::vec3 front = GT_Locator::getGameCamera()->getCameraFront();
+
+    front.y = 0.0;
+    dir.y   = 0.0;
+
+    GLfloat radius = glm::length(dir) / 10000.0f;
+    if (radius > 0.13)
+        radius = 0.13;
+
+    dir   = glm::normalize(dir);
+    front = glm::normalize(front);
+    GLfloat angle = glm::orientedAngle(front, dir, glm::vec3(0.0f, 1.0f, 0.0f));
+
+
+    return glm::vec2(angle, radius);
+
+}
+
 void GT_Radar::scanRadar(GT_Camera* tempCam)
 {
-//    coordinates_.clear();
-//    glm::vec3 front = tempCam->getCameraFront();
-//    for (int i = 1; i < radarActorList_.size(); i++)
-//    {
-//        glm::vec3 dir = radarActorList_[i]->modelPos - tempCam->getCameraPos();
+    coordinates_.clear();
+
+    for (int i = 0; i < radarEnemyList_->size(); i++)
+    {
+
+        glm::vec3 dir = (*(radarEnemyList_))[i]->getPosition() - tempCam->getCameraPos();
 //        front.y = 0.0;
 //        dir.y   = 0.0;
 
@@ -37,7 +60,9 @@ void GT_Radar::scanRadar(GT_Camera* tempCam)
 //        front = glm::normalize(front);
 //        GLfloat angle = glm::orientedAngle(front, dir, glm::vec3(0.0f, 1.0f, 0.0f));
 
-//        if (dynamic_cast<GT_Rocket*> (radarActorList_[i]) )
+            coordinates_.push_back( glm::vec3(calcCoordinates(dir), 2.0f));
+
+//        if (dynamic_cast<GT_Missile*> (radarActorList_[i]) )
 //        {
 //            GT_Rocket* dinRocket = dynamic_cast<GT_Rocket*> (radarActorList_[i]);
 //            if (dinRocket->isFired() && !dinRocket->dead_)
@@ -53,15 +78,17 @@ void GT_Radar::scanRadar(GT_Camera* tempCam)
 //            else
 //                coordinates_.push_back(glm::vec3(angle, radius, -2));
 //        }
-////        else if (dynamic_cast<GT_USSCarrier*> (radarActorList_[i]))
-////        {
-////            GT_USSCarrier* dinCarrier = dynamic_cast<GT_USSCarrier*> (radarActorList_[i]);
-////            if (!dinCarrier->isHit())
-////                coordinates_.push_back(glm::vec3(angle, radius, 3));
-////            else
-////                coordinates_.push_back(glm::vec3(angle, radius, -3));
-////        }
-//    }
+//        else if (dynamic_cast<GT_USSCarrier*> (radarActorList_[i]))
+//        {
+//            GT_USSCarrier* dinCarrier = dynamic_cast<GT_USSCarrier*> (radarActorList_[i]);
+//            if (!dinCarrier->isHit())
+//                coordinates_.push_back(glm::vec3(angle, radius, 3));
+//            else
+//                coordinates_.push_back(glm::vec3(angle, radius, -3));
+//        }
+    }
+
+    coordinates_.push_back( glm::vec3(calcCoordinates(GT_Locator::getUSSCarrier()->getPosition() - GT_Locator::getFighter()->getPosition()), 3));
 }
 
 void GT_Radar::draw(GT_Camera *tempCam)
@@ -98,7 +125,7 @@ void GT_Radar::draw(GT_Camera *tempCam)
 
 void GT_Radar::drawAvatars(GT_Camera *tempCam)
 {
-    for (int i = 0; i < radarActorList_.size(); i++)
+    for (int i = 0; i < radarEnemyList_->size()+1; i++)
     {
         if (coordinates_[i].z > 0 )
             enemyAvatarObj_.draw(tempCam, coordinates_[i].x, coordinates_[i].y, coordinates_[i].z);
