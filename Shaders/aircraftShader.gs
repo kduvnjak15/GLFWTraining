@@ -31,7 +31,7 @@ vec4 explode(vec4 position, vec3 normal)
     if (isHit>0)
     {
         float magnitude = 5.0f;
-        vec3 direction = normal * (-(time) ) * magnitude; 
+        vec3 direction = normal * (-(sqrt(sqrt(time)) ) ) * magnitude; 
         return position + vec4(direction, 0.0f) ;//+ vec4(0.0f, -1.0f * time*time*time, 0.0f , 0.0f);
     }
     else

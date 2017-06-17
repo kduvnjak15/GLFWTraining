@@ -25,5 +25,4 @@ private:
 
     GLboolean dead_;
 
-    GLfloat rndnum();
 };

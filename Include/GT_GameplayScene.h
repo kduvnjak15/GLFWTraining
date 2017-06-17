@@ -3,6 +3,7 @@
 #include "GT_Scene.h"
 #include "GT_Locator.h"
 #include "GT_Enemy.h"
+#include "GT_HUD.h"
 
 class GT_GameplayScene : public GT_Scene
 {
@@ -40,6 +41,8 @@ private:
 
     std::vector<GT_Actor*> actors_;
     std::vector<GT_Enemy*> enemies_;
+
+    GT_HUD* hud_;
 
 };
 

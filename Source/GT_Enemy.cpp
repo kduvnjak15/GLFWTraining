@@ -14,9 +14,7 @@ GT_Enemy::GT_Enemy()
 
     setScale(1.0f);
 
-    GLfloat rnum = rand() / GLfloat(RAND_MAX);
-
-    std::cout << "random num "<<  rnum << std::endl;
+    GLfloat rnum = rand() / GLfloat(RAND_MAX);    
 
     setPosition(glm::vec3( rnum *1000+3000.0f, 400, rnum * 1000));
 

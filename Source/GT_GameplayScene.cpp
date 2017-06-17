@@ -12,6 +12,7 @@ GT_GameplayScene::GT_GameplayScene()
 
     fighter_= GT_Locator::getFighter();
     ussCarrier_ = GT_Locator::getUSSCarrier();
+    hud_ = new GT_HUD();
 
     nextScene_ = gameplay;
 }
@@ -86,6 +87,7 @@ void GT_GameplayScene::renderScene()
 
     skybox_->Draw(sceneCamera_);
     ocean_->draw(sceneCamera_);
+    hud_->draw(sceneCamera_);
 
     renderAircrafts();
 
