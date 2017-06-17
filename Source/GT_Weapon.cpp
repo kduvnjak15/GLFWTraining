@@ -7,7 +7,10 @@ GT_Weapon::GT_Weapon(GLuint numOfMissiles, GT_Aircraft *ownerPtr)
       numOfMissiles_(numOfMissiles)
 {
     for (int i = 0; i < numOfMissiles; i++)
+    {
         missiles_.push_back(new GT_Missile(GT_Locator::getModel(AIM), ownerPtr, i ));
+        GT_Locator::getHUD()->appendMissile(missiles_.back());
+    }
 }
 
 void GT_Weapon::Draw(GT_Camera *tempCam)

@@ -19,7 +19,7 @@ GT_Enemy::GT_Enemy()
 
     GLfloat rnum = rand() / GLfloat(RAND_MAX);    
 
-    setPosition(glm::vec3( rnum *1000+3000.0f, 400, rnum * 1000));
+    setPosition(glm::vec3( rnum *1000+5000.0f, rnum* 500 + 1000, sin(rnum) * 1000));
 
     GT_Weapon::Integrate(0.0f);
     std::cout<< "Enemy initialized" << this<<std::endl;

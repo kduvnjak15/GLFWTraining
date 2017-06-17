@@ -15,6 +15,7 @@ public:
     GT_HUD();
 
     void setRadarEnemyListPtr(std::vector<GT_Enemy*> &enemyList) { radar_->setRadarEnemyList(enemyList); }
+    void appendMissile(GT_Missile* missileInstance) { radar_->appendMissileToRadarList(missileInstance); }
 
     void draw(GT_Camera *tempCam);
 

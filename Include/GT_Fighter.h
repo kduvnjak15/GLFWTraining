@@ -14,12 +14,15 @@ public:
     void Integrate(GT_Camera* tempCam, GLfloat DT_);
 
 
-    bool isTarget() { return isTarget_; }
+    bool isTarget() { return isTarget_ > 0; }
+    void isTarget(bool flag);
 
-    void isTarget(bool flag) { isTarget_ = flag; }
+    bool evade() { return evade_ > 0; }
+    void evade(bool flag);
 
 private:
 
-    bool isTarget_;
+    GLuint isTarget_;
+    GLuint evade_;
 
 };

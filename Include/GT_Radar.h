@@ -87,12 +87,14 @@ private:
     std::vector<glm::vec3> coordinates_;
 
     void setRadarEnemyList(std::vector<GT_Enemy*>& enemyList) {radarEnemyList_ = &enemyList;}
+    void appendMissileToRadarList(GT_Missile* missileInstance) { radarMissileList_.push_back(missileInstance);}
 
     glm::vec2 calcCoordinates(glm::vec3 dir);
 
     void drawAvatars(GT_Camera* tempCam);
 
     std::vector<GT_Enemy*>* radarEnemyList_;
+    std::vector<GT_Missile*> radarMissileList_;
 
     glm::vec3 radarScreenPos_;
 

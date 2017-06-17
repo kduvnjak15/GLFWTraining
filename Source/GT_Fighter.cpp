@@ -4,7 +4,9 @@
 GT_Fighter::GT_Fighter()
     :
       GT_Aircraft(GT_Locator::getModel(F18)),
-       GT_Weapon(100, this)
+       GT_Weapon(100, this),
+       evade_(0),
+       isTarget_(0)
 {
     this->position_ = glm::vec3(170.0f, 58.0f, -32.0f);
     this->front_    = glm::vec3(0.98f, 0.0f, 0.07f);
@@ -77,4 +79,24 @@ void GT_Fighter::Integrate(GT_Camera *tempCam, GLfloat DT_)
     this->setPosition(tempCam->getCameraPos());
     GT_Aircraft::Integrate(tempCam, DT_);
     GT_Weapon::Integrate(DT_);
+}
+
+void GT_Fighter::isTarget(bool flag)
+{
+    if (flag)
+        isTarget_++;
+    else
+        isTarget_--;
+    if (isTarget_ < 0)
+        isTarget_ = 0;
+}
+
+void GT_Fighter::evade(bool flag)
+{
+    if (flag)
+        evade_++;
+    else
+        evade_--;
+    if (evade_ < 0)
+        evade_ = 0;
 }

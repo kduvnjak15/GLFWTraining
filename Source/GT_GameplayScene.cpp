@@ -65,19 +65,25 @@ void GT_GameplayScene::printMSG()
 
     if (fighter_->targetLocked())
     {
-        font_->PrintLine("TARGET LOCKED!", 600.0f, 100.0f, .50f, glm::vec3(1.0, 0.1f, 0.1f));
-        font_->PrintLine("    FIRE!    ", 600.0f, 120.0f, .50f, glm::vec3(1.0, 0.1f, 0.1f));
+        font_->PrintLine("TARGET LOCKED!", 800.0f, 100.0f, .4f, glm::vec3(1.0, 0.1f, 0.1f));
+        font_->PrintLine("        FIRE!    ", 800.0f, 120.0f, .50f, glm::vec3(1.0, 0.1f, 0.1f));
     }
 
     if (fighter_->isTarget())
     {
-        if (sin(glfwGetTime()*50) > 0)
+        if (sin(glfwGetTime()*20) > -0.7)
         {
-            font_->PrintLine("LOCKED!", 700.0f, 500.0f, .50f, glm::vec3(1.0, 0.1f, 0.1f));
-            font_->PrintLine(" EVADE!", 700.0f, 520.0f, .50f, glm::vec3(1.0, 0.1f, 0.1f));
+            font_->PrintLine("LOCKED!", 820.0f, 200.0f, .60f, glm::vec3(1.0, 0.1f, 0.1f));
         }
     }
 
+    if (fighter_->evade())
+    {
+        if (sin(glfwGetTime()*20) > 0)
+        {
+            font_->PrintLine(" EVADE!", 820.0f, 250.0f, .60f, glm::vec3(1.0, 0.1f, 0.1f));
+        }
+    }
 
 }
 
@@ -177,7 +183,6 @@ void GT_GameplayScene::checkCrosshair()
         if ((*enit)->targetLocked())
             if (distance < weaponRange_)
             {
-
                 (*enit)->fireMissile();
             }
 
@@ -185,6 +190,7 @@ void GT_GameplayScene::checkCrosshair()
         {
             (*enit)->setPredatorMode(true);
             (*enit)->lock(fighter_);
+            fighter_->isTarget(true);
         }
         else
         {
@@ -192,8 +198,6 @@ void GT_GameplayScene::checkCrosshair()
             (*enit)->lock(GT_Locator::getUSSCarrier());
         }
     }
-    std::cout << "distance" << distance << std::endl;
-
 }
 
 void GT_GameplayScene::integrateScene(GLfloat deltaTime)

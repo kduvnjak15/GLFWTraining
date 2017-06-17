@@ -108,6 +108,12 @@ void GT_Missile::FIRE(GT_Aircraft* target)
     fired_ = true;
     birthday_ = glfwGetTime();
 
+    if (dynamic_cast<GT_Fighter*>(target))
+    {
+        std::cout << "so true" << std::endl;
+        ((GT_Fighter*)target)->evade(true);
+    }
+
     enemyTarget_ = target;
 }
 
@@ -119,7 +125,7 @@ void GT_Missile::aimEnemy()
     glm::vec3 dir = enemyTarget_->getPosition() - this->position_;
     dir = glm::normalize(dir);
 
-    while (glm::dot(dir, this->front_)<0.5)
+    while (glm::dot(dir, this->front_)<0.85)
     {
         dir = glm::normalize(dir + this->front_);
     }
@@ -127,9 +133,7 @@ void GT_Missile::aimEnemy()
     this->up_ = glm::normalize( glm::cross(this->front_, dir) );
     this->front_ = dir;//buggger
     this->right_ = glm::normalize(glm::cross(this->front_, this->up_));
-
 }
-
 
 void GT_Missile::Integrate(GLfloat DX_)
 {
@@ -149,12 +153,13 @@ void GT_Missile::Integrate(GLfloat DX_)
         if (glfwGetTime() -  birthday_ > MISSILE_LIFE )
         {
             dead_ = true;
+            ((GT_Fighter*)enemyTarget_)->evade(false);
             return;
         }
 
         glm::vec3 dir = enemyTarget_->getPosition() - this->position_;
 
-        if (glm::length(dir) < 20)
+        if (glm::length(dir) < 10)
         {
             dead_ = true;
             ((GT_Enemy*)enemyTarget_)->explode();

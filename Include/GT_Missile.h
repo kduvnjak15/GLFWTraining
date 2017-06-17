@@ -7,7 +7,7 @@
 #include <list>
 
 const GLfloat MISSILE_SPEED    = 600.0f;
-const GLfloat MISSILE_LIFE     = 10.0f;
+const GLfloat MISSILE_LIFE     = 15.0f;
 const GLfloat MISSILE_AGILITY  = 2.0f;
 
 class GT_Missile : public GT_Actor
@@ -25,6 +25,7 @@ public:
 
     GLboolean isDead() { return dead_;}
 
+    glm::vec3 getPosition() {return position_; }
 
 protected:
 
