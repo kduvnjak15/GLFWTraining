@@ -127,7 +127,7 @@ void GT_GameplayScene::sceneKeyboardHandler(bool* keys, int key, int scancode, i
 
 void GT_GameplayScene::checkCrosshair()
 {
-    GT_Aircraft* locked_ = nullptr;
+    fighter_->lock( nullptr );
     glm::vec3 dir;
     for (auto mit = enemies_.begin(); mit != enemies_.end(); mit++)
     {
@@ -137,11 +137,13 @@ void GT_GameplayScene::checkCrosshair()
         dir = glm::normalize((*mit)->getPosition() - fighter_->getPosition()) ;
 
         if ( glm::dot(dir, sceneCamera_->getCameraFront()) > 0.995 )
-               locked_ = *mit;
-        break;
+        {
+               fighter_->lock(*mit);
+               break;
+        }
     }
 
-    fighter_->lock(locked_);
+//    fighter_->lock(locked_);
 }
 
 void GT_GameplayScene::integrateScene(GLfloat deltaTime)
