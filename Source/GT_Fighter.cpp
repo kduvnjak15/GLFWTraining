@@ -69,10 +69,6 @@ void GT_Fighter::Draw(GT_Camera *tempCam)
     actorModel_->Draw(*actorShader_);
 
     GT_Weapon::Draw(tempCam);
-
-    if (target_)
-        GT_Locator::getFonts()->PrintLine("LOCKED \n Press Enter to FIRE! ", window_width * 0.7f, window_height* 0.1f, 0.5, glm::vec3(1.0f, 0.0f, 0.0f) );
-
 }
 
 

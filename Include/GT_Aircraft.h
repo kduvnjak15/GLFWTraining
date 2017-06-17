@@ -24,6 +24,7 @@ public:
 
     GLboolean explode_;
 
+
 protected:
 
     GLuint explodeLoc_;

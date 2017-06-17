@@ -1,9 +1,9 @@
 #pragma once
 
-#include "GT_Weapon.h"
-#include "GT_Intelligence.h"
+#include "GT_Predator.h"
 
-class GT_Enemy : public GT_Aircraft, public GT_Weapon
+
+class GT_Enemy : public GT_Aircraft, public GT_Predator
 {
 public:
 
@@ -20,8 +20,6 @@ public:
     ~GT_Enemy() { std::cout << "enemy deleted " << this << std::endl; }
 
 private:
-
-    const GLfloat weaponRange_ = 500.0f;
 
     GLboolean dead_;
 

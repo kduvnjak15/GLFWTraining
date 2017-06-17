@@ -40,9 +40,12 @@ void GT_Weapon::Integrate(GLfloat DT_)
 
 void GT_Weapon::fireMissile()
 {
+
     for (int i = 0; i < missiles_.size(); i++)
         if (missiles_[i]->isFired())
+        {
             continue;
+        }
         else
         {
             missiles_[i]->FIRE(target_);

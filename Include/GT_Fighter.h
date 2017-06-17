@@ -13,6 +13,13 @@ public:
 
     void Integrate(GT_Camera* tempCam, GLfloat DT_);
 
+
+    bool isTarget() { return isTarget_; }
+
+    void isTarget(bool flag) { isTarget_ = flag; }
+
 private:
+
+    bool isTarget_;
 
 };

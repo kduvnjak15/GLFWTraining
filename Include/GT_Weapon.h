@@ -16,9 +16,9 @@ public:
     GT_Aircraft* target_;
 
     void lock(GT_Aircraft* locked) { target_ = locked; }
-    bool isLocked() { return (bool)target_; }
+    bool targetLocked() { return (bool)target_; }
 
-    void fireMissile();
+    virtual void fireMissile();
 
 protected:
 

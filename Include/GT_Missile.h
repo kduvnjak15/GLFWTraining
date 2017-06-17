@@ -34,7 +34,6 @@ protected:
 
 private:
 
-    void isHit();
     void aimEnemy();
 
     bool fired_;

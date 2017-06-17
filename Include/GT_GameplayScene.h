@@ -44,5 +44,8 @@ private:
 
     GT_HUD* hud_;
 
+    const GLfloat aimRange_    = 1000.0f;
+    const GLfloat weaponRange_ = 500.0f;
+
 };
 

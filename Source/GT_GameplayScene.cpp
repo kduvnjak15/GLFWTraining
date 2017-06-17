@@ -41,6 +41,10 @@ void GT_GameplayScene::printMSG()
     font_->PrintLine( std::to_string(sceneCamera_->getSpeed()), 120.0f, 75.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
     font_->PrintLine("Altitude: ", 25.0f, 100.0f, .50f, glm::vec3(1.0, 0.1f, 0.1f));
     font_->PrintLine( std::to_string(sceneCamera_->getCameraPos().y), 120.0f, 100.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
+    font_->PrintLine("Level: ", 25.0f, 125.0f, .50f, glm::vec3(1.0, 0.1f, 0.1f));
+    font_->PrintLine( std::to_string(level_), 120.0f, 125.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
+    font_->PrintLine("Bogies: ", 25.0f, 150.0f, .50f, glm::vec3(1.0, 0.1f, 0.1f));
+    font_->PrintLine( std::to_string(enemies_.size()), 120.0f, 150.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
 
     font_->PrintLine("Pos", 120.0f, 380.0f, .50f, glm::vec3(1.0, 0.1f, 0.1f));
     font_->PrintLine( std::to_string(sceneCamera_->getCameraPos().x), 20.0f, 460.0f, .40f, glm::vec3(0.5, 0.8f, 0.2f));
@@ -58,7 +62,22 @@ void GT_GameplayScene::printMSG()
     font_->PrintLine( std::to_string(sceneCamera_->getCameraRight().y), 250.0f, 430.0f, .40f, glm::vec3(0.5, 0.8f, 0.2f));
     font_->PrintLine( std::to_string(sceneCamera_->getCameraRight().z), 250.0f, 400.0f, .40f, glm::vec3(0.5, 0.8f, 0.2f));
 
-//    font_->PrintLine("GAMEPLAY", 600.0f, 400.0f, 1.0f, glm::vec3(1.0, 0.1f, 0.1f));
+
+    if (fighter_->targetLocked())
+    {
+        font_->PrintLine("TARGET LOCKED!", 600.0f, 100.0f, .50f, glm::vec3(1.0, 0.1f, 0.1f));
+        font_->PrintLine("    FIRE!    ", 600.0f, 120.0f, .50f, glm::vec3(1.0, 0.1f, 0.1f));
+    }
+
+    if (fighter_->isTarget())
+    {
+        if (sin(glfwGetTime()*50) > 0)
+        {
+            font_->PrintLine("LOCKED!", 700.0f, 500.0f, .50f, glm::vec3(1.0, 0.1f, 0.1f));
+            font_->PrintLine(" EVADE!", 700.0f, 520.0f, .50f, glm::vec3(1.0, 0.1f, 0.1f));
+        }
+    }
+
 
 }
 
@@ -81,16 +100,18 @@ void GT_GameplayScene::renderScene()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     ///////////////////////////////////////////////////////////////////////
 
-    printMSG();
-    // TODO replace with HUD
-
     ////////////////////////   rendering phase   /////////////////////////////
 
     skybox_->Draw(sceneCamera_);
     ocean_->draw(sceneCamera_);
-    hud_->draw(sceneCamera_);
 
     renderAircrafts();
+
+    hud_->draw(sceneCamera_);
+
+    printMSG();
+    // TODO replace with HUD
+
 
     ///////////////////////////////////////////////////////////////////////
 }
@@ -131,22 +152,48 @@ void GT_GameplayScene::sceneKeyboardHandler(bool* keys, int key, int scancode, i
 void GT_GameplayScene::checkCrosshair()
 {
     fighter_->lock( nullptr );
+    fighter_->isTarget(false);
     glm::vec3 dir;
-    for (auto mit = enemies_.begin(); mit != enemies_.end(); mit++)
+    GLfloat distance;
+
+    for (auto enit = enemies_.begin(); enit != enemies_.end(); enit++)
     {
-        if ((*mit)->explode_)
+        if ((*enit)->explode_)
             continue;
 
-        dir = glm::normalize((*mit)->getPosition() - fighter_->getPosition()) ;
+        //////////////////////////////////////////////////////////////
 
-        if ( glm::dot(dir, sceneCamera_->getCameraFront()) > 0.995 )
+        dir = (*enit)->getPosition() - fighter_->getPosition();
+        distance = glm::length(dir);
+        dir = glm::normalize(dir);
+
+        if (distance < 2.0f * aimRange_)
         {
-               fighter_->lock(*mit);
-               break;
+            if (!fighter_->targetLocked())
+                if (glm::dot(dir, sceneCamera_->getCameraFront()) > 0.995)
+                    fighter_->lock(*enit);
+        }
+
+        if ((*enit)->targetLocked())
+            if (distance < weaponRange_)
+            {
+
+                (*enit)->fireMissile();
+            }
+
+        if (distance < aimRange_)
+        {
+            (*enit)->setPredatorMode(true);
+            (*enit)->lock(fighter_);
+        }
+        else
+        {
+            (*enit)->setPredatorMode(false);
+            (*enit)->lock(GT_Locator::getUSSCarrier());
         }
     }
+    std::cout << "distance" << distance << std::endl;
 
-//    fighter_->lock(locked_);
 }
 
 void GT_GameplayScene::integrateScene(GLfloat deltaTime)
@@ -208,7 +255,6 @@ void GT_GameplayScene::renderAircrafts()
 
 void GT_GameplayScene::missileFIRE()
 {
-
-    if (fighter_->isLocked())
+    if (fighter_->targetLocked())
         fighter_->fireMissile();
 }

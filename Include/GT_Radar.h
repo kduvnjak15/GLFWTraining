@@ -48,7 +48,6 @@ public:
 
         model = glm::rotate(model, (GLfloat)-3.14159/2.0f, glm::vec3(1.0f, 0.0f, 0.0f));
 
-
         glm::mat4 view = tempCam->GetViewMatrix();
         model = glm::inverse(view) * model;
         glm::mat4 projection = tempCam->GetProjectionMatrix();
