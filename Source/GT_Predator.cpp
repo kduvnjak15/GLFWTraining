@@ -25,6 +25,7 @@ void GT_Predator::fireMissile()
         }
         else
         {
+            std::cout << " wrect "<< std::endl;
             missiles_[i]->FIRE(target_);
             break;
         }

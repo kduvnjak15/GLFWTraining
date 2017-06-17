@@ -87,3 +87,8 @@ GT_Aircraft::~GT_Aircraft()
     std::cout << "GT_Aircraft dtor" << this << std::endl;
 }
 
+void GT_Aircraft::explode()
+{
+    explodeTime_ = glfwGetTime();
+    explode_ = true;
+}

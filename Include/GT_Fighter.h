@@ -22,7 +22,7 @@ public:
 
 private:
 
-    GLuint isTarget_;
-    GLuint evade_;
+    GLint isTarget_;
+    GLint evade_;
 
 };

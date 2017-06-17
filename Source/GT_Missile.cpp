@@ -114,6 +114,11 @@ void GT_Missile::FIRE(GT_Aircraft* target)
         ((GT_Fighter*)target)->evade(true);
     }
 
+    if (dynamic_cast<GT_USSCarrier*>(target))
+    {
+        std::cout << "FUCK ME" << std::endl;
+    }
+
     enemyTarget_ = target;
 }
 
@@ -153,7 +158,8 @@ void GT_Missile::Integrate(GLfloat DX_)
         if (glfwGetTime() -  birthday_ > MISSILE_LIFE )
         {
             dead_ = true;
-            ((GT_Fighter*)enemyTarget_)->evade(false);
+            if (dynamic_cast<GT_Fighter*>(enemyTarget_))
+                ((GT_Fighter*)enemyTarget_)->evade(false);
             return;
         }
 
@@ -162,8 +168,7 @@ void GT_Missile::Integrate(GLfloat DX_)
         if (glm::length(dir) < 10)
         {
             dead_ = true;
-            ((GT_Enemy*)enemyTarget_)->explode();
-
+            enemyTarget_->explode();
         }
 
         aimEnemy();

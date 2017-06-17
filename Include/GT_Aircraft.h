@@ -24,6 +24,7 @@ public:
 
     GLboolean explode_;
 
+    void explode();
 
 protected:
 

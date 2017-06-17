@@ -36,7 +36,6 @@ glm::vec2 GT_Radar::calcCoordinates(glm::vec3 dir)
     front = glm::normalize(front);
     GLfloat angle = glm::orientedAngle(front, dir, glm::vec3(0.0f, 1.0f, 0.0f));
 
-
     return glm::vec2(angle, radius);
 
 }
@@ -52,14 +51,16 @@ void GT_Radar::scanRadar(GT_Camera* tempCam)
         coordinates_.push_back( glm::vec3(calcCoordinates(dir), 2.0f));
     }
 
-
     auto mit = radarMissileList_.begin();
     while (mit != radarMissileList_.end())
     {
         if ((*mit)->isFired())
         {
             if ((*mit)->isDead())
+            {
                 mit = radarMissileList_.erase(mit);
+                continue;
+            }
             else
             {
                 glm::vec3 dir = (*mit)->getPosition() - tempCam->getCameraPos();
@@ -69,33 +70,6 @@ void GT_Radar::scanRadar(GT_Camera* tempCam)
 
         mit++;
     }
-
-
-//        if (dynamic_cast<GT_Missile*> (radarActorList_[i]) )
-//        {
-//            GT_Rocket* dinRocket = dynamic_cast<GT_Rocket*> (radarActorList_[i]);
-//            if (dinRocket->isFired() && !dinRocket->dead_)
-//                coordinates_.push_back(glm::vec3(angle, radius, 1));
-//            else
-//                coordinates_.push_back(glm::vec3(angle, radius, -1));
-//        }
-//        else if (dynamic_cast<GT_Raptor*> (radarActorList_[i]))
-//        {
-//            GT_Raptor* dinRaptor = dynamic_cast<GT_Raptor*> (radarActorList_[i]);
-//            if (!dinRaptor->isHit())
-//                coordinates_.push_back(glm::vec3(angle, radius, 2));
-//            else
-//                coordinates_.push_back(glm::vec3(angle, radius, -2));
-//        }
-//        else if (dynamic_cast<GT_USSCarrier*> (radarActorList_[i]))
-//        {
-//            GT_USSCarrier* dinCarrier = dynamic_cast<GT_USSCarrier*> (radarActorList_[i]);
-//            if (!dinCarrier->isHit())
-//                coordinates_.push_back(glm::vec3(angle, radius, 3));
-//            else
-//                coordinates_.push_back(glm::vec3(angle, radius, -3));
-//        }
-
 
 }
 

@@ -180,12 +180,6 @@ void GT_GameplayScene::checkCrosshair()
                     fighter_->lock(*enit);
         }
 
-        if ((*enit)->targetLocked())
-            if (distance < weaponRange_)
-            {
-                (*enit)->fireMissile();
-            }
-
         if (distance < aimRange_)
         {
             (*enit)->setPredatorMode(true);
@@ -197,6 +191,18 @@ void GT_GameplayScene::checkCrosshair()
             (*enit)->setPredatorMode(false);
             (*enit)->lock(GT_Locator::getUSSCarrier());
         }
+
+
+        ///////////////////////////////////////////////////////////////
+        dir = (*enit)->target_->getPosition() - (*enit)->getPosition();
+        distance = glm::length(dir);
+
+        if ((*enit)->targetLocked())
+            if (distance < weaponRange_)
+            {
+                (*enit)->fireMissile();
+            }
+
     }
 }
 
