@@ -56,6 +56,7 @@ public:
         fonts_      = new GT_Alphabet(menuCamera_);
         hud_        = new GT_HUD();
 
+
         models_.push_back(new GT_Model("../Content/FA-22_Raptor/FA-22_Raptor.obj"));
         modelMap_.insert(std::pair<MODEL_TYPE, GT_Model*>(F22, models_[0]));
         models_.push_back(new GT_Model("../Content/FA-18_RC/FA-18_RC.obj"));
