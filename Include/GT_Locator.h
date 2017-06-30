@@ -10,35 +10,7 @@
 #include "GT_Fighter.h"
 #include "GT_USSCarrier.h"
 #include "GT_HUD.h"
-
-
-class Audio
-{
-public:
-    virtual ~Audio() {}
-    virtual void playSound(int soundID) = 0;
-    virtual void stopSound(int soundID) = 0;
-    virtual void stopAllSounds() = 0;
-};
-
-class ConsoleAudio : public Audio
-{
-public:
-    virtual void playSound(int soundID)
-    {
-        std::cout << "playSound "<< std::endl;
-    }
-
-    virtual void stopSound(int soundID)
-    {
-        std::cout << "stopSound" << std::endl;
-    }
-
-    virtual void stopAllSounds()
-    {
-        std::cout << "stopped all Sounds" << std::endl;
-    }
-};
+#include "GT_Audio.h"
 
 class GT_Locator
 {
@@ -55,6 +27,7 @@ public:
         menuCamera_ = new GT_Camera();
         fonts_      = new GT_Alphabet(menuCamera_);
         hud_        = new GT_HUD();
+        audio_      = new GT_Audio();
 
 
         models_.push_back(new GT_Model("../Content/FA-22_Raptor/FA-22_Raptor.obj"));
@@ -73,6 +46,8 @@ public:
         actorMap_.insert(std::pair<MODEL_TYPE, GT_Actor*>(F22, actors_[1]));
         actors_.push_back(new GT_Actor(modelMap_[USS]));
         actorMap_.insert(std::pair<MODEL_TYPE, GT_Actor*>(USS, actors_[2]));
+
+
         std::cout <<" GT_Locator constructor " << std::endl;
 
         fighter_ = new GT_Fighter();
@@ -82,9 +57,9 @@ public:
 
     //getters
 
-    static Audio* getAudio()
+    static GT_Audio* getAudio()
     {
-        return service_;
+        return audio_;
     }
 
     static GT_Ocean* getOcean()
@@ -144,11 +119,6 @@ public:
 
     // providers
 
-    static void provide(Audio* service)
-    {
-        service_ = service;
-    }
-
     static void provide(GT_Skybox* skybox)
     {
         skybox_ = skybox;
@@ -169,7 +139,6 @@ public:
 
 private:
 
-    static Audio*       service_;
     static GT_Ocean*    ocean_;
     static GT_Skybox*   skybox_;
     static GT_Particle* particle_;
@@ -177,6 +146,7 @@ private:
     static GT_Camera*   menuCamera_;
     static GT_Alphabet* fonts_;
     static GT_HUD*      hud_;
+    static GT_Audio*    audio_;
 
     static GT_Fighter*  fighter_;
     static GT_USSCarrier*   ussCarrier_;

@@ -1,6 +1,5 @@
 #include "GT_Locator.h"
 
-Audio*       GT_Locator::service_;
 GT_Ocean*    GT_Locator::ocean_;
 GT_Skybox*   GT_Locator::skybox_;
 GT_Particle* GT_Locator::particle_;
@@ -8,6 +7,7 @@ GT_Camera*   GT_Locator::gameCamera_;
 GT_Camera*   GT_Locator::menuCamera_;
 GT_Alphabet* GT_Locator::fonts_;
 GT_HUD*      GT_Locator::hud_;
+GT_Audio*    GT_Locator::audio_;
 
 GT_Fighter*  GT_Locator::fighter_;
 GT_USSCarrier*  GT_Locator::ussCarrier_;
@@ -20,7 +20,7 @@ std::vector<GT_Actor*>          GT_Locator::actors_;
 
 GT_Locator::~GT_Locator()
 {
-    if (service_)   delete service_;
+    if (audio_)     delete audio_;
     if (ocean_)     delete ocean_;
     if (skybox_)    delete skybox_;
     if (particle_)  delete particle_;

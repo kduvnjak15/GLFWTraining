@@ -52,6 +52,8 @@ void GT_Weapon::fireMissile()
         else
         {
             missiles_[i]->FIRE(target_);
+            GT_Locator::getAudio()->playSound(BOOM);
+
             break;
         }
 }
