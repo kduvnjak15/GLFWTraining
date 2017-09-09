@@ -11,6 +11,7 @@
 #include "GT_USSCarrier.h"
 #include "GT_HUD.h"
 #include "GT_Audio.h"
+#include "GT_Image.h"
 
 class GT_Locator
 {
@@ -28,6 +29,7 @@ public:
         fonts_      = new GT_Alphabet(menuCamera_);
         hud_        = new GT_HUD();
         audio_      = new GT_Audio();
+        wallp_      = new GT_Image("../Content/intro.jpg");
 
 
         models_.push_back(new GT_Model("../Content/FA-22_Raptor/FA-22_Raptor.obj"));
@@ -117,6 +119,11 @@ public:
         return hud_;
     }
 
+    static GT_Image* getImage()
+    {
+        return wallp_;
+    }
+
     // providers
 
     static void provide(GT_Skybox* skybox)
@@ -147,6 +154,7 @@ private:
     static GT_Alphabet* fonts_;
     static GT_HUD*      hud_;
     static GT_Audio*    audio_;
+    static GT_Image*    wallp_;
 
     static GT_Fighter*  fighter_;
     static GT_USSCarrier*   ussCarrier_;

@@ -4,10 +4,11 @@
 #include <vector>
 #include "GT_Camera.h"
 #include "GT_Alphabet.h"
-
+#include "GT_Utils.h"
 
 enum sceneType
 {
+    introScene,
     gameplay,
     pauseScene,
     menuScene,
@@ -28,8 +29,8 @@ enum class keyPressed
 
 class GT_Scene
 {
-
 public:
+
     GT_Scene(sceneType sceneEnum);
 
     virtual ~GT_Scene();

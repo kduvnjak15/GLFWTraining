@@ -24,6 +24,12 @@ GT_Primitive::GT_Primitive(const char* textureImage)
       hasTexture_(true)
 
 {
+
+    initValues();
+    defineTexture();
+    defineVAO();
+    defineShader();
+
     std::cout<< "GT_Primitive ctor "<<this<<" "<<textureImage<<std::endl;
 
 }
@@ -169,8 +175,8 @@ void GT_Primitive::draw(GT_Camera *tempCam)
     glm::mat4 projection = tempCam->GetProjectionMatrix();
 
     glUniformMatrix4fv(modelLoc_, 1, GL_FALSE, glm::value_ptr(model));
-    glUniformMatrix4fv(viewLoc_, 1, GL_FALSE, glm::value_ptr(view));
-    glUniformMatrix4fv(projLoc_, 1, GL_FALSE, glm::value_ptr(projection));
+    glUniformMatrix4fv(viewLoc_, 1, GL_FALSE, glm::value_ptr(model));
+    glUniformMatrix4fv(projLoc_, 1, GL_FALSE, glm::value_ptr(model));
 
     glBindVertexArray(VAO_);
 

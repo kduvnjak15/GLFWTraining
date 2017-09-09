@@ -11,6 +11,9 @@
 #include "GT_GameplayScene.h"
 #include "GT_PauseScene.h"
 
+#include "GT_IntroScene.h"
+#include "GT_Image.h"
+
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -106,7 +109,8 @@ public:
         scenes_.push_back(new GT_MenuScene());
         scenes_.push_back(new GT_GameplayScene());
         scenes_.push_back(new GT_PauseScene());
-        curScene_ = scenes_[0];
+        scenes_.push_back(new GT_IntroScene);
+        curScene_ = scenes_[3];
 
     }
 
@@ -116,6 +120,7 @@ public:
 
         loadGame();
 
+        slika_ = new GT_Image("../Content/sun.jpg");
         std::cout << "Starting GAME LOOP "<< std::endl;
 
         while (!glfwWindowShouldClose(windowPtr_))
@@ -123,17 +128,28 @@ public:
 
             ///////////////////////////////////////////////////////
 
+
             glfwPollEvents();
 
             /////////////////////    rendering    //////////////////
+//            glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+//            glClear(GL_COLOR_BUFFER_BIT);
+
+
+
 
             curScene_->renderScene();
-
             /////////////////    gameplay control  //////////////////
 
             if (curScene_->nextScene_ != nonType )
             {
-                if (curScene_->nextScene_ == gameplay)
+                if (curScene_->nextScene_ == introScene)
+                {
+                    std::cout << "Next scene Introscene"<< std::endl;
+                    curScene_->nextScene_ = nonType;
+                    curScene_ = scenes_[3];
+                }
+                else if (curScene_->nextScene_ == gameplay)
                 {
                     std::cout << "Next scene gameplay"<< std::endl;
                     curScene_->nextScene_ = nonType;
@@ -156,6 +172,7 @@ public:
                 else
                     curScene_ = scenes_[0];
             }
+
 
 
             ////////////////////////////////////////////////////////
@@ -231,6 +248,7 @@ private:
     GT_Scene* curScene_;
 
     GT_Locator* GT_Locator_;
+    GT_Image* slika_;
 };
 
 int main(int argc, char** argv)

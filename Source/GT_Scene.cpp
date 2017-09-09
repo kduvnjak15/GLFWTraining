@@ -30,7 +30,7 @@ GT_Scene::GT_Scene(sceneType sceneEnum)
 
 void GT_Scene::updateClock()
 {
-    deltaTime_ =  glfwGetTime() - lastFrame_;
+    deltaTime_ = glfwGetTime() - lastFrame_;
     lastFrame_ = glfwGetTime();
 }
 

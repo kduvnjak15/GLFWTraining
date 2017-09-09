@@ -8,6 +8,7 @@ GT_Camera*   GT_Locator::menuCamera_;
 GT_Alphabet* GT_Locator::fonts_;
 GT_HUD*      GT_Locator::hud_;
 GT_Audio*    GT_Locator::audio_;
+GT_Image*    GT_Locator::wallp_;
 
 GT_Fighter*  GT_Locator::fighter_;
 GT_USSCarrier*  GT_Locator::ussCarrier_;
