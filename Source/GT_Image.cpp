@@ -1,6 +1,8 @@
 #include "GT_Image.h"
 #include "SOIL/SOIL.h"
 
+#include "GT_Utils.h"
+
 #define DISParr(e) for (int i = 0; i< (sizeof(e)/sizeof(GLfloat)); i++) std::cout << e[i] << std::endl;
 #define DISP(e) std::cout<< e << std::endl;
 
@@ -137,6 +139,65 @@ void GT_Image::defineTexture()
     DISP("define text")
 }
 
+void GT_Image::defineImageCoordinates(GLfloat x1, GLfloat y1, GLfloat x2, GLfloat y2)
+{
+
+    if (x2 <= x1 || y2 <= y1)
+    {
+        std::cout << "epic error, wrong input image coordinates"<< std::endl;
+        return;
+    }
+
+    GLuint win_w, win_h;
+    GT_Utils::getWindowWidthAndHeight(win_w, win_h);
+
+    win_w *= 0.5;
+    win_h *= 0.5;
+
+    // Top left
+    imageCoords_[0] = (x1-win_w)/win_w;
+    imageCoords_[1] =-(y1-win_h)/win_h;
+    // Bottom left
+    imageCoords_[2] = (x1-win_w)/win_w ;
+    imageCoords_[3] =-(y1-win_h)/win_h - (y2-y1)/win_h;
+    // Bottom right
+    imageCoords_[4] = (x2-win_w)/win_w;
+    imageCoords_[5] =-(y2-win_h)/win_h;
+    // Top right
+    imageCoords_[6] = (x2-win_w)/win_w;
+    imageCoords_[7] =-(y2-win_h)/win_h + (y2-y1)/win_h;
+
+
+    for (int i = 0; i < 8; i++)
+    {
+        std::cout << imageCoords_[i] << std::endl;
+    }
+    defineVAO();
+}
+
+void GT_Image::defineImageScreenCoordinates(GLfloat x1, GLfloat y1, GLfloat x2, GLfloat y2)
+{
+    if (abs(x1) > 1 || abs(y1) > 1 || abs(x2) > 1 || abs(y2) > 1 )
+    {
+        std::cout << "epic fail, wrong input image screen coordinates" << std::endl;
+        return;
+    }
+
+    // Top left
+    imageCoords_[0] = x1;
+    imageCoords_[1] = -y1;
+    // Bottom left
+    imageCoords_[2] = x1;
+    imageCoords_[3] = -y2;
+    // Bottom right
+    imageCoords_[4] = x2;
+    imageCoords_[5] = -y2;
+    // Top right
+    imageCoords_[6] = x2;
+    imageCoords_[7] = -y1;
+
+    defineVAO();
+}
 
 void GT_Image::Draw()
 {

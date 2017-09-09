@@ -120,7 +120,6 @@ public:
 
         loadGame();
 
-        slika_ = new GT_Image("../Content/sun.jpg");
         std::cout << "Starting GAME LOOP "<< std::endl;
 
         while (!glfwWindowShouldClose(windowPtr_))
@@ -248,7 +247,7 @@ private:
     GT_Scene* curScene_;
 
     GT_Locator* GT_Locator_;
-    GT_Image* slika_;
+
 };
 
 int main(int argc, char** argv)

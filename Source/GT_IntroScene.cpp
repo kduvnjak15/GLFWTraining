@@ -5,6 +5,11 @@ GT_IntroScene::GT_IntroScene()
     :GT_Scene(introScene)
 
 {
+    wallpaper_ = GT_Locator::getImage();
+
+    wallpaper_->defineImageCoordinates(100, 100, 800, 200);
+    wallpaper_->defineImageScreenCoordinates(-0.95, -0.95, 0.5,0.5);
+
     nextScene_ = introScene;
 }
 
@@ -14,7 +19,7 @@ void GT_IntroScene::renderScene()
 
     checkKeyboardInput();
 
-    GT_Utils::drawImage(*(GT_Locator::getImage()));
+    GT_Utils::drawImage(*(wallpaper_));
 }
 
 void GT_IntroScene::checkKeyboardInput()
@@ -23,11 +28,18 @@ void GT_IntroScene::checkKeyboardInput()
     {
         if (keys_[GLFW_KEY_SPACE])
             nextScene_ = menuScene;
+
+
     }
 }
 
 void GT_IntroScene::sceneKeyboardHandler(bool* keys, int key, int scancode, int action, int mode)
 {
     keys_ = keys;
+
+    if (keys[GLFW_KEY_ESCAPE] && action == GLFW_PRESS)
+    {
+        nextScene_ = exitGame;
+    }
 }
 

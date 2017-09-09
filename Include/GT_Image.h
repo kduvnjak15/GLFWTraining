@@ -12,6 +12,10 @@ public:
 
     void Draw();
 
+    void defineImageCoordinates(GLfloat x1, GLfloat y1, GLfloat x2, GLfloat y2);
+    void defineImageScreenCoordinates(GLfloat x1, GLfloat y1, GLfloat x2, GLfloat y2);
+
+
 private:
 
     const char* texturePath_;

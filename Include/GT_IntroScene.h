@@ -15,7 +15,7 @@ public:
 
 private:
 
-
+    GT_Image* wallpaper_;
 
 
 
