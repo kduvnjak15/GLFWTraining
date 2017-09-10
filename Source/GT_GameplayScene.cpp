@@ -15,6 +15,10 @@ GT_GameplayScene::GT_GameplayScene()
     hud_ = GT_Locator::getHUD();
     hud_->setRadarEnemyListPtr(enemies_);
 
+    sound_.setBuffer(*(GT_Locator::getAudio()->getSoundBuffMap(ENGINE)));
+    sound_.setLoop(true);
+    sound_.setVolume(soundVolume_);
+
     nextScene_ = gameplay;
 }
 
@@ -28,6 +32,7 @@ void GT_GameplayScene::checkKeyboardInput()
             sceneCamera_->keyboardHandler(ACCELERATE, deltaTime_);
         if (keys_[GLFW_KEY_LEFT_SHIFT])
             sceneCamera_->keyboardHandler(DECELERATE, deltaTime_);
+
     }
 }
 
@@ -114,6 +119,12 @@ void GT_GameplayScene::renderScene()
     renderAircrafts();
 
     hud_->draw(sceneCamera_);
+
+    if (dirtySound_)
+    {
+        sound_.play();
+        dirtySound_ = false;
+    }
 
     printMSG();
     // TODO replace with HUD
@@ -212,6 +223,9 @@ void GT_GameplayScene::integrateScene(GLfloat deltaTime)
     sceneCamera_->keyboardHandler(FORWARD, deltaTime);
 
     integrateAircrafts(deltaTime);
+
+    GLfloat temp_speed = GT_Locator::getGameCamera()->getSpeed();
+    sound_.setVolume((temp_speed / MAX_SPEED)*100);
 
     checkCrosshair();
 }

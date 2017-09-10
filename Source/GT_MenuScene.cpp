@@ -18,6 +18,10 @@ GT_MenuScene::GT_MenuScene()
     buttons_.push_back("OPTIONS");
     buttons_.push_back("QUIT GAME");
 
+    sound_.setBuffer(*(GT_Locator::getAudio()->getSoundBuffMap(OCEAN)));
+    sound_.setVolume(40);
+    sound_.setLoop(true);
+
     carrier_ = GT_Locator::getUSSCarrier();
     fighter_ = GT_Locator::getFighter();
 
@@ -63,7 +67,10 @@ void GT_MenuScene::sceneKeyboardHandler(bool* keys, int key, int scancode, int a
         {
             startAnimateGameplay_ = true;
             if (stopAnimateGameplay_)
+            {
+                sound_.stop();
                 nextScene_ = gameplay;
+            }
         }
 
         if (currButton_ == 1)
@@ -158,6 +165,13 @@ void GT_MenuScene::renderScene()
 
     carrier_->Draw(sceneCamera_);
     fighter_->Draw(sceneCamera_);
+
+    if (dirtySound_)
+    {
+        sound_.play();
+        dirtySound_ = false;
+    }
+
 
     ///////////////////////////////////////////////////////////////////////
 }

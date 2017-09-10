@@ -47,5 +47,9 @@ private:
     const GLfloat aimRange_    = 2000.0f;
     const GLfloat weaponRange_ = 1000.0f;
 
+    sf::Sound sound_;
+    bool dirtySound_ = true;
+    GLfloat soundVolume_ = 100;
+
 };
 

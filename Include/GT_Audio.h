@@ -9,7 +9,10 @@ enum SOUND
     BOOM,
     MISSILE,
     SPRAY,
-    LAND
+    LAND,
+    ENGINE,
+    OCEAN,
+    EXPLOSION
 
 };
 
@@ -21,6 +24,7 @@ public:
 
     void playSound(SOUND soundEnum);
 
+    sf::SoundBuffer* getSoundBuffMap(SOUND soundEnum) { return soundBuffMap_[soundEnum]; }
 
 private:
     std::map<SOUND, sf::SoundBuffer*> soundBuffMap_;

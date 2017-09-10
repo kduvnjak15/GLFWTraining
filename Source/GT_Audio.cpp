@@ -26,6 +26,18 @@ GT_Audio::GT_Audio()
     sb->loadFromFile("../Content/spray.wav");
     soundBuffMap_.insert(std::pair<SOUND, sf::SoundBuffer*>(SPRAY, sb));
 
+    sb = new sf::SoundBuffer();
+    sb->loadFromFile("../Content/engine.wav");
+    soundBuffMap_.insert(std::pair<SOUND, sf::SoundBuffer*>(ENGINE, sb));
+
+    sb = new sf::SoundBuffer();
+    sb->loadFromFile("../Content/ocean.wav");
+    soundBuffMap_.insert(std::pair<SOUND, sf::SoundBuffer*>(OCEAN, sb));
+
+    sb = new sf::SoundBuffer();
+    sb->loadFromFile("../Content/explosion.wav");
+    soundBuffMap_.insert(std::pair<SOUND, sf::SoundBuffer*>(EXPLOSION, sb));
+
 }
 
 

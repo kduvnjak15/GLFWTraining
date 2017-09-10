@@ -34,6 +34,9 @@ private:
     glm::vec3 menuCamFront_;
     GLfloat camTimer_;
 
+    sf::Sound sound_;
+    bool dirtySound_ = true;
+
     const GLfloat SPINFACTOR_ = 0.01f;
     bool startAnimateGameplay_;
     bool stopAnimateGameplay_;

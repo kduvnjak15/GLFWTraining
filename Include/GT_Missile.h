@@ -2,6 +2,7 @@
 
 #include "GT_Aircraft.h"
 #include "GT_Particle.h"
+#include "SFML/Audio.hpp"
 
 #include <glm/glm.hpp>
 #include <list>
@@ -47,5 +48,9 @@ private:
     GLuint contrailRate_;
 
     GT_Particle* particle_;
+
+    sf::Sound sound_;
+    bool dirtySound_ = true;
+
 
 };
