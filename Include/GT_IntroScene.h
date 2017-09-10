@@ -17,6 +17,6 @@ private:
 
     GT_Image* wallpaper_;
 
-
+    GLfloat start;
 
 };

@@ -3,6 +3,7 @@
 in vec2 texcor; 
 
 uniform int hasTexture;
+uniform float transparent;
 uniform vec4 rgba_;
 
 uniform sampler2D sempler; 
@@ -18,6 +19,8 @@ void main()
 	else
 	{
 		color = texture(sempler, texcor);
+		if (transparent >= 0)
+			color.w = abs(transparent); 
 	}
 	
 }

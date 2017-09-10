@@ -1,5 +1,6 @@
 #include "GT_IntroScene.h"
 #include "GT_Locator.h"
+#include "time.h"
 
 GT_IntroScene::GT_IntroScene()
     :GT_Scene(introScene)
@@ -7,10 +8,10 @@ GT_IntroScene::GT_IntroScene()
 {
     wallpaper_ = GT_Locator::getImage();
     //wallpaper_ = new GT_Image(0.0f, 0.0f, 1.0f, 1.0f);
-    wallpaper_ = new GT_Image(1.0f, 0.0f, 0.2f);
+    //wallpaper_ = new GT_Image(1.0f, 0.0f, 0.2f);
 
-    wallpaper_->defineImageScreenCoordinates(-0.95, -0.95, 0.5,0.5);
-
+    //wallpaper_->defineImageScreenCoordinates(-0.95, -0.95, 0.5,0.5);
+    start = 0;
     nextScene_ = introScene;
 }
 
@@ -20,6 +21,9 @@ void GT_IntroScene::renderScene()
 
     checkKeyboardInput();
 
+    start += 0.025;
+    wallpaper_->setTransparency(sin(start));
+    std::cout << sin(start)<<std::endl;
     GT_Utils::drawImage(*(wallpaper_));
 }
 

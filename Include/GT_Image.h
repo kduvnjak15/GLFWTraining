@@ -15,6 +15,8 @@ public:
 
     void defineImageCoordinates(GLfloat x1, GLfloat y1, GLfloat x2, GLfloat y2);
     void defineImageScreenCoordinates(GLfloat x1, GLfloat y1, GLfloat x2, GLfloat y2);
+    void setTransparency(GLfloat alpha);
+    void makeTransparent(bool make) { transparent_ = make ;}
 
 
 private:

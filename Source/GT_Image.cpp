@@ -9,7 +9,8 @@
 GT_Image::GT_Image(const char *texturePath)
     :
       texturePath_(texturePath),
-      hasTexture_(true)
+      hasTexture_(true),
+      transparent_(true)
 {
     initScreenCoords();
     defineVAO();
@@ -223,6 +224,11 @@ void GT_Image::defineImageScreenCoordinates(GLfloat x1, GLfloat y1, GLfloat x2, 
     defineVAO();
 }
 
+void GT_Image::setTransparency(GLfloat alpha)
+{
+    RGBA_[3] = alpha;
+}
+
 void GT_Image::Draw()
 {
 
@@ -235,6 +241,16 @@ void GT_Image::Draw()
     {
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, textureHandle_);
+        if (transparent_)
+        {
+            glUniform1f(glGetUniformLocation(imageShader_->shaderProgram_, "transparent"), RGBA_[3] );
+        }
+        else
+        {
+            glUniform1f(glGetUniformLocation(imageShader_->shaderProgram_, "transparent"), -100 );
+        }
+
+
     }
     else
     {
