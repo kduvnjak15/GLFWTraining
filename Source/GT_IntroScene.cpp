@@ -6,8 +6,9 @@ GT_IntroScene::GT_IntroScene()
 
 {
     wallpaper_ = GT_Locator::getImage();
+    //wallpaper_ = new GT_Image(0.0f, 0.0f, 1.0f, 1.0f);
+    wallpaper_ = new GT_Image();
 
-    wallpaper_->defineImageCoordinates(100, 100, 800, 200);
     wallpaper_->defineImageScreenCoordinates(-0.95, -0.95, 0.5,0.5);
 
     nextScene_ = introScene;

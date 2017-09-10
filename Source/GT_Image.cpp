@@ -8,14 +8,33 @@
 
 GT_Image::GT_Image(const char *texturePath)
     :
-      texturePath_(texturePath)
+      texturePath_(texturePath),
+      hasTexture_(true)
 {
     initScreenCoords();
     defineVAO();
     defineShader();
     defineTexture();
 
-    std::cout << "slika ctor "<< this << std::endl;
+    std::cout << "textured slika ctor "<< this << std::endl;
+}
+
+GT_Image::GT_Image(GLfloat r_, GLfloat g_, GLfloat b_, GLfloat alpha )
+    :
+      hasTexture_(false)
+
+{
+    RGBA_[0] = r_;
+    RGBA_[1] = g_;
+    RGBA_[2] = b_;
+    RGBA_[3] = alpha;
+
+    initScreenCoords();
+    defineVAO();
+    defineShader();
+
+    std::cout << "coloured slika ctor" << this << std::endl;
+
 }
 
 
@@ -58,6 +77,8 @@ void GT_Image::initScreenCoords()
     textureCoords_[6] = 1.0f;
     textureCoords_[7] = 0.0f;
 
+    ///////////////////////////////
+
 }
 
 void GT_Image::defineVAO()
@@ -66,6 +87,7 @@ void GT_Image::defineVAO()
     glGenBuffers(1, &VBO_);
     glGenBuffers(1, &EBO_);
     glGenBuffers(1, &TBO_);
+    glGenBuffers(1, &CBO_);
    // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
     glBindVertexArray(VAO_);
 
@@ -73,14 +95,23 @@ void GT_Image::defineVAO()
     glBufferData(GL_ARRAY_BUFFER, sizeof(imageCoords_), imageCoords_, GL_STATIC_DRAW);
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
-    //glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 
     glBindBuffer(GL_ARRAY_BUFFER, TBO_);
     glBufferData(GL_ARRAY_BUFFER, sizeof(textureCoords_), textureCoords_, GL_STATIC_DRAW);
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(1);
-//    glBindBuffer(GL_ARRAY_BUFFER,0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+
+        glBindBuffer(GL_ARRAY_BUFFER, CBO_);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(RGBA_), RGBA_, GL_STATIC_DRAW);
+        glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, 1 * sizeof(GLfloat), (void*)0);
+        glEnableVertexAttribArray(2);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO_);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(imageIndices_), imageIndices_, GL_STATIC_DRAW);
@@ -205,11 +236,17 @@ void GT_Image::Draw()
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, textureHandle_);
-
     this->imageShader_->Use();
+
+    if (hasTexture_)
+    {
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, textureHandle_);
+    }
+    else
+    {
+        glUniform1i(glGetUniformLocation(imageShader_->shaderProgram_, "hasTexture"), -10);
+    }
 
     glBindVertexArray(VAO_);
 
@@ -219,3 +256,4 @@ void GT_Image::Draw()
 
 
 }
+
