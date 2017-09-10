@@ -132,12 +132,13 @@ public:
 
             /////////////////////    rendering    //////////////////
 //            glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-//            glClear(GL_COLOR_BUFFER_BIT);
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
 
 
             curScene_->renderScene();
+            GT_Locator::getFonts()->PrintLine("asdad",20, 20, 1.0f, glm::vec3(1.0f, 0.0f, 0.0f));
             /////////////////    gameplay control  //////////////////
 
             if (curScene_->nextScene_ != nonType )

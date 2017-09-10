@@ -13,49 +13,14 @@
 #include "GT_Audio.h"
 #include "GT_Image.h"
 
+#define PI 3.1415926
+
 class GT_Locator
 {
 public:
 
 
-    GT_Locator()
-    {
-
-        skybox_ = new GT_Skybox();
-        ocean_  = new GT_Ocean();
-        particle_  = new GT_Particle();
-        gameCamera_ = new GT_Camera();
-        menuCamera_ = new GT_Camera();
-        fonts_      = new GT_Alphabet(menuCamera_);
-        hud_        = new GT_HUD();
-        audio_      = new GT_Audio();
-        wallp_      = new GT_Image("../Content/intro.jpg");
-
-
-        models_.push_back(new GT_Model("../Content/FA-22_Raptor/FA-22_Raptor.obj"));
-        modelMap_.insert(std::pair<MODEL_TYPE, GT_Model*>(F22, models_[0]));
-        models_.push_back(new GT_Model("../Content/FA-18_RC/FA-18_RC.obj"));
-        modelMap_.insert(std::pair<MODEL_TYPE, GT_Model*>(F18, models_[1]));
-        models_.push_back(new GT_Model("../Content/AVMT300/AVMT300.3ds"));
-        modelMap_.insert(std::pair<MODEL_TYPE, GT_Model*>(AIM, models_[2]));
-        models_.push_back(new GT_Model("../Content/CV - Essex class/essex_scb-125_generic.obj"));
-        modelMap_.insert(std::pair<MODEL_TYPE, GT_Model*>(USS, models_[3]));
-
-
-        actors_.push_back(new GT_Actor(modelMap_[F18]));
-        actorMap_.insert(std::pair<MODEL_TYPE, GT_Actor*>(F18, actors_[0]));
-        actors_.push_back(new GT_Actor(modelMap_[F22]));
-        actorMap_.insert(std::pair<MODEL_TYPE, GT_Actor*>(F22, actors_[1]));
-        actors_.push_back(new GT_Actor(modelMap_[USS]));
-        actorMap_.insert(std::pair<MODEL_TYPE, GT_Actor*>(USS, actors_[2]));
-
-
-        std::cout <<" GT_Locator constructor " << std::endl;
-
-        fighter_ = new GT_Fighter();
-        ussCarrier_ = new GT_USSCarrier();
-
-    }
+    GT_Locator();
 
     //getters
 
@@ -119,9 +84,14 @@ public:
         return hud_;
     }
 
-    static GT_Image* getImage()
+    static sf::SoundBuffer* getSpray()
     {
-        return wallp_;
+        return sfSpray_;
+    }
+
+    static sf::SoundBuffer* getLand()
+    {
+        return sfLand_;
     }
 
     // providers
@@ -154,7 +124,9 @@ private:
     static GT_Alphabet* fonts_;
     static GT_HUD*      hud_;
     static GT_Audio*    audio_;
-    static GT_Image*    wallp_;
+
+    static sf::SoundBuffer* sfSpray_;
+    static sf::SoundBuffer* sfLand_;
 
     static GT_Fighter*  fighter_;
     static GT_USSCarrier*   ussCarrier_;

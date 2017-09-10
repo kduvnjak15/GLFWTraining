@@ -15,9 +15,9 @@ public:
 
     void defineImageCoordinates(GLfloat x1, GLfloat y1, GLfloat x2, GLfloat y2);
     void defineImageScreenCoordinates(GLfloat x1, GLfloat y1, GLfloat x2, GLfloat y2);
-    void setTransparency(GLfloat alpha);
-    void makeTransparent(bool make) { transparent_ = make ;}
 
+    void setTransparency(GLfloat alpha);
+    void setBrightness(GLfloat bright);
 
 private:
 
@@ -27,12 +27,15 @@ private:
     GT_Shader* imageShader_;
 
     bool hasTexture_ = false;
-    bool transparent_ = false;
 
     GLfloat imageCoords_[8];
     GLuint imageIndices_[6];
     GLfloat textureCoords_[8];
     GLfloat RGBA_[4];
+
+    GLfloat brightness_;
+    GLfloat transparency_;
+    bool transparent_;
 
     GLuint VAO_;
     GLuint VBO_;

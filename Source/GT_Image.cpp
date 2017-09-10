@@ -10,7 +10,9 @@ GT_Image::GT_Image(const char *texturePath)
     :
       texturePath_(texturePath),
       hasTexture_(true),
-      transparent_(true)
+      brightness_(1.0f),
+      transparency_(1.0f)
+
 {
     initScreenCoords();
     defineVAO();
@@ -22,7 +24,9 @@ GT_Image::GT_Image(const char *texturePath)
 
 GT_Image::GT_Image(GLfloat r_, GLfloat g_, GLfloat b_, GLfloat alpha )
     :
-      hasTexture_(false)
+      hasTexture_(false),
+      brightness_(1.0f),
+      transparency_(1.0f)
 
 {
     RGBA_[0] = r_;
@@ -125,7 +129,6 @@ void GT_Image::defineVAO()
 void GT_Image::defineShader()
 {
     imageShader_ = new GT_Shader(aircraftShader, "../Shaders/imageShader.vs", "../Shaders/imageShader.fs");
-    DISP("define shader")
 }
 
 
@@ -226,7 +229,12 @@ void GT_Image::defineImageScreenCoordinates(GLfloat x1, GLfloat y1, GLfloat x2, 
 
 void GT_Image::setTransparency(GLfloat alpha)
 {
-    RGBA_[3] = alpha;
+    transparency_ = alpha;
+}
+
+void GT_Image::setBrightness(GLfloat bright)
+{
+    brightness_ = bright;
 }
 
 void GT_Image::Draw()
@@ -236,21 +244,13 @@ void GT_Image::Draw()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     this->imageShader_->Use();
+    glUniform1f(glGetUniformLocation(imageShader_->shaderProgram_, "brightness"), brightness_ );
+    glUniform1f(glGetUniformLocation(imageShader_->shaderProgram_, "transparency"), transparency_ );
 
     if (hasTexture_)
     {
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, textureHandle_);
-        if (transparent_)
-        {
-            glUniform1f(glGetUniformLocation(imageShader_->shaderProgram_, "transparent"), RGBA_[3] );
-        }
-        else
-        {
-            glUniform1f(glGetUniformLocation(imageShader_->shaderProgram_, "transparent"), -100 );
-        }
-
-
     }
     else
     {

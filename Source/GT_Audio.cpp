@@ -21,7 +21,7 @@ GT_Audio::GT_Audio()
 void GT_Audio::playSound(SOUND soundEnum)
 {
     tempBuff_ = new sf::SoundBuffer();
-    if (tempBuff_->loadFromFile("../Content/gunshot.wav"))
+    if (tempBuff_->loadFromFile("../Content/missile.wav"))
     {
         std::cout << "sebon"<< std::endl;
     }
