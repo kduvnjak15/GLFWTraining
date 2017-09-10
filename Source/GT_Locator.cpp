@@ -16,7 +16,6 @@ sf::SoundBuffer* GT_Locator::sfSpray_;
 sf::SoundBuffer* GT_Locator::sfLand_;
 
 
-
 GT_Fighter*  GT_Locator::fighter_;
 GT_USSCarrier*  GT_Locator::ussCarrier_;
 

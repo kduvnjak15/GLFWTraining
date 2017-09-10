@@ -6,7 +6,11 @@
 enum SOUND
 {
     BELL,
-    BOOM
+    BOOM,
+    MISSILE,
+    SPRAY,
+    LAND
+
 };
 
 

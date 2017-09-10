@@ -6,7 +6,6 @@
 
 GT_Audio::GT_Audio()
 {
-
     sf::SoundBuffer* sb = new sf::SoundBuffer();
     sb->loadFromFile("../Content/bell.wav");
     soundBuffMap_.insert(std::pair<SOUND, sf::SoundBuffer*>(BELL, sb));
@@ -15,19 +14,24 @@ GT_Audio::GT_Audio()
     sb->loadFromFile("../Content/gunshot.wav");
     soundBuffMap_.insert(std::pair<SOUND, sf::SoundBuffer*>(BOOM, sb));
 
+    sb = new sf::SoundBuffer();
+    sb->loadFromFile("../Content/missile.wav");
+    soundBuffMap_.insert(std::pair<SOUND, sf::SoundBuffer*>(MISSILE, sb));
+
+    sb = new sf::SoundBuffer();
+    sb->loadFromFile("../Content/land.flac");
+    soundBuffMap_.insert(std::pair<SOUND, sf::SoundBuffer*>(LAND, sb));
+
+    sb = new sf::SoundBuffer();
+    sb->loadFromFile("../Content/spray.wav");
+    soundBuffMap_.insert(std::pair<SOUND, sf::SoundBuffer*>(SPRAY, sb));
+
 }
 
 
 void GT_Audio::playSound(SOUND soundEnum)
 {
-    tempBuff_ = new sf::SoundBuffer();
-    if (tempBuff_->loadFromFile("../Content/missile.wav"))
-    {
-        std::cout << "sebon"<< std::endl;
-    }
-
+    tempBuff_ = soundBuffMap_[soundEnum];
     sound_.setBuffer( *tempBuff_ );
-    sound_.setVolume(100);
-
     sound_.play();
 }

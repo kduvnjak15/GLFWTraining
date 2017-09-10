@@ -26,7 +26,9 @@ private:
 
     sf::Sound sound_;
     sf::SoundBuffer* bannerSound_;
-    bool banner_played = false;
+    bool machina_played     = false;
+    bool wallpaper_played   = false;
+    bool dirtySound_ = false;
 
 
     GLfloat start;

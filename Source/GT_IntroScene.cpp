@@ -14,8 +14,8 @@ GT_IntroScene::GT_IntroScene()
     wallpaper_->setBrightness(0);
 
     bannerSound_ = GT_Locator::getSpray();
-
     sound_.setBuffer(*(bannerSound_));
+    dirtySound_ = true;
 
     banner_ = machina_;
     nextScene_ = introScene;
@@ -42,11 +42,7 @@ void GT_IntroScene::integrateScene(GLfloat deltaTime_)
     if (start > 2*PI )
     {
         banner_ = wallpaper_;
-
-        if (bannerSound_ != GT_Locator::getLand() )
-        bannerSound_ = GT_Locator::getLand();
-        sound_.setBuffer(*bannerSound_);
-        banner_played = false;
+        dirtySound_ = true;
     }
 
     setSceneBrightness();
@@ -71,15 +67,21 @@ void GT_IntroScene::renderScene()
 
     banner_->Draw();
 
-
-    if (!banner_played)
+    if (!machina_played)
     {
-        bannerSound_ = GT_Locator::getSpray();
-        sound_.setBuffer( *bannerSound_);
-
         sound_.play();
-        banner_played = true;
+        machina_played = true;
+        dirtySound_ = false;
     }
+    else if (!wallpaper_played && dirtySound_)
+    {
+        sound_.setBuffer(*(GT_Locator::getLand()));
+        sound_.play();
+        std::cout << " pa sta je sad "<< std::endl;
+        wallpaper_played = true;
+    }
+
+
 }
 
 void GT_IntroScene::checkKeyboardInput()
@@ -87,7 +89,10 @@ void GT_IntroScene::checkKeyboardInput()
     if (keys_ != nullptr)
     {
         if (keys_[GLFW_KEY_SPACE])
+        {
+            sound_.stop();
             nextScene_ = menuScene;
+        }
     }
 }
 
