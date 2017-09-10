@@ -1,9 +1,9 @@
 #version 330 core 
 
 in vec2 texcor; 
-in vec4 rgba_;
 
 uniform int hasTexture;
+uniform vec4 rgba_;
 
 uniform sampler2D sempler; 
 
@@ -13,7 +13,7 @@ void main()
 {
 	if (hasTexture < 0)
 	{
-		color  = vec4(0.0f, 0.0f, 0.0f, rgba_.w); 
+		color  = vec4(rgba_.x, rgba_.y, rgba_.z, 1.0f); 
 	}
 	else
 	{

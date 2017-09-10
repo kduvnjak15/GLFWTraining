@@ -29,6 +29,7 @@ GT_Image::GT_Image(GLfloat r_, GLfloat g_, GLfloat b_, GLfloat alpha )
     RGBA_[2] = b_;
     RGBA_[3] = alpha;
 
+
     initScreenCoords();
     defineVAO();
     defineShader();
@@ -91,6 +92,7 @@ void GT_Image::defineVAO()
    // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
     glBindVertexArray(VAO_);
 
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindBuffer(GL_ARRAY_BUFFER, VBO_);
     glBufferData(GL_ARRAY_BUFFER, sizeof(imageCoords_), imageCoords_, GL_STATIC_DRAW);
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
@@ -103,15 +105,6 @@ void GT_Image::defineVAO()
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(1);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-
-        glBindBuffer(GL_ARRAY_BUFFER, CBO_);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(RGBA_), RGBA_, GL_STATIC_DRAW);
-        glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, 1 * sizeof(GLfloat), (void*)0);
-        glEnableVertexAttribArray(2);
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO_);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(imageIndices_), imageIndices_, GL_STATIC_DRAW);
@@ -246,6 +239,7 @@ void GT_Image::Draw()
     else
     {
         glUniform1i(glGetUniformLocation(imageShader_->shaderProgram_, "hasTexture"), -10);
+        glUniform4f(glGetUniformLocation(imageShader_->shaderProgram_, "rgba_"),RGBA_[0],RGBA_[1],RGBA_[2],RGBA_[3] );
     }
 
     glBindVertexArray(VAO_);
