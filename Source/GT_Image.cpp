@@ -15,9 +15,9 @@ GT_Image::GT_Image(const char *texturePath)
 
 {
     initScreenCoords();
+    defineTexture();
     defineVAO();
     defineShader();
-    defineTexture();
 
     std::cout << "textured slika ctor "<< this << std::endl;
 }
@@ -93,37 +93,23 @@ void GT_Image::defineVAO()
     glGenBuffers(1, &VBO_);
     glGenBuffers(1, &EBO_);
     glGenBuffers(1, &TBO_);
-    glGenBuffers(1, &CBO_);
    // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
     glBindVertexArray(VAO_);
 
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindBuffer(GL_ARRAY_BUFFER, VBO_);
     glBufferData(GL_ARRAY_BUFFER, sizeof(imageCoords_), imageCoords_, GL_STATIC_DRAW);
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-
 
     glBindBuffer(GL_ARRAY_BUFFER, TBO_);
     glBufferData(GL_ARRAY_BUFFER, sizeof(textureCoords_), textureCoords_, GL_STATIC_DRAW);
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(1);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO_);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(imageIndices_), imageIndices_, GL_STATIC_DRAW);
 
-
-       // note that this is allowed, the call to glVertexAttribPointer registered VBO as the vertex attribute's bound vertex buffer object so afterwards we can safely unbind
-   //    glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-       // remember: do NOT unbind the EBO while a VAO is active as the bound element buffer object IS stored in the VAO; keep the EBO bound.
-       //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-       // You can unbind the VAO afterwards so other VAO calls won't accidentally modify this VAO, but this rarely happens. Modifying other
-       // VAOs requires a call to glBindVertexArray anyways so we generally don't unbind VAOs (nor VBOs) when it's not directly necessary.
-       glBindVertexArray(0);
+    glBindVertexArray(0);
 }
 
 void GT_Image::defineShader()
@@ -146,7 +132,7 @@ void GT_Image::defineTexture()
         alphaChannel = GL_RGB;
         soilAlpha    = SOIL_LOAD_RGB;
     }
-    unsigned char* image = SOIL_load_image(texturePath_, &width, &height, 0, soilAlpha);
+    unsigned char* image = SOIL_load_image(texturePath_, &width, &height, 0, SOIL_LOAD_RGB);
 
 
     glGenTextures(1, &textureHandle_);
@@ -164,7 +150,6 @@ void GT_Image::defineTexture()
 
     SOIL_free_image_data(image);
     glBindTexture(GL_TEXTURE_2D, 0);
-    DISP("define text")
 }
 
 void GT_Image::defineImageCoordinates(GLfloat x1, GLfloat y1, GLfloat x2, GLfloat y2)
@@ -240,9 +225,6 @@ void GT_Image::setBrightness(GLfloat bright)
 void GT_Image::Draw()
 {
 
-    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
     this->imageShader_->Use();
     glUniform1f(glGetUniformLocation(imageShader_->shaderProgram_, "brightness"), brightness_ );
     glUniform1f(glGetUniformLocation(imageShader_->shaderProgram_, "transparency"), transparency_ );
@@ -263,6 +245,8 @@ void GT_Image::Draw()
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
     glBindVertexArray(0);
+    glBindTexture(GL_TEXTURE_2D, 0);
+
 
 
 }

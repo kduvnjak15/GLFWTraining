@@ -17,7 +17,7 @@ GT_Scene::GT_Scene(sceneType sceneEnum)
 
     if (sceneEnum == gameplay)
         sceneCamera_ = GT_Locator::getGameCamera();
-    else if (sceneEnum == pauseScene || sceneEnum == menuScene)
+    else if (sceneEnum == pauseScene || sceneEnum == menuScene || sceneEnum == credits )
     {
         std::cout << "GT_MENUSCENE" << std::endl;
         sceneCamera_ = GT_Locator::getMenuCamera();

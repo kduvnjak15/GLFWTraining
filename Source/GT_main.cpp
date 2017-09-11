@@ -10,6 +10,8 @@
 #include "GT_MenuScene.h"
 #include "GT_GameplayScene.h"
 #include "GT_PauseScene.h"
+#include "GT_CreditScene.h"
+#include "GT_GameoverScene.h"
 
 #include "GT_IntroScene.h"
 #include "GT_Image.h"
@@ -110,6 +112,7 @@ public:
         scenes_.push_back(new GT_GameplayScene());
         scenes_.push_back(new GT_PauseScene());
         scenes_.push_back(new GT_IntroScene);
+        scenes_.push_back(new GT_CreditScene);
         curScene_ = scenes_[3];
 
     }
@@ -134,11 +137,7 @@ public:
 //            glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-
-
-
             curScene_->renderScene();
-            GT_Locator::getFonts()->PrintLine("asdad",20, 20, 1.0f, glm::vec3(1.0f, 0.0f, 0.0f));
             /////////////////    gameplay control  //////////////////
 
             if (curScene_->nextScene_ != nonType )
@@ -166,6 +165,12 @@ public:
                     std::cout << "Next scene pausescene" << std::endl;
                     curScene_->nextScene_ = nonType;
                     curScene_ = scenes_[2];
+                }
+                else if (curScene_->nextScene_ == credits)
+                {
+                    std::cout << "Next scene credits" << std::endl;
+                    curScene_->nextScene_ = nonType;
+                    curScene_ = scenes_[4];
                 }
                 else if (curScene_->nextScene_ == exitGame)
                     return true;

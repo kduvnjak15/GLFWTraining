@@ -15,7 +15,7 @@ GT_MenuScene::GT_MenuScene()
       stopAnimateGameplay_(false)
 {
     buttons_.push_back("PLAY GAME");
-    buttons_.push_back("OPTIONS");
+    buttons_.push_back("CREDITS");
     buttons_.push_back("QUIT GAME");
 
     sound_.setBuffer(*(GT_Locator::getAudio()->getSoundBuffMap(OCEAN)));
@@ -80,7 +80,7 @@ void GT_MenuScene::sceneKeyboardHandler(bool* keys, int key, int scancode, int a
         }
 
         if (currButton_ == 1)
-            nextScene_ = options;
+            nextScene_ = credits;
         if (currButton_ == 2)
             nextScene_ = exitGame;
     }
@@ -113,10 +113,7 @@ void GT_MenuScene::animateGameplay()
 {
     fighter_->setPosition(fighter_->getPosition() + fighter_->getFront()*5.2f);
 
-    std::cout << sceneCamera_->getCameraPos().x - soundJetPos_ <<std::endl;
     soundJet_.setVolume( (sceneCamera_->getCameraPos().x - soundJetPos_)/234.0f * (150.0f/6));
-
-    std::cout << soundJet_.getVolume()<< std::endl;
 
     if (dirtySoundJet_)
     {

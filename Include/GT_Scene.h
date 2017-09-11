@@ -12,8 +12,9 @@ enum sceneType
     gameplay,
     pauseScene,
     menuScene,
-    options,
     exitGame,
+    credits,
+    gameover,
     nonType
 };
 
@@ -63,5 +64,8 @@ protected:
     GT_Alphabet* font_;
 
     bool* keys_;
+
+    const GLfloat SPINFACTOR_ = 0.01f;
+
 
 };

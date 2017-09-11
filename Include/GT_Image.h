@@ -35,7 +35,7 @@ private:
 
     GLfloat brightness_;
     GLfloat transparency_;
-    bool transparent_;
+    bool transparent_ = false;
 
     GLuint VAO_;
     GLuint VBO_;

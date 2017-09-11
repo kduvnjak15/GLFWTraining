@@ -40,7 +40,6 @@ private:
     bool dirtySoundJet_ = true;
     GLfloat soundJetPos_ = 0;
 
-    const GLfloat SPINFACTOR_ = 0.01f;
     bool startAnimateGameplay_;
     bool stopAnimateGameplay_;
 };

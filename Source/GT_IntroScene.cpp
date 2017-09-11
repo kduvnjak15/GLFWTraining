@@ -81,7 +81,7 @@ void GT_IntroScene::renderScene()
         wallpaper_played = true;
     }
 
-
+    GT_Locator::getFonts()->PrintLine("satirican", 200, 200, 1.0f, glm::vec3(1.0f, 0.0f, 0.0f));
 }
 
 void GT_IntroScene::checkKeyboardInput()
