@@ -18,6 +18,7 @@ GT_GameplayScene::GT_GameplayScene()
     sound_.setBuffer(*(GT_Locator::getAudio()->getSoundBuffMap(ENGINE)));
     sound_.setLoop(true);
     sound_.setVolume(soundVolume_);
+    sound_.setPitch(0.5);
 
     nextScene_ = gameplay;
 }

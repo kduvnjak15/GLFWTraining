@@ -49,8 +49,6 @@ private:
 
     GT_Particle* particle_;
 
-    sf::Sound sound_;
-    bool dirtySound_ = true;
 
 
 };

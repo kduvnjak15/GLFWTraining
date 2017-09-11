@@ -4,7 +4,7 @@
 GT_Fighter::GT_Fighter()
     :
       GT_Aircraft(GT_Locator::getModel(F18)),
-       GT_Weapon(1, this),
+       GT_Weapon(10, this),
        evade_(0),
        isTarget_(0)
 {

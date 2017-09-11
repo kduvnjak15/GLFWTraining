@@ -35,7 +35,10 @@ private:
     GLfloat camTimer_;
 
     sf::Sound sound_;
+    sf::Sound soundJet_;
     bool dirtySound_ = true;
+    bool dirtySoundJet_ = true;
+    GLfloat soundJetPos_ = 0;
 
     const GLfloat SPINFACTOR_ = 0.01f;
     bool startAnimateGameplay_;

@@ -27,11 +27,6 @@ GT_Missile::GT_Missile(GT_Model *missileModel, GT_Aircraft* ownerPtr, GLuint mis
 
     particle_ = GT_Locator::getParticle();
 
-
-    sound_.setBuffer(*(GT_Locator::getAudio()->getSoundBuffMap(MISSILE)));
-
-
-
     std::cout << "GT_Missile initialized "<< this << std::endl;
 }
 
@@ -44,11 +39,6 @@ void GT_Missile::Draw(GT_Camera *tempCam)
 {
     if (dead_ )
     {
-        if (dirtySound_)
-        {
-            sound_.play();
-            dirtySound_ = false;
-        }
         return;
     }
 
@@ -119,9 +109,6 @@ void GT_Missile::FIRE(GT_Aircraft* target)
 {
     fired_ = true;
     birthday_ = glfwGetTime();
-    sound_.play();
-    dirtySound_ = false;
-
 
     if (dynamic_cast<GT_Fighter*>(target))
     {
@@ -157,13 +144,6 @@ void GT_Missile::aimEnemy()
 
 void GT_Missile::Integrate(GLfloat DX_)
 {
-
-    if (dead_)
-    {
-        sound_.setBuffer(*(GT_Locator::getAudio()->getSoundBuffMap(EXPLOSION)));
-        dirtySound_ = true;
-    }
-
 
     if (!fired_)
     {

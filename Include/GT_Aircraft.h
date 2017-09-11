@@ -4,7 +4,7 @@
 #include "GT_Actor.h"
 
 #include <glm/glm.hpp>
-
+#include "SFML/Audio.hpp"
 
 class GT_Aircraft : public GT_Actor
 {
@@ -32,6 +32,8 @@ protected:
     GLuint explodeTime_;
 
     GLfloat aircraftSpeed_;
+    sf::Sound sound_;
+    bool dirtySound_ = true;
 
 
 };

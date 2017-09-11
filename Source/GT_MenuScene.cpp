@@ -22,8 +22,13 @@ GT_MenuScene::GT_MenuScene()
     sound_.setVolume(40);
     sound_.setLoop(true);
 
+    soundJet_.setBuffer(*(GT_Locator::getAudio()->getSoundBuffMap(ENGINE)));
+    soundJet_.setVolume(0);
+
     carrier_ = GT_Locator::getUSSCarrier();
     fighter_ = GT_Locator::getFighter();
+
+    soundJetPos_ = fighter_->getPosition().x;
 
     nextScene_ = menuScene;
 
@@ -66,11 +71,12 @@ void GT_MenuScene::sceneKeyboardHandler(bool* keys, int key, int scancode, int a
         if (currButton_ == 0)
         {
             startAnimateGameplay_ = true;
+            soundJetPos_ = sceneCamera_->getCameraPos().x;
             if (stopAnimateGameplay_)
             {
-                sound_.stop();
                 nextScene_ = gameplay;
             }
+
         }
 
         if (currButton_ == 1)
@@ -83,6 +89,13 @@ void GT_MenuScene::sceneKeyboardHandler(bool* keys, int key, int scancode, int a
 
 void GT_MenuScene::initGameplayScene()
 {
+    sound_.setLoop(false);
+    dirtySound_ = false;
+    sound_.stop();
+
+    dirtySoundJet_ = false;
+    soundJet_.stop();
+
     nextScene_ = gameplay;
     GT_Locator::getGameCamera()->setCameraPos(fighter_->getPosition());
     GT_Locator::getGameCamera()->setCameraFront(fighter_->getFront());
@@ -99,6 +112,18 @@ void GT_MenuScene::animateCam()
 void GT_MenuScene::animateGameplay()
 {
     fighter_->setPosition(fighter_->getPosition() + fighter_->getFront()*5.2f);
+
+    std::cout << sceneCamera_->getCameraPos().x - soundJetPos_ <<std::endl;
+    soundJet_.setVolume( (sceneCamera_->getCameraPos().x - soundJetPos_)/234.0f * (150.0f/6));
+
+    std::cout << soundJet_.getVolume()<< std::endl;
+
+    if (dirtySoundJet_)
+    {
+        soundJet_.play();
+        dirtySoundJet_ = false;
+    }
+
 
     if (fighter_->getPosition().x > 400.0f)
     {

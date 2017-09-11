@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include "GT_Aircraft.h"
+#include "GT_Locator.h"
 
 GT_Aircraft::GT_Aircraft(GT_Model *aircraftModel)
     :
@@ -18,6 +19,8 @@ GT_Aircraft::GT_Aircraft(GT_Model *aircraftModel)
     lightPosLoc_ = glGetUniformLocation(actorShader_->shaderProgram_, "light.position");
     viewPosLoc_ = glGetUniformLocation(actorShader_->shaderProgram_, "viewPos");
     explodeLoc_ = glGetUniformLocation(actorShader_->shaderProgram_, "isHit");
+
+    sound_.setBuffer(*(GT_Locator::getAudio()->getSoundBuffMap(EXPLOSION)));
 
     std::cout << "GT_Aircraft initialized " << this << std::endl;
 }
@@ -89,6 +92,27 @@ GT_Aircraft::~GT_Aircraft()
 
 void GT_Aircraft::explode()
 {
+
+    if (explode_)
+        return;
+
+    GLfloat normDistance_;
+    if (this != GT_Locator::getFighter())
+    {
+
+        glm::vec3 distance = GT_Locator::getFighter()->getPosition() -  this->getPosition();
+
+        normDistance_= abs(3000 - glm::length(distance))/ 30.0f;
+    }
+    else
+    {
+        normDistance_ = 100;
+    }
+
+
+    sound_.setVolume(normDistance_);
+    sound_.play();
+
     explodeTime_ = glfwGetTime();
     explode_ = true;
 }
