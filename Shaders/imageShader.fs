@@ -18,7 +18,7 @@ void main()
 	
 	if (hasTexture < 0)
 	{
-		color  = vec4(rgba_.x, rgba_.y, rgba_.z, rgba_.z); 
+		color  = vec4(rgba_.x, rgba_.y, rgba_.z, rgba_.w); 
 	}
 	else
 	{
@@ -28,4 +28,3 @@ void main()
 	color = vec4(b*color.x, b*color.y, b*color.z, t*color.w);
 	
 }
-

@@ -31,10 +31,11 @@ public:
     GLuint fontVAO;
 
     void PrintLine(std::string text, GLfloat x, GLfloat y, GLfloat scale, glm::vec3 color);
+    void PrintLine(std::string text, GLfloat x, GLfloat y, GLfloat scale, glm::vec4 color);
 
 private:
 
-    void RenderText(GT_Shader &shader, std::string text, GLfloat x, GLfloat y, GLfloat scale, glm::vec3 color);
+    void RenderText(GT_Shader &shader, std::string text, GLfloat x, GLfloat y, GLfloat scale, glm::vec4 color);
 
     void createTexQuads();
 
@@ -44,4 +45,5 @@ private:
 
     GT_Shader* fontShader_;
     GT_Camera* tempCam_;
+    glm::mat4 projMatrix_;
 };

@@ -65,6 +65,10 @@ void GT_IntroScene::renderScene()
 
     integrateScene(deltaTime_);
 
+    if (wallpaper_played)
+    {
+        GT_Locator::getFonts()->PrintLine("Press SPACE to continue", 220, 30, 1.0f, glm::vec4(0.0f, 0.1f, 1.0f, sin(start*5)*0.5 + 0.5));
+    }
     banner_->Draw();
 
     if (!machina_played)
@@ -73,15 +77,14 @@ void GT_IntroScene::renderScene()
         machina_played = true;
         dirtySound_ = false;
     }
+
     else if (!wallpaper_played && dirtySound_)
     {
         sound_.setBuffer(*(GT_Locator::getLand()));
         sound_.play();
-        std::cout << " pa sta je sad "<< std::endl;
         wallpaper_played = true;
     }
 
-    GT_Locator::getFonts()->PrintLine("satirican", 200, 200, 1.0f, glm::vec3(1.0f, 0.0f, 0.0f));
 }
 
 void GT_IntroScene::checkKeyboardInput()

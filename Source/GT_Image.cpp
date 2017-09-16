@@ -15,9 +15,9 @@ GT_Image::GT_Image(const char *texturePath)
 
 {
     initScreenCoords();
-    defineTexture();
     defineVAO();
     defineShader();
+    defineTexture();
 
     std::cout << "textured slika ctor "<< this << std::endl;
 }
@@ -90,21 +90,22 @@ void GT_Image::initScreenCoords()
 void GT_Image::defineVAO()
 {
     glGenVertexArrays(1, &VAO_);
+
     glGenBuffers(1, &VBO_);
     glGenBuffers(1, &EBO_);
     glGenBuffers(1, &TBO_);
-   // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
+    // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
     glBindVertexArray(VAO_);
 
     glBindBuffer(GL_ARRAY_BUFFER, VBO_);
     glBufferData(GL_ARRAY_BUFFER, sizeof(imageCoords_), imageCoords_, GL_STATIC_DRAW);
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
 
     glBindBuffer(GL_ARRAY_BUFFER, TBO_);
     glBufferData(GL_ARRAY_BUFFER, sizeof(textureCoords_), textureCoords_, GL_STATIC_DRAW);
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO_);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(imageIndices_), imageIndices_, GL_STATIC_DRAW);
@@ -132,7 +133,7 @@ void GT_Image::defineTexture()
         alphaChannel = GL_RGB;
         soilAlpha    = SOIL_LOAD_RGB;
     }
-    unsigned char* image = SOIL_load_image(texturePath_, &width, &height, 0, SOIL_LOAD_RGB);
+    unsigned char* image = SOIL_load_image(texturePath_, &width, &height, 0, soilAlpha);
 
 
     glGenTextures(1, &textureHandle_);
@@ -150,6 +151,7 @@ void GT_Image::defineTexture()
 
     SOIL_free_image_data(image);
     glBindTexture(GL_TEXTURE_2D, 0);
+    DISP("define text")
 }
 
 void GT_Image::defineImageCoordinates(GLfloat x1, GLfloat y1, GLfloat x2, GLfloat y2)
@@ -228,6 +230,7 @@ void GT_Image::Draw()
     this->imageShader_->Use();
     glUniform1f(glGetUniformLocation(imageShader_->shaderProgram_, "brightness"), brightness_ );
     glUniform1f(glGetUniformLocation(imageShader_->shaderProgram_, "transparency"), transparency_ );
+    glUniform1i(glGetUniformLocation(imageShader_->shaderProgram_, "sempler"), 0);
 
     if (hasTexture_)
     {
@@ -245,8 +248,6 @@ void GT_Image::Draw()
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
     glBindVertexArray(0);
-    glBindTexture(GL_TEXTURE_2D, 0);
-
 
 
 }

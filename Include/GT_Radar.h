@@ -1,4 +1,4 @@
-#pragma once 
+#pragma once
 
 #include <glm/glm.hpp>
 #include <vector>
@@ -77,7 +77,7 @@ public:
 
     void scanRadar(GT_Camera *tempCam);
 
-    void draw(GT_Camera* tempCam);    
+    void draw(GT_Camera* tempCam);
 
 private:
 

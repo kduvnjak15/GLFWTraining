@@ -3,6 +3,7 @@
 #include "GT_Model.h"
 #include "GT_Primitive.h"
 #include "GT_Radar.h"
+#include "GT_Image.h"
 
 #include "GT_Enemy.h"
 
@@ -21,8 +22,8 @@ public:
 
     typedef struct
     {
-        glm::vec3 position_;
-        glm::vec3 volume_;
+        glm::vec2 topLeft;
+        glm::vec2 bottomRight;
     }panel;
 
 private:
@@ -37,6 +38,7 @@ private:
 
     void installRadar();
 
-};
+    GT_Image panel_ = GT_Image(0.0f, 0.0f, 0.0f, 0.45f);
 
+};
 

@@ -12,7 +12,6 @@
 #include "GT_PauseScene.h"
 #include "GT_CreditScene.h"
 #include "GT_GameoverScene.h"
-
 #include "GT_IntroScene.h"
 #include "GT_Image.h"
 
@@ -58,7 +57,7 @@ public:
     {
         srand ( time(NULL) );
         gamePointer = this;
-        std::cout<<"GLFWTraining GAME class "<<std::endl;
+        std::cout<<"GLFWTraining GAME class info "<<std::endl;
     }
     virtual ~GAME()
     {
@@ -98,7 +97,7 @@ public:
         // OpenGL options
         glEnable(GL_DEPTH_TEST);
         glEnable(GL_BLEND);
-        glBlendFunc(GL_DST_ALPHA, GL_ONE);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         return true;
     }
 
@@ -111,10 +110,12 @@ public:
         scenes_.push_back(new GT_MenuScene());
         scenes_.push_back(new GT_GameplayScene());
         scenes_.push_back(new GT_PauseScene());
-        scenes_.push_back(new GT_IntroScene);
-        scenes_.push_back(new GT_CreditScene);
-        curScene_ = scenes_[3];
+        scenes_.push_back(new GT_IntroScene());
+        scenes_.push_back(new GT_CreditScene());
+        scenes_.push_back(new GT_GameoverScene());
 
+
+        curScene_ = scenes_[4];
     }
 
     bool Run()
@@ -134,8 +135,9 @@ public:
             glfwPollEvents();
 
             /////////////////////    rendering    //////////////////
-//            glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+            glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 
             curScene_->renderScene();
             /////////////////    gameplay control  //////////////////
@@ -168,17 +170,21 @@ public:
                 }
                 else if (curScene_->nextScene_ == credits)
                 {
-                    std::cout << "Next scene credits" << std::endl;
+                    std::cout << "Next scene creditscene" << std::endl;
                     curScene_->nextScene_ = nonType;
                     curScene_ = scenes_[4];
+                }
+                else if (curScene_->nextScene_ == gameover)
+                {
+                    std::cout << "Next scene gameover" << std::endl;
+                    curScene_->nextScene_ = nonType;
+                    curScene_ = scenes_[5];
                 }
                 else if (curScene_->nextScene_ == exitGame)
                     return true;
                 else
                     curScene_ = scenes_[0];
             }
-
-
 
             ////////////////////////////////////////////////////////
 
@@ -195,6 +201,7 @@ private:
     void initSceneContext()
     {
         glViewport(0, 0, window_width, window_height);
+
     }
 
     void initializeCallbacks()

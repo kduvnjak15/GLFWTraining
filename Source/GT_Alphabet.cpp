@@ -60,8 +60,7 @@ GT_Alphabet::GT_Alphabet(GT_Camera *tempCam)
     FT_Done_Face(face);
     FT_Done_FreeType(ft);
 
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 
     fontShader_ = new GT_Shader(fontShader, "../Shaders/fontShader.vs", "../Shaders/fontShader.fs");
     this->tempCam_  = tempCam;
@@ -70,18 +69,28 @@ GT_Alphabet::GT_Alphabet(GT_Camera *tempCam)
 
 void GT_Alphabet::PrintLine(std::string text, GLfloat x, GLfloat y, GLfloat scale, glm::vec3 color)
 {
-    glm::mat4 projection = glm::ortho(0.0f, static_cast<GLfloat>(window_width), 0.0f, static_cast<GLfloat>(window_height));
-    glUniformMatrix4fv(glGetUniformLocation(fontShader_->shaderProgram_, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+    RenderText(*fontShader_, text, x, y, scale, glm::vec4(color, 1.0f) );
+}
 
+
+void GT_Alphabet::PrintLine(std::string text, GLfloat x, GLfloat y, GLfloat scale, glm::vec4 color)
+{
     RenderText(*fontShader_, text, x, y, scale, color );
 }
 
-void GT_Alphabet::RenderText(GT_Shader &shader, std::string text, GLfloat x, GLfloat y, GLfloat scale, glm::vec3 color)
+void GT_Alphabet::RenderText(GT_Shader &shader, std::string text, GLfloat x, GLfloat y, GLfloat scale, glm::vec4 color)
 {
     shader.Use();
-    glUniform3f(glGetUniformLocation(shader.shaderProgram_, "textColor"), color.x, color.y, color.z);
-    glActiveTexture(GL_TEXTURE0);
+    glUniform4f(glGetUniformLocation(shader.shaderProgram_, "textColor"), color.x, color.y, color.z, color.w);
+    glUniform1i(glGetUniformLocation(shader.shaderProgram_, "text"), 1);
+
+    glm::mat4 projection = glm::ortho(0.0f, static_cast<GLfloat>(window_width), 0.0f, static_cast<GLfloat>(window_height));
+    glUniformMatrix4fv(glGetUniformLocation(fontShader_->shaderProgram_, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+
+    glActiveTexture(GL_TEXTURE1);
     glBindVertexArray(fontVAO);
+
+    glBlendFunc(GL_SRC0_ALPHA, GL_ONE);
 
     std::string::const_iterator c;
     for (c = text.begin(); c!=text.end(); c++)
@@ -114,13 +123,12 @@ void GT_Alphabet::RenderText(GT_Shader &shader, std::string text, GLfloat x, GLf
         glDrawArrays(GL_TRIANGLES, 0, 6);
         // Now advance cursors for next glyph
         x += (ch.Advance >> 6) * scale;
-
-
-
     }
 
     glBindVertexArray(0);
     glBindTexture(GL_TEXTURE_2D, 0);
+
+    glBlendFunc(GL_SRC0_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 }
 

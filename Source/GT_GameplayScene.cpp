@@ -18,7 +18,6 @@ GT_GameplayScene::GT_GameplayScene()
     sound_.setBuffer(*(GT_Locator::getAudio()->getSoundBuffMap(ENGINE)));
     sound_.setLoop(true);
     sound_.setVolume(soundVolume_);
-    sound_.setPitch(0.5);
 
     nextScene_ = gameplay;
 }
@@ -52,34 +51,17 @@ void GT_GameplayScene::printMSG()
     font_->PrintLine("Bogies: ", 25.0f, 150.0f, .50f, glm::vec3(1.0, 0.1f, 0.1f));
     font_->PrintLine( std::to_string(enemies_.size()), 120.0f, 150.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
 
-    font_->PrintLine("Pos", 120.0f, 380.0f, .50f, glm::vec3(1.0, 0.1f, 0.1f));
-    font_->PrintLine( std::to_string(sceneCamera_->getCameraPos().x), 20.0f, 460.0f, .40f, glm::vec3(0.5, 0.8f, 0.2f));
-    font_->PrintLine( std::to_string(sceneCamera_->getCameraPos().y), 20.0f, 430.0f, .40f, glm::vec3(0.5, 0.8f, 0.2f));
-    font_->PrintLine( std::to_string(sceneCamera_->getCameraPos().z), 20.0f, 400.0f, .40f, glm::vec3(0.5, 0.8f, 0.2f));
-
-
-    font_->PrintLine("Front ", 120.0f, 380.0f, .50f, glm::vec3(1.0, 0.1f, 0.1f));
-    font_->PrintLine( std::to_string(sceneCamera_->getCameraFront().x), 120.0f, 460.0f, .40f, glm::vec3(0.5, 0.8f, 0.2f));
-    font_->PrintLine( std::to_string(sceneCamera_->getCameraFront().y), 120.0f, 430.0f, .40f, glm::vec3(0.5, 0.8f, 0.2f));
-    font_->PrintLine( std::to_string(sceneCamera_->getCameraFront().z), 120.0f, 400.0f, .40f, glm::vec3(0.5, 0.8f, 0.2f));
-
-    font_->PrintLine("Right ", 250.0f, 380.0f, .50f, glm::vec3(1.0, 0.1f, 0.1f));
-    font_->PrintLine( std::to_string(sceneCamera_->getCameraRight().x), 250.0f, 460.0f, .40f, glm::vec3(0.5, 0.8f, 0.2f));
-    font_->PrintLine( std::to_string(sceneCamera_->getCameraRight().y), 250.0f, 430.0f, .40f, glm::vec3(0.5, 0.8f, 0.2f));
-    font_->PrintLine( std::to_string(sceneCamera_->getCameraRight().z), 250.0f, 400.0f, .40f, glm::vec3(0.5, 0.8f, 0.2f));
-
-
     if (fighter_->targetLocked())
     {
-        font_->PrintLine("TARGET LOCKED!", 800.0f, 100.0f, .4f, glm::vec3(1.0, 0.1f, 0.1f));
-        font_->PrintLine("        FIRE!    ", 800.0f, 120.0f, .50f, glm::vec3(1.0, 0.1f, 0.1f));
+        font_->PrintLine("TARGET LOCKED!", 802.0f, 30.0f, .4f, glm::vec3(1.0, 0.1f, 0.1f));
+        font_->PrintLine("        FIRE!    ", 802.0f, 50.0f, .50f, glm::vec3(1.0, 0.1f, 0.1f));
     }
 
     if (fighter_->isTarget())
     {
         if (sin(glfwGetTime()*20) > -0.7)
         {
-            font_->PrintLine("LOCKED!", 820.0f, 200.0f, .60f, glm::vec3(1.0, 0.1f, 0.1f));
+            font_->PrintLine("LOCKED!", 820.0f, 92.0f, .60f, glm::vec3(1.0, 0.1f, 0.1f));
         }
     }
 
@@ -87,7 +69,7 @@ void GT_GameplayScene::printMSG()
     {
         if (sin(glfwGetTime()*20) > 0)
         {
-            font_->PrintLine(" EVADE!", 820.0f, 250.0f, .60f, glm::vec3(1.0, 0.1f, 0.1f));
+            font_->PrintLine(" EVADE!", 825.0f, 150.0f, .60f, glm::vec3(1.0, 0.1f, 0.1f));
         }
     }
 
@@ -220,6 +202,14 @@ void GT_GameplayScene::checkCrosshair()
 
 void GT_GameplayScene::integrateScene(GLfloat deltaTime)
 {
+    if (this->fighter_->explode_)
+        nextScene_ = gameover;
+
+    if (level_ > 1 && !(fighter_->isFreeMode()))
+    {
+        nextScene_ = gameover;
+    }
+
     // Fly movement
     sceneCamera_->keyboardHandler(FORWARD, deltaTime);
 
@@ -227,6 +217,14 @@ void GT_GameplayScene::integrateScene(GLfloat deltaTime)
 
     GLfloat temp_speed = GT_Locator::getGameCamera()->getSpeed();
     sound_.setVolume((temp_speed / MAX_SPEED)*100);
+
+
+    GLfloat gravityFactor = (100 - temp_speed ) / 100 ;
+    if (gravityFactor >= 0 && sceneCamera_->getCameraPos().y > 5)
+        sceneCamera_->enforceGravity(gravityFactor);
+
+    if (sceneCamera_->getCameraPos().y < 10)
+        nextScene_ = gameover;
 
     checkCrosshair();
 }

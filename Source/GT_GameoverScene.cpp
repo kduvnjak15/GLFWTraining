@@ -1,22 +1,21 @@
-#include "GT_CreditScene.h"
+#include "GT_GameoverScene.h"
 
 
-GT_CreditScene::GT_CreditScene()
+
+GT_GameoverScene::GT_GameoverScene()
     :
       GT_Scene(credits),
       skybox_(GT_Locator::getSkybox()),
       ocean_(GT_Locator::getOcean()),
       camTimer_(0),
       menuCamFront_(glm::vec3(0.0f, 0.0f, 1.0f))
-
 {
+
     carrier_ = GT_Locator::getUSSCarrier();
     fighter_ = GT_Locator::getFighter();
 
     canvas_ = new GT_Image(0.0f, 0.0f, 0.0f, 0.3f);
     canvas_->defineImageScreenCoordinates(-0.7, -0.7, 0.7, 0.7);
-
-    nextScene_ = credits;
 
     GT_Locator::getGameCamera()->setCameraPos(carrier_->getPosition()+ glm::vec3(170.0f, 58.0f, -32.0f));
     GT_Locator::getGameCamera()->setCameraFront(carrier_->getFront());
@@ -27,48 +26,60 @@ GT_CreditScene::GT_CreditScene()
     oceanSound_.setLoop(true);
 
 
-    nextScene_ = credits;
+    nextScene_ = gameover;
 }
 
-void GT_CreditScene::checkKeyboardInput()
+void GT_GameoverScene::checkKeyboardInput()
 {
-    if (keys_ != nullptr)
-    {
-        if (keys_[GLFW_KEY_Q])
-            camTimer_-=3.0f;
-        if (keys_[GLFW_KEY_E])
-            camTimer_+=1.0f;
-    }
+//    if (keys_ != nullptr)
+//    {
+//        if (keys_[GLFW_KEY_Q])
+//            camTimer_-=3.0f;
+//        if (keys_[GLFW_KEY_E])
+//            camTimer_+=1.0f;
+//    }
 }
 
-void GT_CreditScene::sceneKeyboardHandler(bool *keys, int key, int scancode, int action, int mode)
+void GT_GameoverScene::sceneKeyboardHandler(bool *keys, int key, int scancode, int action, int mode)
 {
     keys_ = keys;
 
     if (keys[GLFW_KEY_ESCAPE] && action == GLFW_PRESS)
     {
-        nextScene_ = menuScene;
+        if (fighter_->getPosition().y < 10 || fighter_->explode_ > 0 )
+            nextScene_ = menuScene;
+        else
+            nextScene_ = gameplay;
     }
 }
 
-void GT_CreditScene::printMSG()
+void GT_GameoverScene::printWIN()
 {
-    font_->PrintLine("Sky Knights", 440.0f, 450.0f, .50f, glm::vec3(1.0, 1.0f, 1.0f));
+    font_->PrintLine("MISSION ACCOMPLISHED!", 190.0f, 450.0f, 1.00f, glm::vec3(1.0, 1.0f, 1.0f));
 
-    font_->PrintLine("This flight simulation game is demo project for MACHINA", 200.0f, 400.0f, .50f, glm::vec3(1.0, 1.0f, 1.0f));
-    font_->PrintLine("game programming course. Written entirely in C++ and ", 200.0f, 370.0f, .50f, glm::vec3(1.0, 1.0f, 1.0f));
-    font_->PrintLine("OpenGL 3.3.", 200.0f, 340.0f, .50f, glm::vec3(1.0, 1.0f, 1.0f));
+    font_->PrintLine("EPIC WIN!", 430.0f, 400.0f, 1.00f, glm::vec3(1.0, 1.0f, 1.0f));
 
-    font_->PrintLine("Author:                         Kresimir Duvnjak", 200.0f, 280.0f, .50f, glm::vec3(1.0, 1.0f, 1.0f));
+    font_->PrintLine("You have passed all levels and unlocked free mode!", 235.0f, 350.0f, .50f, glm::vec3(1.0, 1.0f, 1.0f));
 
-    font_->PrintLine("Special thanks to:       Dini Selimovic", 200.0f, 220.0f, .50f, glm::vec3(1.0, 1.0f, 1.0f));
-    font_->PrintLine("                                      Tomislav Vrdoljak", 200.0f, 190.0f, .50f, glm::vec3(1.0, 1.0f, 1.0f));
-    font_->PrintLine("All rights reserved, 2017", 370.0f, 110.0f, .50f, glm::vec3(1.0, 1.0f, 1.0f));
+    font_->PrintLine("GOD SPEED, ACE!!!", 400.0f, 110.0f, .50f, glm::vec3(1.0, 1.0f, 1.0f));
 
 }
 
+void GT_GameoverScene::printLOSE()
+{
+    font_->PrintLine("YOU SUCK!", 380.0f, 450.0f, 1.00f, glm::vec3(1.0, 1.0f, 1.0f));
 
-void GT_CreditScene::renderScene()
+    font_->PrintLine("BUY YOURSELF A BICYCLE FIRST!", 300.0f, 200.0f, .50f, glm::vec3(1.0, 1.0f, 1.0f));
+}
+
+void GT_GameoverScene::printDROWN()
+{
+    font_->PrintLine("YOU FLY LOW LIKE YOUR MOMMA's IQ! ", 290.0f, 450.0f, .50f, glm::vec3(1.0, 1.0f, 1.0f));
+
+    font_->PrintLine("Don't hold your breath!", 390.0f, 200.0f, .50f, glm::vec3(1.0, 1.0f, 1.0f));
+}
+
+void GT_GameoverScene::renderScene()
 {
     ////////////////////////// timer //////////////////////////////////////
     updateClock();
@@ -89,18 +100,20 @@ void GT_CreditScene::renderScene()
 
     ////////////////////////   rendering phase   /////////////////////////////
 
-
     skybox_->Draw(sceneCamera_);
     ocean_->draw(sceneCamera_);
-
 
     carrier_->Draw(sceneCamera_);
     fighter_->Draw(sceneCamera_);
 
-
     canvas_->Draw();
 
-    printMSG();
+    if (sceneEnum_ == WIN)
+        printWIN();
+    else if (sceneEnum_ == LOSE)
+        printLOSE();
+    else if (sceneEnum_ == DROWN)
+        printDROWN();
 
     if (dirtySound_)
     {
@@ -111,10 +124,22 @@ void GT_CreditScene::renderScene()
 }
 
 
-
-void GT_CreditScene::integrateScene(GLfloat deltaTime_)
+void GT_GameoverScene::integrateScene(GLfloat deltaTime_)
 {
     camTimer_ += 1.0f;
     sceneCamera_->setCameraPos(GT_Locator::getFighter()->getPosition() +  glm::vec3(sin(camTimer_*SPINFACTOR_), 0.0f, cos(camTimer_*SPINFACTOR_))*10.0f);
     sceneCamera_->setCameraFront(glm::normalize(GT_Locator::getFighter()->getPosition() - sceneCamera_->getCameraPos()));
+
+    if (sceneCamera_->getCameraPos().y < 15)
+        sceneEnum_ = DROWN;
+    else if (fighter_->explode_ > 0 )
+        sceneEnum_ = LOSE;
+    else if (fighter_->explode_ <= 0)
+    {
+        sceneEnum_ = WIN;
+        fighter_->unlockFreeMode();
+    }
+
+
+
 }
