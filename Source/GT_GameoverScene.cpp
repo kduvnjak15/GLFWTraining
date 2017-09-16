@@ -25,7 +25,6 @@ GT_GameoverScene::GT_GameoverScene()
     oceanSound_.setBuffer(*(GT_Locator::getAudio()->getSoundBuffMap(OCEAN)));
     oceanSound_.setLoop(true);
 
-
     nextScene_ = gameover;
 }
 
@@ -46,7 +45,7 @@ void GT_GameoverScene::sceneKeyboardHandler(bool *keys, int key, int scancode, i
 
     if (keys[GLFW_KEY_ESCAPE] && action == GLFW_PRESS)
     {
-        if (fighter_->getPosition().y < 10 || fighter_->explode_ > 0 )
+        if (fighter_->getPosition().y < 10 || fighter_->explode_ > 0 || carrier_->explode_)
             nextScene_ = menuScene;
         else
             nextScene_ = gameplay;
@@ -67,9 +66,19 @@ void GT_GameoverScene::printWIN()
 
 void GT_GameoverScene::printLOSE()
 {
-    font_->PrintLine("YOU SUCK!", 380.0f, 450.0f, 1.00f, glm::vec3(1.0, 1.0f, 1.0f));
 
-    font_->PrintLine("BUY YOURSELF A BICYCLE FIRST!", 300.0f, 200.0f, .50f, glm::vec3(1.0, 1.0f, 1.0f));
+    if (carrier_->explode_ > 0 )
+    {
+        font_->PrintLine("YOU WORTHLESS PIECE OF SHIT!!!", 80.0f, 450.0f, 0.70f, glm::vec3(1.0, 1.0f, 1.0f));
+
+        font_->PrintLine("LET'S HOPE YOU DON'T LOOK LIKE YOU PLAY!", 240.0f, 200.0f, .50f, glm::vec3(1.0, 1.0f, 1.0f));
+    }
+    else if (fighter_->explode_ > 0)
+    {
+        font_->PrintLine("YOU SUCK!", 380.0f, 450.0f, 1.00f, glm::vec3(1.0, 1.0f, 1.0f));
+
+        font_->PrintLine("BUY YOURSELF A BICYCLE FIRST!", 300.0f, 200.0f, .50f, glm::vec3(1.0, 1.0f, 1.0f));
+    }
 }
 
 void GT_GameoverScene::printDROWN()
@@ -127,12 +136,22 @@ void GT_GameoverScene::renderScene()
 void GT_GameoverScene::integrateScene(GLfloat deltaTime_)
 {
     camTimer_ += 1.0f;
-    sceneCamera_->setCameraPos(GT_Locator::getFighter()->getPosition() +  glm::vec3(sin(camTimer_*SPINFACTOR_), 0.0f, cos(camTimer_*SPINFACTOR_))*10.0f);
-    sceneCamera_->setCameraFront(glm::normalize(GT_Locator::getFighter()->getPosition() - sceneCamera_->getCameraPos()));
+    if (GT_Locator::getUSSCarrier()->explode_)
+    {
+        GT_Locator::getUSSCarrier()->Integrate(sceneCamera_, deltaTime_);
+
+        sceneCamera_->setCameraPos(GT_Locator::getUSSCarrier()->getPosition() +  glm::vec3(sin(camTimer_*SPINFACTOR_), 0.0f, cos(camTimer_*SPINFACTOR_))*200.0f);
+        sceneCamera_->setCameraFront(glm::normalize(GT_Locator::getUSSCarrier()->getPosition() - (sceneCamera_->getCameraPos()+ glm::vec3(0.0f, 40.0f, 0.0f))));
+    }
+    else
+    {
+        sceneCamera_->setCameraPos(GT_Locator::getFighter()->getPosition() +  glm::vec3(sin(camTimer_*SPINFACTOR_), 0.0f, cos(camTimer_*SPINFACTOR_))*10.0f);
+        sceneCamera_->setCameraFront(glm::normalize(GT_Locator::getFighter()->getPosition() - sceneCamera_->getCameraPos()));
+    }
 
     if (sceneCamera_->getCameraPos().y < 15)
         sceneEnum_ = DROWN;
-    else if (fighter_->explode_ > 0 )
+    else if (fighter_->explode_ > 0 || carrier_->explode_ > 0)
         sceneEnum_ = LOSE;
     else if (fighter_->explode_ <= 0)
     {

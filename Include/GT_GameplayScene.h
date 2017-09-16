@@ -44,8 +44,8 @@ private:
 
     GT_HUD* hud_;
 
-    const GLfloat aimRange_    = 2000.0f;
-    const GLfloat weaponRange_ = 1000.0f;
+    const GLfloat aimRange_    = 2500.0f;
+    const GLfloat weaponRange_ = 1200.0f;
 
     sf::Sound sound_;
     bool dirtySound_ = true;

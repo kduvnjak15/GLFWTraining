@@ -10,6 +10,8 @@ public:
 
     void Draw(GT_Camera *tempCam);
 
+    virtual void Integrate(GT_Camera* tempCam,  GLfloat DT_);
+
 private:
 
 

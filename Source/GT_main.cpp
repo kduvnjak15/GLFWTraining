@@ -115,7 +115,7 @@ public:
         scenes_.push_back(new GT_GameoverScene());
 
 
-        curScene_ = scenes_[4];
+        curScene_ = scenes_[3];
     }
 
     bool Run()

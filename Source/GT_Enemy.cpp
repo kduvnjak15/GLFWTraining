@@ -15,7 +15,7 @@ GT_Enemy::GT_Enemy()
     this->up_    = glm::vec3(0.0f, 1.0f, 0.0f);
     this->right_ = glm::normalize(glm::cross(this->front_, this->up_));
 
-    setScale(20.0f);
+    setScale(10.0f);
 
     GLfloat rnum = rand() / GLfloat(RAND_MAX);    
 
@@ -49,7 +49,7 @@ void GT_Enemy::Integrate(GT_Camera *tempCam, GLfloat DT_)
     if (this->explode_)
     {
         this->position_ += glm::vec3(0.0f, -1.0f*(glfwGetTime() - explodeTime_ )*(glfwGetTime() - explodeTime_ ), 0.0f);
-        this->position_ += this->front_;
+        this->position_ += this->front_*2.0f;
     }
     else
     {
@@ -71,7 +71,7 @@ void GT_Enemy::Integrate(GT_Camera *tempCam, GLfloat DT_)
         this->right_ = glm::cross(front_, up_);
 
 
-        this->position_ += this->front_*3.0f;
+        this->position_ += this->front_*5.0f;
 
     }
 

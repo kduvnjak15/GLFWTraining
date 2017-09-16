@@ -56,3 +56,14 @@ void GT_USSCarrier::Draw(GT_Camera *tempCam)
 
     actorModel_->Draw(*actorShader_);
 }
+
+
+void GT_USSCarrier::Integrate(GT_Camera *tempCam, GLfloat DT_)
+{
+    GT_Aircraft::Integrate(tempCam,DT_);
+
+    this->position_ += glm::vec3(0.0f, -10.0f * DT_, 0.0f);
+    this->front_    += glm::vec3(-10.0f * DT_, 0.0f, 0.0f);
+    this->right_    += glm::vec3(0.0f, 0.0f, -10.0f * DT_);
+
+}

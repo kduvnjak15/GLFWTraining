@@ -2,6 +2,8 @@
 
 #include "GT_Aircraft.h"
 #include "GT_Locator.h"
+#include "SFML/System/Time.hpp"
+#include "SFML/Audio/Sound.hpp"
 
 GT_Aircraft::GT_Aircraft(GT_Model *aircraftModel)
     :
@@ -96,6 +98,9 @@ void GT_Aircraft::explode()
     if (explode_)
         return;
 
+
+
+
     GLfloat normDistance_;
     if (this != GT_Locator::getFighter())
     {
@@ -103,6 +108,10 @@ void GT_Aircraft::explode()
         glm::vec3 distance = GT_Locator::getFighter()->getPosition() -  this->getPosition();
 
         normDistance_= abs(3000 - glm::length(distance))/ 30.0f;
+
+        ////////////////////////////////////////////////////////
+
+        GT_Locator::getFighter()->bonusMissiles(3);
     }
     else
     {
@@ -110,9 +119,26 @@ void GT_Aircraft::explode()
     }
 
 
-    sound_.setVolume(normDistance_);
-    sound_.play();
+    if (this == GT_Locator::getUSSCarrier())
+    {
+        sound_.setVolume(80);
+        sound_.play();
+
+        sound_.setVolume(30);
+        sound_.play();
+
+        sound_.setVolume(50);
+        sound_.play();
+
+    }
+    else
+    {
+        sound_.setVolume(normDistance_);
+        sound_.play();
+    }
 
     explodeTime_ = glfwGetTime();
     explode_ = true;
+
+
 }

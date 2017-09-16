@@ -29,4 +29,6 @@ protected:
     glm::vec3 targetPos_;
 
     GLboolean intelligent_;
+
+    void appendMissiles(int num);
 };

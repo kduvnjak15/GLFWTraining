@@ -44,6 +44,7 @@ void GT_Weapon::Integrate(GLfloat DT_)
 void GT_Weapon::fireMissile()
 {
 
+    std::cout << "prv"<< std::endl;
     for (int i = 0; i < missiles_.size(); i++)
         if (missiles_[i]->isFired())
         {
@@ -56,4 +57,14 @@ void GT_Weapon::fireMissile()
 
             break;
         }
+    std::cout << "drugi"<< std::endl;
+}
+
+void GT_Weapon::appendMissiles(int num)
+{
+    for (int i = 0; i < num; i++)
+    {
+        missiles_.push_back(new GT_Missile(GT_Locator::getModel(AIM), GT_Locator::getFighter(), i ));
+        GT_Locator::getHUD()->appendMissile(missiles_.back());
+    }
 }

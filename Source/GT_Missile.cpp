@@ -119,9 +119,12 @@ void GT_Missile::FIRE(GT_Aircraft* target)
     if (dynamic_cast<GT_USSCarrier*>(target))
     {
         std::cout << "FUCK ME" << std::endl;
+        dynamic_cast<GT_USSCarrier*>(target)->explode();
     }
 
     enemyTarget_ = target;
+
+    std::cout << "FUCK me "<< std::endl;
 }
 
 void GT_Missile::aimEnemy()
@@ -130,11 +133,16 @@ void GT_Missile::aimEnemy()
         return ;
 
     glm::vec3 dir = enemyTarget_->getPosition() - this->position_;
-    dir = glm::normalize(dir);
+    glm::vec3 frontDir = this->front_;
 
-    while (glm::dot(dir, this->front_)<0.85)
+    dir = glm::normalize(dir);
+    frontDir = glm::normalize(frontDir);
+
+    GLfloat dotpr  =glm::dot(dir, frontDir);
+    while (dotpr<0.85)
     {
-        dir = glm::normalize(dir + this->front_);
+        dir     = glm::normalize(dir + frontDir);
+        dotpr   = glm::dot(dir, frontDir);
     }
 
     this->up_ = glm::normalize( glm::cross(this->front_, dir) );

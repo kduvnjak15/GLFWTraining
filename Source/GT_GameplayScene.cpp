@@ -47,7 +47,17 @@ void GT_GameplayScene::printMSG()
     font_->PrintLine("Altitude: ", 25.0f, 100.0f, .50f, glm::vec3(1.0, 0.1f, 0.1f));
     font_->PrintLine( std::to_string(sceneCamera_->getCameraPos().y), 120.0f, 100.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
     font_->PrintLine("Level: ", 25.0f, 125.0f, .50f, glm::vec3(1.0, 0.1f, 0.1f));
-    font_->PrintLine( std::to_string(level_), 120.0f, 125.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
+
+    if (fighter_->isFreeMode())
+    {
+        font_->PrintLine( "free mode", 120.0f, 125.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
+    }
+    else
+    {
+        font_->PrintLine( std::to_string(level_), 120.0f, 125.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
+    }
+
+
     font_->PrintLine("Bogies: ", 25.0f, 150.0f, .50f, glm::vec3(1.0, 0.1f, 0.1f));
     font_->PrintLine( std::to_string(enemies_.size()), 120.0f, 150.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
 
@@ -202,7 +212,7 @@ void GT_GameplayScene::checkCrosshair()
 
 void GT_GameplayScene::integrateScene(GLfloat deltaTime)
 {
-    if (this->fighter_->explode_)
+    if (this->fighter_->explode_ || this->ussCarrier_->explode_)
         nextScene_ = gameover;
 
     if (level_ > 1 && !(fighter_->isFreeMode()))
@@ -262,7 +272,7 @@ void GT_GameplayScene::integrateAircrafts(GLfloat deltaTime)
         //enemies_[i]->Integrate(sceneCamera_, deltaTime);
     }
 
-  //  std::cout << enemies_.size() << "level : "<< level_ << std::endl;
+
     if (enemies_.size() == 0)
         nextLevel();
 }

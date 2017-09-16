@@ -22,6 +22,8 @@ public:
     void unlockFreeMode() { freeMode_ = true; }
     bool isFreeMode() { return freeMode_; }
 
+    void bonusMissiles(int n) { appendMissiles(n);}
+
 private:
 
     GLint isTarget_;
