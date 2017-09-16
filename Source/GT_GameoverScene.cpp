@@ -45,7 +45,7 @@ void GT_GameoverScene::sceneKeyboardHandler(bool *keys, int key, int scancode, i
 
     if (keys[GLFW_KEY_ESCAPE] && action == GLFW_PRESS)
     {
-        if (fighter_->getPosition().y < 10 || fighter_->explode_ > 0 || carrier_->explode_)
+        if (fighter_->getPosition().y < 10 || fighter_->explode_ > 0 || carrier_->explode_ )
             nextScene_ = menuScene;
         else
             nextScene_ = gameplay;
@@ -69,7 +69,7 @@ void GT_GameoverScene::printLOSE()
 
     if (carrier_->explode_ > 0 )
     {
-        font_->PrintLine("YOU WORTHLESS PIECE OF SHIT!!!", 80.0f, 450.0f, 0.70f, glm::vec3(1.0, 1.0f, 1.0f));
+        font_->PrintLine("YOU WORTHLESS PIECE OF SHIT!!!", 120.0f, 450.0f, 0.70f, glm::vec3(1.0, 1.0f, 1.0f));
 
         font_->PrintLine("LET'S HOPE YOU DON'T LOOK LIKE YOU PLAY!", 240.0f, 200.0f, .50f, glm::vec3(1.0, 1.0f, 1.0f));
     }
@@ -138,6 +138,10 @@ void GT_GameoverScene::integrateScene(GLfloat deltaTime_)
     camTimer_ += 1.0f;
     if (GT_Locator::getUSSCarrier()->explode_)
     {
+        std::cout << GT_Locator::getUSSCarrier()->getPosition().y << std::endl;
+        if (GT_Locator::getUSSCarrier()->getPosition().y < 14)
+            nextScene_ = menuScene;
+
         GT_Locator::getUSSCarrier()->Integrate(sceneCamera_, deltaTime_);
 
         sceneCamera_->setCameraPos(GT_Locator::getUSSCarrier()->getPosition() +  glm::vec3(sin(camTimer_*SPINFACTOR_), 0.0f, cos(camTimer_*SPINFACTOR_))*200.0f);

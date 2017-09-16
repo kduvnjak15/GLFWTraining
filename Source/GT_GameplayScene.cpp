@@ -215,7 +215,7 @@ void GT_GameplayScene::integrateScene(GLfloat deltaTime)
     if (this->fighter_->explode_ || this->ussCarrier_->explode_)
         nextScene_ = gameover;
 
-    if (level_ > 1 && !(fighter_->isFreeMode()))
+    if (level_ > 3 && !(fighter_->isFreeMode()))
     {
         nextScene_ = gameover;
     }
@@ -247,7 +247,10 @@ void GT_GameplayScene::nextLevel()
     for (int i = 0; i < level_ * 2 - 1  ; i++ )
     {
         enemies_.push_back(new GT_Enemy());
+        fighter_->appendMissiles(3);
     }
+
+
 
     std::cout << "Level " << level_ << std::endl;
 }

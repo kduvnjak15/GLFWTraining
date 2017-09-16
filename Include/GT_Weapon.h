@@ -20,6 +20,8 @@ public:
 
     virtual void fireMissile();
 
+    void appendMissiles(int num);
+
 protected:
 
     GLuint numOfMissiles_;
@@ -30,5 +32,4 @@ protected:
 
     GLboolean intelligent_;
 
-    void appendMissiles(int num);
 };
