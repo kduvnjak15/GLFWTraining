@@ -13,7 +13,6 @@
 #include "GT_CreditScene.h"
 #include "GT_GameoverScene.h"
 #include "GT_IntroScene.h"
-#include "GT_Image.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -24,9 +23,6 @@
 #include <time.h>
 
 bool keys[1024];
-bool firstMouse = true;
-
-GLfloat lastX = window_width/2, lastY = window_height/2;
 
 class initialCallbacks
 {
@@ -71,10 +67,17 @@ public:
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-        glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
+//        glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
+
+        GLFWmonitor* primaryMonitor = glfwGetPrimaryMonitor();
+        const GLFWvidmode* videoMode = glfwGetVideoMode(primaryMonitor);
+        GLuint monitor_width    = videoMode->width;
+        GLuint monitor_height   = videoMode->height;
+
+        std::cout << monitor_width << ", "<< monitor_height <<std::endl;
 
         // CreateWindow
-        windowPtr_ = glfwCreateWindow(window_width, window_height, "SkyKnightsDEMO", NULL, NULL);
+        windowPtr_ = glfwCreateWindow(monitor_width, monitor_height, "SkyKnightsDEMO", glfwGetPrimaryMonitor(), NULL);
         if (windowPtr_ == NULL)
         {
             std::cout<<"Failed to create GLFW window"<<std::endl;
@@ -104,18 +107,6 @@ public:
     void loadGame()
     {
         GT_Locator_ = new GT_Locator();
-
-        std::cout << "Loading scenes "<< std::endl;
-
-        scenes_.push_back(new GT_MenuScene());
-        scenes_.push_back(new GT_GameplayScene());
-        scenes_.push_back(new GT_PauseScene());
-        scenes_.push_back(new GT_IntroScene());
-        scenes_.push_back(new GT_CreditScene());
-        scenes_.push_back(new GT_GameoverScene());
-
-
-        curScene_ = scenes_[3];
     }
 
     bool Run()
@@ -131,60 +122,17 @@ public:
 
             ///////////////////////////////////////////////////////
 
-
             glfwPollEvents();
 
             /////////////////////    rendering    //////////////////
             glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-
-            curScene_->renderScene();
-            /////////////////    gameplay control  //////////////////
-
-            if (curScene_->nextScene_ != nonType )
-            {
-                if (curScene_->nextScene_ == introScene)
-                {
-                    std::cout << "Next scene Introscene"<< std::endl;
-                    curScene_->nextScene_ = nonType;
-                    curScene_ = scenes_[3];
-                }
-                else if (curScene_->nextScene_ == gameplay)
-                {
-                    std::cout << "Next scene gameplay"<< std::endl;
-                    curScene_->nextScene_ = nonType;
-                    curScene_ = scenes_[1];
-                }
-                else if (curScene_->nextScene_ == menuScene)
-                {
-                    std::cout << "Next scene Menuscene"<< std::endl;
-                    curScene_->nextScene_ = nonType;
-                    curScene_ = scenes_[0];
-                }
-                else if (curScene_->nextScene_ == pauseScene)
-                {
-                    std::cout << "Next scene pausescene" << std::endl;
-                    curScene_->nextScene_ = nonType;
-                    curScene_ = scenes_[2];
-                }
-                else if (curScene_->nextScene_ == credits)
-                {
-                    std::cout << "Next scene creditscene" << std::endl;
-                    curScene_->nextScene_ = nonType;
-                    curScene_ = scenes_[4];
-                }
-                else if (curScene_->nextScene_ == gameover)
-                {
-                    std::cout << "Next scene gameover" << std::endl;
-                    curScene_->nextScene_ = nonType;
-                    curScene_ = scenes_[5];
-                }
-                else if (curScene_->nextScene_ == exitGame)
-                    return true;
-                else
-                    curScene_ = scenes_[0];
-            }
+            currScene_ = GT_Locator::getSceneManager()->getActiveScene();
+            if (currScene_ != nullptr )
+                currScene_->renderScene();
+            else
+                glfwSetWindowShouldClose(windowPtr_, GL_TRUE );
 
             ////////////////////////////////////////////////////////
 
@@ -200,7 +148,7 @@ private:
 //class private function members
     void initSceneContext()
     {
-        glViewport(0, 0, window_width, window_height);
+        glViewport(0, 0, glfwGetVideoMode(glfwGetPrimaryMonitor())->width, glfwGetVideoMode(glfwGetPrimaryMonitor())->height);
 
     }
 
@@ -223,8 +171,8 @@ private:
         else if(action == GLFW_RELEASE)
             keys[key] = false;
 
-        if (curScene_)
-            curScene_->sceneKeyboardHandler(keys, key, scancode, action, mode);
+        if (currScene_)
+            currScene_->sceneKeyboardHandler(keys, key, scancode, action, mode);
         else
         {
             std::cout << "NO CURSCENE_; CATASTRPHIC CRASH" << std::endl;
@@ -235,18 +183,18 @@ private:
 
     void MouseCallback(GLFWwindow* window, double xpos, double ypos)
     {
-        if (firstMouse)
-        {
-            lastX = xpos;
-            lastY = ypos;
-            firstMouse = false;
-        }
+//        if (firstMouse)
+//        {
+//            lastX = xpos;
+//            lastY = ypos;
+//            firstMouse = false;
+//        }
 
-        GLfloat xoffset = xpos -lastX;
-        GLfloat yoffset = ypos -lastY;
+//        GLfloat xoffset = xpos -lastX;
+//        GLfloat yoffset = ypos -lastY;
 
-        lastX = xpos;
-        lastY = ypos;
+//        lastX = xpos;
+//        lastY = ypos;
 
         //camera_->mouseHandler(xoffset, -yoffset);
     }
@@ -257,7 +205,7 @@ private:
     GLFWwindow* windowPtr_;
 
     std::vector<GT_Scene*> scenes_;
-    GT_Scene* curScene_;
+    GT_Scene* currScene_;
 
     GT_Locator* GT_Locator_;
 

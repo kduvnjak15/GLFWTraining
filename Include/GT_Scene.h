@@ -44,8 +44,6 @@ public:
 
     void setCamera(GT_Camera* tempCam) { sceneCamera_ = tempCam; }
 
-    sceneType nextScene_;
-
     std::set<int> keysEnable_;
     bool keyPressed_;
     GLfloat keyDelay_;

@@ -82,7 +82,7 @@ void GT_Skybox::Draw(GT_Camera* tempCam)
     viewLoc_  = glGetUniformLocation(skyboxShader_->shaderProgram_, "view");
     projLoc_  = glGetUniformLocation(skyboxShader_->shaderProgram_, "projection");
     glm::mat4 view = glm::mat4(glm::mat3(tempCam->GetViewMatrix()));
-    glm::mat4 projection = glm::perspective(ZOOM, (window_width*1.0f)/window_height, 0.1f, 10000.0f);
+    glm::mat4 projection = glm::perspective(ZOOM, (tempCam->getWindowWidth()*1.0f)/tempCam->getWindowHeight(), 0.1f, 10000.0f);
     glUniformMatrix4fv(viewLoc_, 1, GL_FALSE, glm::value_ptr(view));
     glUniformMatrix4fv(projLoc_, 1, GL_FALSE, glm::value_ptr(projection));
 

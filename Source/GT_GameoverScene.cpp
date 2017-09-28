@@ -25,7 +25,6 @@ GT_GameoverScene::GT_GameoverScene()
     oceanSound_.setBuffer(*(GT_Locator::getAudio()->getSoundBuffMap(OCEAN)));
     oceanSound_.setLoop(true);
 
-    nextScene_ = gameover;
 }
 
 void GT_GameoverScene::checkKeyboardInput()
@@ -46,9 +45,9 @@ void GT_GameoverScene::sceneKeyboardHandler(bool *keys, int key, int scancode, i
     if (keys[GLFW_KEY_ESCAPE] && action == GLFW_PRESS)
     {
         if (fighter_->getPosition().y < 10 || fighter_->explode_ > 0 || carrier_->explode_ )
-            nextScene_ = menuScene;
+            GT_Locator::getSceneManager()->activateScene( menuScene );
         else
-            nextScene_ = gameplay;
+            GT_Locator::getSceneManager()->activateScene(gameplay);
     }
 }
 
@@ -140,7 +139,7 @@ void GT_GameoverScene::integrateScene(GLfloat deltaTime_)
     {
         std::cout << GT_Locator::getUSSCarrier()->getPosition().y << std::endl;
         if (GT_Locator::getUSSCarrier()->getPosition().y < 14)
-            nextScene_ = menuScene;
+            GT_Locator::getSceneManager()->activateScene( menuScene );
 
         GT_Locator::getUSSCarrier()->Integrate(sceneCamera_, deltaTime_);
 

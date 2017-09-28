@@ -21,6 +21,7 @@ public:
     virtual void fireMissile();
 
     void appendMissiles(int num);
+    GLuint getNumOfMissiles_() {return numOfMissiles_;}
 
 protected:
 

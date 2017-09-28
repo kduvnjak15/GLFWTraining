@@ -74,7 +74,7 @@ void GT_Missile::Draw(GT_Camera *tempCam)
     glm::mat4 planeOrient = glm::lookAt(glm::vec3(0.0f), this->front_, this->up_);
 
     glm::mat4 view = tempCam->GetViewMatrix();
-    glm::mat4 projection = glm::perspective(ZOOM, (window_width*1.0f)/window_height, 0.1f, horizon);
+    glm::mat4 projection = glm::perspective(ZOOM, (tempCam->getWindowWidth()*1.0f)/tempCam->getWindowHeight(), 0.1f, horizon);
 
     model =  tr * yawRot * rollRot * pitchRot * glm::inverse(planeOrient) * rot * sc;
 
@@ -112,19 +112,17 @@ void GT_Missile::FIRE(GT_Aircraft* target)
 
     if (dynamic_cast<GT_Fighter*>(target))
     {
-        std::cout << "so true" << std::endl;
         ((GT_Fighter*)target)->evade(true);
     }
 
     if (dynamic_cast<GT_USSCarrier*>(target))
     {
-        std::cout << "FUCK ME" << std::endl;
         dynamic_cast<GT_USSCarrier*>(target)->explode();
     }
 
     enemyTarget_ = target;
 
-    std::cout << "FUCK me "<< std::endl;
+    std::cout <<this<<  " MISSILE FIRE "<< std::endl;
 }
 
 void GT_Missile::aimEnemy()
@@ -139,11 +137,15 @@ void GT_Missile::aimEnemy()
     frontDir = glm::normalize(frontDir);
 
     GLfloat dotpr  =glm::dot(dir, frontDir);
-    while (dotpr<0.85)
-    {
-        dir     = glm::normalize(dir + frontDir);
-        dotpr   = glm::dot(dir, frontDir);
-    }
+//    while (dotpr<0.85)
+//    {
+//        dir     = glm::normalize(dir + frontDir);
+//        dotpr   = glm::dot(dir, frontDir);
+//    }
+
+
+        dir     = glm::normalize(dir + 50.0f*frontDir);
+
 
     this->up_ = glm::normalize( glm::cross(this->front_, dir) );
     this->front_ = dir;//buggger
@@ -152,6 +154,14 @@ void GT_Missile::aimEnemy()
 
 void GT_Missile::Integrate(GLfloat DX_)
 {
+
+    if (dead_)
+        return;
+    if (this->getPosition().y < 0)
+    {
+        dead_ = true;
+        return;
+    }
 
     if (!fired_)
     {

@@ -38,6 +38,9 @@ GT_Audio::GT_Audio()
     sb->loadFromFile("../Content/explosion.wav");
     soundBuffMap_.insert(std::pair<SOUND, sf::SoundBuffer*>(EXPLOSION, sb));
 
+    sb = new sf::SoundBuffer();
+    sb->loadFromFile("../Content/beep.wav");
+    soundBuffMap_.insert(std::pair<SOUND, sf::SoundBuffer*>(BEEP, sb));
 }
 
 

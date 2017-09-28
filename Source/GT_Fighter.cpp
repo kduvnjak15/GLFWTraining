@@ -60,7 +60,7 @@ void GT_Fighter::Draw(GT_Camera *tempCam)
 
     glm::mat4 view = tempCam->GetViewMatrix();
 
-    glm::mat4 projection = glm::perspective(ZOOM, (window_width*1.0f)/window_height, 0.1f, horizon);
+    glm::mat4 projection = glm::perspective(ZOOM, (tempCam->getWindowWidth()*1.0f)/tempCam->getWindowHeight(), 0.1f, horizon);
 
     model =  tr * yawRot * rollRot * pitchRot * glm::transpose(planeOrient) * rot * sc;
 
@@ -76,6 +76,9 @@ void GT_Fighter::Draw(GT_Camera *tempCam)
 
 void GT_Fighter::Integrate(GT_Camera *tempCam, GLfloat DT_)
 {
+
+
+
     this->setPosition(tempCam->getCameraPos());
     GT_Aircraft::Integrate(tempCam, DT_);
     GT_Weapon::Integrate(DT_);

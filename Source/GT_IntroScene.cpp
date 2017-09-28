@@ -18,7 +18,6 @@ GT_IntroScene::GT_IntroScene()
     dirtySound_ = true;
 
     banner_ = machina_;
-    nextScene_ = introScene;
 }
 
 void GT_IntroScene::setSceneBrightness()
@@ -49,7 +48,7 @@ void GT_IntroScene::integrateScene(GLfloat deltaTime_)
 
     if (start > 4*PI)
     {
-        nextScene_ = menuScene;
+        GT_Locator::getSceneManager()->activateScene( menuScene );
     }
 
 
@@ -67,7 +66,7 @@ void GT_IntroScene::renderScene()
 
     if (wallpaper_played)
     {
-        GT_Locator::getFonts()->PrintLine("Press SPACE to continue", 220, 30, 1.0f, glm::vec4(0.0f, 0.1f, 1.0f, sin(start*5)*0.5 + 0.5));
+        GT_Locator::getFonts()->PrintLine("Press SPACE to continue", 0.35, 0.12, 1.0f, glm::vec4(0.0f, 0.1f, 1.0f, sin(start*5)*0.5 + 0.5));
     }
     banner_->Draw();
 
@@ -94,7 +93,7 @@ void GT_IntroScene::checkKeyboardInput()
         if (keys_[GLFW_KEY_SPACE])
         {
             sound_.stop();
-            nextScene_ = menuScene;
+            GT_Locator::getSceneManager()->activateScene(menuScene);
         }
     }
 }
@@ -105,7 +104,7 @@ void GT_IntroScene::sceneKeyboardHandler(bool* keys, int key, int scancode, int 
 
     if (keys[GLFW_KEY_ESCAPE] && action == GLFW_PRESS)
     {
-        nextScene_ = exitGame;
+         GT_Locator::getSceneManager()->activateScene( exitGame );
     }
 }
 

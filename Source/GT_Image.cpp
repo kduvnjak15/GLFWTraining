@@ -182,11 +182,6 @@ void GT_Image::defineImageCoordinates(GLfloat x1, GLfloat y1, GLfloat x2, GLfloa
     imageCoords_[6] = (x2-win_w)/win_w;
     imageCoords_[7] =-(y2-win_h)/win_h + (y2-y1)/win_h;
 
-
-    for (int i = 0; i < 8; i++)
-    {
-        std::cout << imageCoords_[i] << std::endl;
-    }
     defineVAO();
 }
 

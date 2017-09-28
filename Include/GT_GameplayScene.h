@@ -25,6 +25,7 @@ private:
     void printMSG();
 
     void integrateScene(GLfloat deltaTime);
+    void checkForBouncingBox();
 
     void integrateAircrafts(GLfloat deltaTime);
     void renderAircrafts();
@@ -48,8 +49,11 @@ private:
     const GLfloat weaponRange_ = 1200.0f;
 
     sf::Sound sound_;
+    sf::Sound beepSound_;
     bool dirtySound_ = true;
     GLfloat soundVolume_ = 100;
 
+    const GLfloat bouncingBoxThreshold_ = 20000.0f;
+    GLfloat tooFarMSGtime_ = -1;
 };
 

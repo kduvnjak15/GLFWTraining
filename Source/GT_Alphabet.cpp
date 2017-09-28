@@ -80,11 +80,15 @@ void GT_Alphabet::PrintLine(std::string text, GLfloat x, GLfloat y, GLfloat scal
 
 void GT_Alphabet::RenderText(GT_Shader &shader, std::string text, GLfloat x, GLfloat y, GLfloat scale, glm::vec4 color)
 {
+
+    x = tempCam_->getWindowWidth()  * x;
+    y = tempCam_->getWindowHeight() * y;
+
     shader.Use();
     glUniform4f(glGetUniformLocation(shader.shaderProgram_, "textColor"), color.x, color.y, color.z, color.w);
     glUniform1i(glGetUniformLocation(shader.shaderProgram_, "text"), 1);
 
-    glm::mat4 projection = glm::ortho(0.0f, static_cast<GLfloat>(window_width), 0.0f, static_cast<GLfloat>(window_height));
+    glm::mat4 projection = glm::ortho(0.0f, static_cast<GLfloat>(tempCam_->getWindowWidth()), 0.0f, static_cast<GLfloat>(tempCam_->getWindowHeight()));
     glUniformMatrix4fv(glGetUniformLocation(fontShader_->shaderProgram_, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 
     glActiveTexture(GL_TEXTURE1);

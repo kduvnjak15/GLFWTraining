@@ -12,6 +12,7 @@
 #include "GT_HUD.h"
 #include "GT_Audio.h"
 #include "GT_Image.h"
+#include "GT_SManager.h"
 
 #define PI 3.1415926
 
@@ -23,6 +24,11 @@ public:
     GT_Locator();
 
     //getters
+
+    static GT_SManager* getSceneManager()
+    {
+        return sceneManager_;
+    }
 
     static GT_Audio* getAudio()
     {
@@ -124,6 +130,7 @@ private:
     static GT_Alphabet* fonts_;
     static GT_HUD*      hud_;
     static GT_Audio*    audio_;
+    static GT_SManager*    sceneManager_;
 
     static sf::SoundBuffer* sfSpray_;
     static sf::SoundBuffer* sfLand_;

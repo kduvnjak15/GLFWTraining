@@ -20,6 +20,7 @@ GT_Camera::GT_Camera()
       yawDelay_(0.0f)
 
 {
+
     cameraRight = glm::normalize(glm::cross(cameraFront, cameraUp));
     this->cameraInstance_ = this;
 }
@@ -27,6 +28,7 @@ GT_Camera::GT_Camera()
 
 glm::vec3 GT_Camera::getRotatedVector()
 {
+
     glm::vec3 retVec;
     retVec.x = (a*(v*v+w*w) - u*(b*v+c*w-u*x-v*y-w*z))*(1-cos(th)) + L*x*cos(th)+ std::sqrt(L)*(-c*v+b*w-w*y+v*z)*sin(th);
     retVec.y = (b*(u*u+w*w) - v*(a*u+c*w-u*x-v*y-w*z))*(1-cos(th)) + L*y*cos(th)+ std::sqrt(L)*( c*u-a*w+w*x-u*z)*sin(th);
@@ -129,12 +131,12 @@ void GT_Camera:: keyboardHandler(std::set<int> keysPressed, GLfloat deltaTime)
 
     if (keysPressed.find(GLFW_KEY_E) != keysPressed.end())
     {
-        yawDelay_ -= 0.05f;
+        yawDelay_ -= 0.01f;
         if (yawDelay_ < -2.0f) yawDelay_ = -2.0f;
     }
     else if (keysPressed.find(GLFW_KEY_Q) != keysPressed.end())
     {
-        yawDelay_ += 0.05f;
+        yawDelay_ += 0.01f;
         if (yawDelay_ > 2.0f) yawDelay_ = 2.0f;
     }
     else

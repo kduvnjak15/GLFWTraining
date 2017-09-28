@@ -16,8 +16,6 @@ GT_CreditScene::GT_CreditScene()
     canvas_ = new GT_Image(0.0f, 0.0f, 0.0f, 0.3f);
     canvas_->defineImageScreenCoordinates(-0.7, -0.7, 0.7, 0.7);
 
-    nextScene_ = credits;
-
     GT_Locator::getGameCamera()->setCameraPos(carrier_->getPosition()+ glm::vec3(170.0f, 58.0f, -32.0f));
     GT_Locator::getGameCamera()->setCameraFront(carrier_->getFront());
     GT_Locator::getGameCamera()->setCameraRight(carrier_->getRight());
@@ -25,9 +23,6 @@ GT_CreditScene::GT_CreditScene()
 
     oceanSound_.setBuffer(*(GT_Locator::getAudio()->getSoundBuffMap(OCEAN)));
     oceanSound_.setLoop(true);
-
-
-    nextScene_ = credits;
 }
 
 void GT_CreditScene::checkKeyboardInput()
@@ -47,7 +42,7 @@ void GT_CreditScene::sceneKeyboardHandler(bool *keys, int key, int scancode, int
 
     if (keys[GLFW_KEY_ESCAPE] && action == GLFW_PRESS)
     {
-        nextScene_ = menuScene;
+        GT_Locator::getSceneManager()->activateScene( menuScene );
     }
 }
 

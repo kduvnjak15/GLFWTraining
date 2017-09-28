@@ -3,6 +3,7 @@
 #include <iostream>
 #include <set>
 #include <GL/glew.h>
+#include <GLFW/glfw3.h>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -37,8 +38,6 @@ const GLfloat ROLL_SENSITIVITY  = 1.85;
 const GLfloat YAW_SENSITIVITY   = 1.85;
 const GLfloat PITCH_SENSITIVITY = 1.85;
 const GLfloat CAMERA_OFFSET = 20;
-const GLuint window_width = 1024;
-const GLuint window_height = 600;
 const GLfloat horizon = 50000;
 const GLfloat MAX_SPEED = 600.0f;
 
@@ -92,6 +91,8 @@ public:
 
     static GT_Camera* getCamera() { return cameraInstance_; }
 
+    GLuint getWindowWidth() { return window_width; }
+    GLuint getWindowHeight() { return window_height; }
 
 private:
     //Camera Cartesian
@@ -125,4 +126,8 @@ private:
     glm::vec3 getRotatedVector();
 
     static GT_Camera* cameraInstance_;
+
+    const GLuint window_width   = glfwGetVideoMode(glfwGetPrimaryMonitor())->width;
+    const GLuint window_height  = glfwGetVideoMode(glfwGetPrimaryMonitor())->height;
+
 };

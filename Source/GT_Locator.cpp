@@ -10,11 +10,11 @@ GT_Camera*   GT_Locator::menuCamera_;
 GT_Alphabet* GT_Locator::fonts_;
 GT_HUD*      GT_Locator::hud_;
 GT_Audio*    GT_Locator::audio_;
+GT_SManager* GT_Locator::sceneManager_;
 
 // SOUNDS
 sf::SoundBuffer* GT_Locator::sfSpray_;
 sf::SoundBuffer* GT_Locator::sfLand_;
-
 
 GT_Fighter*  GT_Locator::fighter_;
 GT_USSCarrier*  GT_Locator::ussCarrier_;
@@ -37,6 +37,7 @@ GT_Locator::GT_Locator()
     audio_      = new GT_Audio();
     sfSpray_     = new sf::SoundBuffer();
     sfLand_     = new sf::SoundBuffer();
+
 
 
     models_.push_back(new GT_Model("../Content/FA-22_Raptor/FA-22_Raptor.obj"));
@@ -65,6 +66,10 @@ GT_Locator::GT_Locator()
     fighter_ = new GT_Fighter();
     ussCarrier_ = new GT_USSCarrier();
 
+
+
+    // has to be last ? // lousy design
+    sceneManager_ = new GT_SManager();
 }
 
 
@@ -79,6 +84,7 @@ GT_Locator::~GT_Locator()
 
     if (sfSpray_)   delete sfSpray_;
     if (sfLand_)    delete sfLand_;
+    if (sceneManager_) delete sceneManager_;
 
 
     for (auto it = models_.begin(); it != models_.end(); it++)

@@ -19,7 +19,8 @@ GT_GameplayScene::GT_GameplayScene()
     sound_.setLoop(true);
     sound_.setVolume(soundVolume_);
 
-    nextScene_ = gameplay;
+    beepSound_.setBuffer(*(GT_Locator::getAudio()->getSoundBuffMap(BEEP)));
+
 }
 
 void GT_GameplayScene::checkKeyboardInput()
@@ -38,50 +39,84 @@ void GT_GameplayScene::checkKeyboardInput()
 
 void GT_GameplayScene::printMSG()
 {
-    font_->PrintLine("Time: ", 25.0f, 25.0f, .50f, glm::vec3(1.0, 0.1f, 0.1f));
-    font_->PrintLine( std::to_string(glfwGetTime()), 120.0f, 25.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
-    font_->PrintLine("FPS: ", 25.0f, 50.0f, .50f, glm::vec3(1.0, 0.1f, 0.1f));
-    font_->PrintLine( std::to_string(60.0f - 1/deltaTime_), 120.0f, 50.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
-    font_->PrintLine("Speed: ", 25.0f, 75.0f, .50f, glm::vec3(1.0, 0.1f, 0.1f));
-    font_->PrintLine( std::to_string(sceneCamera_->getSpeed()), 120.0f, 75.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
-    font_->PrintLine("Altitude: ", 25.0f, 100.0f, .50f, glm::vec3(1.0, 0.1f, 0.1f));
-    font_->PrintLine( std::to_string(sceneCamera_->getCameraPos().y), 120.0f, 100.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
-    font_->PrintLine("Level: ", 25.0f, 125.0f, .50f, glm::vec3(1.0, 0.1f, 0.1f));
+    font_->PrintLine("Time: ", 0.015f, 0.05f, .50f, glm::vec3(1.0, 0.1f, 0.1f));
+    font_->PrintLine( std::to_string(glfwGetTime()), 0.07f, 0.05f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
+    font_->PrintLine("FPS: ",  0.015f, 0.07f, .50f, glm::vec3(1.0, 0.1f, 0.1f));
+    font_->PrintLine( std::to_string(60.0f - 1/deltaTime_), 0.07f, 0.07f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
+    font_->PrintLine("Speed: ", 0.015f, 0.09f, .50f, glm::vec3(1.0, 0.1f, 0.1f));
+    font_->PrintLine( std::to_string(sceneCamera_->getSpeed()), 0.07f, 0.09f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
+    font_->PrintLine("Altitude: ", 0.015f, 0.11f, .50f, glm::vec3(1.0, 0.1f, 0.1f));
+    font_->PrintLine( std::to_string(sceneCamera_->getCameraPos().y), 0.07f, 0.11f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
+    font_->PrintLine("Level: ", 0.015f, 0.13f, .50f, glm::vec3(1.0, 0.1f, 0.1f));
+    font_->PrintLine((fighter_->isFreeMode() ? "free mode" : std::to_string(level_)),0.07f, 0.13, .50f, glm::vec3(0.5, 0.8f, 0.2f));
+    font_->PrintLine("Bogies: ", 0.015f, 0.15, .50f, glm::vec3(1.0, 0.1f, 0.1f));
+    font_->PrintLine( std::to_string(enemies_.size()), 0.07f, 0.15f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
 
-    if (fighter_->isFreeMode())
+    font_->PrintLine("Missiles: ", 0.015f, 0.17f, .50f, glm::vec3(1.0, 0.1f, 0.1f));
+    font_->PrintLine( std::to_string(fighter_->getNumOfMissiles_()), 0.07f, 0.17f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
+
+
+    glm::vec3 activeCol(1.0f, 0.1f, 0.1f);
+    glm::vec3 passiveCol(0.01f, 0.01f, 0.01f);
+    glm::vec3 tempColor;
+
+    tempColor = fighter_->targetLocked() ? activeCol : passiveCol;
+    font_->PrintLine("TARGET LOCKED!", 0.820f, 0.08f, .4f, tempColor);
+    font_->PrintLine("        FIRE!    ", 0.8250f, 0.05f, .50f, tempColor);
+
+
+    if (tooFarMSGtime_ > 0 )
     {
-        font_->PrintLine( "free mode", 120.0f, 125.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
-    }
-    else
-    {
-        font_->PrintLine( std::to_string(level_), 120.0f, 125.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
-    }
+        font_->PrintLine("TOO FAR!", 0.498, 0.91, .60f, glm::vec3(1.0, 0.1f, 0.1f));
 
+        font_->PrintLine("Get back in arena!!!", 0.495, 0.90, .60f, glm::vec3(1.0, 0.1f, 0.1f));
 
-    font_->PrintLine("Bogies: ", 25.0f, 150.0f, .50f, glm::vec3(1.0, 0.1f, 0.1f));
-    font_->PrintLine( std::to_string(enemies_.size()), 120.0f, 150.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
-
-    if (fighter_->targetLocked())
-    {
-        font_->PrintLine("TARGET LOCKED!", 802.0f, 30.0f, .4f, glm::vec3(1.0, 0.1f, 0.1f));
-        font_->PrintLine("        FIRE!    ", 802.0f, 50.0f, .50f, glm::vec3(1.0, 0.1f, 0.1f));
-    }
-
-    if (fighter_->isTarget())
-    {
-        if (sin(glfwGetTime()*20) > -0.7)
+        if (glfwGetTime() - tooFarMSGtime_ > 1.0f)
         {
-            font_->PrintLine("LOCKED!", 820.0f, 92.0f, .60f, glm::vec3(1.0, 0.1f, 0.1f));
+            std::cout << tooFarMSGtime_ << std::endl;
+            tooFarMSGtime_ = -1;
         }
     }
 
+
+    tempColor = passiveCol;
+    if (fighter_->isTarget())
+    {
+        if (sin(glfwGetTime()*10) > -0.7)
+        {
+            if (!fighter_->evade())
+            {
+                beepSound_.setVolume(20);
+                beepSound_.play();
+            }
+            tempColor = activeCol;
+        }
+        else
+        {
+            beepSound_.stop();
+            tempColor = passiveCol;
+        }
+    }
+    font_->PrintLine("LOCKED!", 0.8300f, 0.135f, .60f, tempColor);
+
+
+    tempColor = passiveCol;
     if (fighter_->evade())
     {
         if (sin(glfwGetTime()*20) > 0)
         {
-            font_->PrintLine(" EVADE!", 825.0f, 150.0f, .60f, glm::vec3(1.0, 0.1f, 0.1f));
+            beepSound_.setVolume(100);
+            beepSound_.play();
+            tempColor = activeCol;
+        }
+        else
+        {
+            beepSound_.stop();
+            tempColor = passiveCol;
         }
     }
+    font_->PrintLine("EVADE!", 0.8350f, 0.210f, .65f, tempColor);
+
 
 }
 
@@ -133,7 +168,7 @@ void GT_GameplayScene::sceneKeyboardHandler(bool* keys, int key, int scancode, i
 
     if (keys[GLFW_KEY_ESCAPE] && action == GLFW_PRESS)
     {
-        nextScene_ = pauseScene;
+        GT_Locator::getSceneManager()->activateScene( pauseScene );
     }
 
     if (keys[GLFW_KEY_ENTER] && action == GLFW_PRESS)
@@ -212,12 +247,13 @@ void GT_GameplayScene::checkCrosshair()
 
 void GT_GameplayScene::integrateScene(GLfloat deltaTime)
 {
-    if (this->fighter_->explode_ || this->ussCarrier_->explode_)
-        nextScene_ = gameover;
 
-    if (level_ > 3 && !(fighter_->isFreeMode()))
+    if (this->fighter_->explode_ || this->ussCarrier_->explode_)
+        GT_Locator::getSceneManager()->activateScene( gameover );
+
+    if (level_ > 2 && !(fighter_->isFreeMode()))
     {
-        nextScene_ = gameover;
+        GT_Locator::getSceneManager()->activateScene( gameover );
     }
 
     // Fly movement
@@ -234,7 +270,7 @@ void GT_GameplayScene::integrateScene(GLfloat deltaTime)
         sceneCamera_->enforceGravity(gravityFactor);
 
     if (sceneCamera_->getCameraPos().y < 10)
-        nextScene_ = gameover;
+        GT_Locator::getSceneManager()->activateScene( gameover );
 
     checkCrosshair();
 }
@@ -247,16 +283,41 @@ void GT_GameplayScene::nextLevel()
     for (int i = 0; i < level_ * 2 - 1  ; i++ )
     {
         enemies_.push_back(new GT_Enemy());
-        fighter_->appendMissiles(3);
+        //fighter_->appendMissiles(3);
     }
-
-
 
     std::cout << "Level " << level_ << std::endl;
 }
 
+void GT_GameplayScene::checkForBouncingBox()
+{
+    if (sceneCamera_->getCameraPos().y > bouncingBoxThreshold_ / 2.0)
+    {
+        sceneCamera_->setCameraFront(-1.0f*sceneCamera_->getCameraFront());
+    }
+
+    if (sceneCamera_->getCameraPos().x > bouncingBoxThreshold_ || sceneCamera_->getCameraPos().x < -bouncingBoxThreshold_ ||
+            sceneCamera_->getCameraPos().z > bouncingBoxThreshold_ || sceneCamera_->getCameraPos().z < -bouncingBoxThreshold_ )
+    {
+
+        std::cout << sceneCamera_->getCameraPos().x << std::endl;
+        std::cout << sceneCamera_->getCameraPos().y << std::endl;
+        std::cout << sceneCamera_->getCameraPos().z << std::endl;
+        sceneCamera_->setCameraFront(-1.0f*sceneCamera_->getCameraFront());
+        sceneCamera_->setCameraRight(-1.0f*sceneCamera_->getCameraRight());
+
+        tooFarMSGtime_ = glfwGetTime();
+
+    }
+
+
+}
+
 void GT_GameplayScene::integrateAircrafts(GLfloat deltaTime)
 {
+
+    checkForBouncingBox();
+
     fighter_->Integrate(sceneCamera_, deltaTime);
 
     auto eit = enemies_.begin();

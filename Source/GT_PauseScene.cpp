@@ -17,8 +17,6 @@ GT_PauseScene::GT_PauseScene()
     carrier_ = GT_Locator::getUSSCarrier();
     fighter_ = GT_Locator::getFighter();
 
-    nextScene_ = pauseScene;
-
     std::cout << " GT_PauseScene initialized " << std::endl;
 }
 
@@ -61,20 +59,10 @@ void GT_PauseScene::renderScene()
         else
             fontSize = 0.4f;
 
-        font_->PrintLine(buttons_[i], 400.0f, 400.0f-i*45.0f, fontSize, glm::vec3(0.50, 0.1f, 1.0f));
+        font_->PrintLine(buttons_[i], 0.45f, 0.50f-i*0.050f, fontSize, glm::vec3(0.0, 0.3f, 0.2f));
     }
 
-
-    font_->PrintLine("Time: ", 25.0f, 25.0f, .50f, glm::vec3(1.0, 0.1f, 0.1f));
-    font_->PrintLine( std::to_string(glfwGetTime()), 120.0f, 25.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
-    font_->PrintLine("FPS: ", 25.0f, 50.0f, .50f, glm::vec3(1.0, 0.1f, 0.1f));
-    font_->PrintLine( std::to_string(1/deltaTime_), 120.0f, 50.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
-    font_->PrintLine("Speed: ", 25.0f, 75.0f, .50f, glm::vec3(1.0, 0.1f, 0.1f));
-    font_->PrintLine( std::to_string(sceneCamera_->getSpeed()), 120.0f, 75.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
-    font_->PrintLine("Altitude: ", 25.0f, 100.0f, .50f, glm::vec3(1.0, 0.1f, 0.1f));
-    font_->PrintLine( std::to_string(sceneCamera_->getCameraPos().y), 120.0f, 100.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
-
-//    font_->PrintLine("PAUSE ", 600.0f, 400.0f, 1.0f, glm::vec3(1.0, 0.1f, 0.1f));
+    font_->PrintLine("PAUSE ", 0.700f, 0.70f, 1.2f, glm::vec3(0.0, 0.4f, 0.3f));
 
     ////////////////////////   rendering phase   /////////////////////////////
 
@@ -103,8 +91,9 @@ void GT_PauseScene::sceneKeyboardHandler(bool* keys, int key, int scancode, int 
 {
     keys_ = keys;
 
-    if (keys[GLFW_KEY_LEFT] || keys[GLFW_KEY_DOWN] && action == GLFW_PRESS)
+    if (keys[GLFW_KEY_LEFT] || keys[GLFW_KEY_UP] && action == GLFW_PRESS)
     {
+
         if (currButton_ == 0)
             currButton_ = buttons_.size() - 1;
         else
@@ -121,9 +110,9 @@ void GT_PauseScene::sceneKeyboardHandler(bool* keys, int key, int scancode, int 
     if (keys[GLFW_KEY_ENTER] && action == GLFW_PRESS)
     {
         if (currButton_ == 0)
-            nextScene_ = gameplay;
+            GT_Locator::getSceneManager()->activateScene( gameplay );
         else if (currButton_ == 1)
-            nextScene_ = menuScene;
+            GT_Locator::getSceneManager()->activateScene( menuScene );
     }    
 }
 

@@ -32,28 +32,28 @@ void GT_HUD::defineShader()
 
 void GT_HUD::definePanels()
 {
-    // Info
-    panel Info;
-    Info.topLeft        = glm::vec2(0.56, -0.98);
-    Info.bottomRight    = glm::vec2(0.9,-0.45);
+    // Radar
+    panel Radar;
+    Radar.topLeft        = glm::vec2(0.65, -0.98);
+    Radar.bottomRight    = glm::vec2(0.95, -0.45);
 
     // Mission objectives
     panel Evade;
-    Evade.topLeft      = glm::vec2(0.50, 0.35);
-    Evade.bottomRight  = glm::vec2(0.95, 0.58);
+    Evade.topLeft      = glm::vec2(0.60, 0.8);
+    Evade.bottomRight  = glm::vec2(0.85, 0.92);
 
     panel Locked;
-    Locked.topLeft       = glm::vec2(0.54, 0.6);
-    Locked.bottomRight   = glm::vec2(0.92 , 0.72);
+    Locked.topLeft     = glm::vec2(0.60, 0.65);
+    Locked.bottomRight = glm::vec2(0.85, 0.78);
 
     panel fireLocked;
-    fireLocked.topLeft       = glm::vec2(0.56, 0.75);
-    fireLocked.bottomRight   = glm::vec2(0.90 , 0.95);
+    fireLocked.topLeft       = glm::vec2(0.60, 0.50);
+    fireLocked.bottomRight   = glm::vec2(0.85, 0.63);
 
-    // Radar
-    panel Radar;
-    Radar.topLeft       = glm::vec2(-0.98, 0.4);
-    Radar.bottomRight   = glm::vec2(-0.50, 0.95);
+    // Info
+    panel Info;
+    Info.topLeft       = glm::vec2(-0.98, 0.6);
+    Info.bottomRight   = glm::vec2(-0.70, 0.92);
 
     panelSettings_.push_back(Info);
     panelSettings_.push_back(Radar);

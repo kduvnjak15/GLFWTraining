@@ -12,7 +12,8 @@ enum SOUND
     LAND,
     ENGINE,
     OCEAN,
-    EXPLOSION
+    EXPLOSION,
+    BEEP
 
 };
 

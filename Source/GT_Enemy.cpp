@@ -15,7 +15,7 @@ GT_Enemy::GT_Enemy()
     this->up_    = glm::vec3(0.0f, 1.0f, 0.0f);
     this->right_ = glm::normalize(glm::cross(this->front_, this->up_));
 
-    setScale(10.0f);
+    setScale(5.0f);
 
     GLfloat rnum = rand() / GLfloat(RAND_MAX);    
 
@@ -40,7 +40,7 @@ void GT_Enemy::Draw(GT_Camera *tempCam)
 void GT_Enemy::Integrate(GT_Camera *tempCam, GLfloat DT_)
 {
 
-    if (this->position_.y < -20)
+    if (this->position_.y < 0)
     {
         dead_ = true;
         return;
@@ -54,13 +54,24 @@ void GT_Enemy::Integrate(GT_Camera *tempCam, GLfloat DT_)
     else
     {
 
-        glm::vec3 dir = target_->getPosition() - this->position_;
-        dir = glm::normalize(dir);
-        GLfloat dotP = glm::dot(dir, this->front_);
-        while (dotP < 0.2)
+        if (glm::length(GT_Locator::getFighter()->getPosition() - this->position_)< 20)
         {
-            dir = glm::normalize(dir + this->front_);
-            dotP = glm::dot(dir, this->front_);
+            GT_Locator::getFighter()->explode();
+            GT_Aircraft::explode();
+        }
+
+
+        glm::vec3 dir = target_->getPosition() - this->position_;
+        glm::vec3 frontDir = this->front_;
+
+        dir = glm::normalize(dir);
+        frontDir = glm::normalize(frontDir);
+
+        GLfloat dotP = glm::dot(dir,frontDir);
+        while (dotP < 0.99999)
+        {
+            dir = glm::normalize(dir + frontDir);
+            dotP = glm::dot(dir, frontDir);
         }
 
         this->front_ = dir;

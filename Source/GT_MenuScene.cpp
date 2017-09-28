@@ -30,8 +30,6 @@ GT_MenuScene::GT_MenuScene()
 
     soundJetPos_ = fighter_->getPosition().x;
 
-    nextScene_ = menuScene;
-
     std::cout << " GT_MenuScene initialized " << std::endl;
 }
 
@@ -74,14 +72,14 @@ void GT_MenuScene::sceneKeyboardHandler(bool* keys, int key, int scancode, int a
             soundJetPos_ = sceneCamera_->getCameraPos().x;
             if (stopAnimateGameplay_)
             {
-                nextScene_ = gameplay;
+                GT_Locator::getSceneManager()->activateScene( gameplay );
             }
         }
 
         if (currButton_ == 1)
-            nextScene_ = credits;
+            GT_Locator::getSceneManager()->activateScene( credits );
         if (currButton_ == 2)
-            nextScene_ = exitGame;
+            GT_Locator::getSceneManager()->activateScene( exitGame );
     }
 }
 
@@ -95,7 +93,7 @@ void GT_MenuScene::initGameplayScene()
     dirtySoundJet_ = false;
     soundJet_.stop();
 
-    nextScene_ = gameplay;
+    GT_Locator::getSceneManager()->activateScene( gameplay );
     GT_Locator::getGameCamera()->setCameraPos(fighter_->getPosition());
     GT_Locator::getGameCamera()->setCameraFront(fighter_->getFront());
     GT_Locator::getGameCamera()->setCameraRight(fighter_->getRight());
@@ -166,7 +164,7 @@ void GT_MenuScene::renderScene()
         else
             fontSize = 0.4f;
 
-        font_->PrintLine(buttons_[i], 400.0f, 200.0f-i*45.0f, fontSize, glm::vec3(0.50, 0.1f, 1.0f));
+        font_->PrintLine(buttons_[i], 0.45f, 0.50f-i*0.050f, fontSize, glm::vec3(0.0, 0.3f, 0.2f));
     }
 
 

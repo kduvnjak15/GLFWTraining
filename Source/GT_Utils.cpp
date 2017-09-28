@@ -15,6 +15,6 @@ void GT_Utils::drawImage(GT_Image& imgRef)
 
 void GT_Utils::getWindowWidthAndHeight(GLuint &win_width, GLuint &win_height)
 {
-    win_width  = window_width;
-    win_height = window_height;
+    win_width  = GT_Locator::getGameCamera()->getWindowWidth();
+    win_height = GT_Locator::getGameCamera()->getWindowHeight();
 }

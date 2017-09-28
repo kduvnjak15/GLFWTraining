@@ -65,7 +65,7 @@ void GT_Actor::Draw(GT_Camera *tempCam)
     glm::mat4 planeOrient = glm::lookAt(glm::vec3(0.0f), this->front_, this->up_);
 
     glm::mat4 view = tempCam->GetViewMatrix();
-    glm::mat4 projection = glm::perspective(ZOOM, (window_width*1.0f)/window_height, 0.1f, horizon);
+    glm::mat4 projection = glm::perspective(ZOOM, (tempCam->getWindowWidth()*1.0f)/tempCam->getWindowHeight(), 0.1f, horizon);
 
     model =  tr * glm::inverse(planeOrient) * rot * sc;
 
