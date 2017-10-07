@@ -16,10 +16,12 @@ public:
 
     void sceneKeyboardHandler(bool* keys, int key, int scancode, int action, int mode);
 
+    void resetGameplay();
+
+
 private:
 
     void nextLevel();
-
     void checkCrosshair();
 
     void printMSG();
@@ -40,7 +42,6 @@ private:
     GT_Fighter* fighter_;
     GT_USSCarrier* ussCarrier_;
 
-    std::vector<GT_Actor*> actors_;
     std::vector<GT_Enemy*> enemies_;
 
     GT_HUD* hud_;

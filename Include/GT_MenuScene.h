@@ -16,12 +16,12 @@ public:
 
     void integrateScene(GLfloat deltaTime);
 
+    void resetMenuGameplay();
 private:
 
     void animateCam();
     void animateGameplay();
     void initGameplayScene();
-
 
     std::vector<const char* > buttons_;
     int currButton_;
@@ -42,4 +42,5 @@ private:
 
     bool startAnimateGameplay_;
     bool stopAnimateGameplay_;
+
 };

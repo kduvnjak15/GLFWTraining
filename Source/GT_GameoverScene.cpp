@@ -1,5 +1,6 @@
 #include "GT_GameoverScene.h"
-
+#include "GT_MenuScene.h"
+#include "GT_GameplayScene.h"
 
 
 GT_GameoverScene::GT_GameoverScene()
@@ -36,30 +37,38 @@ void GT_GameoverScene::checkKeyboardInput()
 //        if (keys_[GLFW_KEY_E])
 //            camTimer_+=1.0f;
 //    }
+
+
 }
 
 void GT_GameoverScene::sceneKeyboardHandler(bool *keys, int key, int scancode, int action, int mode)
 {
     keys_ = keys;
-
-    if (keys[GLFW_KEY_ESCAPE] && action == GLFW_PRESS)
+    if (keys_[GLFW_KEY_ESCAPE] && action == GLFW_PRESS)
     {
-        if (fighter_->getPosition().y < 10 || fighter_->explode_ > 0 || carrier_->explode_ )
+        GT_Locator::getSceneManager()->activateScene( gameplay );
+        GT_GameplayScene* gameplayScenePtr =dynamic_cast<GT_GameplayScene*>(GT_Locator::getSceneManager()->getActiveScene());
+        if (!fighter_->isFreeMode() && sceneEnum_ != WIN)
+        {
+            gameplayScenePtr->resetGameplay();
+
             GT_Locator::getSceneManager()->activateScene( menuScene );
-        else
-            GT_Locator::getSceneManager()->activateScene(gameplay);
+            GT_MenuScene* menuScenePtr =dynamic_cast<GT_MenuScene*>(GT_Locator::getSceneManager()->getActiveScene());
+            menuScenePtr->resetMenuGameplay();
+        }
     }
+
 }
 
 void GT_GameoverScene::printWIN()
 {
-    font_->PrintLine("MISSION ACCOMPLISHED!", 190.0f, 450.0f, 1.00f, glm::vec3(1.0, 1.0f, 1.0f));
+    font_->PrintLine("MISSION ACCOMPLISHED!", 0.37, 0.6f, 1.00f, glm::vec3(1.0, 1.0f, 1.0f));
 
-    font_->PrintLine("EPIC WIN!", 430.0f, 400.0f, 1.00f, glm::vec3(1.0, 1.0f, 1.0f));
+    font_->PrintLine("EPIC WIN!", 0.420f, 0.70f, 1.00f, glm::vec3(1.0, 1.0f, 1.0f));
 
-    font_->PrintLine("You have passed all levels and unlocked free mode!", 235.0f, 350.0f, .50f, glm::vec3(1.0, 1.0f, 1.0f));
+    font_->PrintLine("You have passed all levels and unlocked free mode!", 0.3f, 0.35f, .50f, glm::vec3(1.0, 1.0f, 1.0f));
 
-    font_->PrintLine("GOD SPEED, ACE!!!", 400.0f, 110.0f, .50f, glm::vec3(1.0, 1.0f, 1.0f));
+    font_->PrintLine("GOD SPEED, ACE!!!", 0.42f, 0.20f, .50f, glm::vec3(1.0, 1.0f, 1.0f));
 
 }
 
@@ -68,23 +77,23 @@ void GT_GameoverScene::printLOSE()
 
     if (carrier_->explode_ > 0 )
     {
-        font_->PrintLine("YOU WORTHLESS PIECE OF SHIT!!!", 120.0f, 450.0f, 0.70f, glm::vec3(1.0, 1.0f, 1.0f));
+        font_->PrintLine("YOU WORTHLESS PIECE OF SHIT!!!",  0.35f, 0.80f, .70f, glm::vec3(1.0, 1.0f, 1.0f));
 
-        font_->PrintLine("LET'S HOPE YOU DON'T LOOK LIKE YOU PLAY!", 240.0f, 200.0f, .50f, glm::vec3(1.0, 1.0f, 1.0f));
+        font_->PrintLine("LET'S HOPE YOU DON'T LOOK LIKE YOU PLAY!",  0.38f, 0.20f, .50f, glm::vec3(1.0, 1.0f, 1.0f));
     }
     else if (fighter_->explode_ > 0)
     {
-        font_->PrintLine("YOU SUCK!", 380.0f, 450.0f, 1.00f, glm::vec3(1.0, 1.0f, 1.0f));
+        font_->PrintLine("YOU SUCK!",  0.44f, 0.80f, 1.0f, glm::vec3(1.0, 1.0f, 1.0f));
 
-        font_->PrintLine("BUY YOURSELF A BICYCLE FIRST!", 300.0f, 200.0f, .50f, glm::vec3(1.0, 1.0f, 1.0f));
+        font_->PrintLine("BUY YOURSELF A BICYCLE FIRST!", 0.40f, 0.20f, .50f, glm::vec3(1.0, 1.0f, 1.0f));
     }
 }
 
 void GT_GameoverScene::printDROWN()
 {
-    font_->PrintLine("YOU FLY LOW LIKE YOUR MOMMA's IQ! ", 290.0f, 450.0f, .50f, glm::vec3(1.0, 1.0f, 1.0f));
+    font_->PrintLine("YOU FLY LOW LIKE YOUR MOMMA's IQ! ", 0.38f, 0.80f, .50f, glm::vec3(1.0, 1.0f, 1.0f));
 
-    font_->PrintLine("Don't hold your breath!", 390.0f, 200.0f, .50f, glm::vec3(1.0, 1.0f, 1.0f));
+    font_->PrintLine("Don't hold your breath!", 0.44f, 0.20f, .50f, glm::vec3(1.0, 1.0f, 1.0f));
 }
 
 void GT_GameoverScene::renderScene()
@@ -139,7 +148,12 @@ void GT_GameoverScene::integrateScene(GLfloat deltaTime_)
     {
         std::cout << GT_Locator::getUSSCarrier()->getPosition().y << std::endl;
         if (GT_Locator::getUSSCarrier()->getPosition().y < 14)
+        {
             GT_Locator::getSceneManager()->activateScene( menuScene );
+//            GT_Scene* menusceneHolder = GT_Locator::getSceneManager()->getActiveScene();
+//            GT_MenuScene* menuscenePtr = dynamic_cast<GT_MenuScene*>(menusceneHolder);
+//            menuscenePtr->initializeMenu();
+        }
 
         GT_Locator::getUSSCarrier()->Integrate(sceneCamera_, deltaTime_);
 

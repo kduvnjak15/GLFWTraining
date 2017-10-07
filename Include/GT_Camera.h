@@ -54,6 +54,7 @@ public:
     void setCameraFront(glm::vec3 camFront)     { cameraFront   = camFront; }
     void setCameraRight(glm::vec3 camRight)     { cameraRight   = camRight; }
     void setCameraUp(glm::vec3 camUp)           { cameraUp      = camUp;    }
+    void setSpeed(GLfloat speed)             { speed_      = speed;    }
 
     glm::vec3 getCameraPos()        { return cameraPos; }
     glm::vec3 getCameraFront()      { return cameraFront; }

@@ -30,9 +30,12 @@ void GT_SManager::activateScene(sceneType sceneEnum)
 GT_SManager::~GT_SManager()
 {
     std::map<sceneType,GT_Scene*>::iterator sit;
-    for (sit =sceneMap_.begin(); sit != sceneMap_.end(); sit++)
+    for (sit =sceneMap_.begin(); sit != sceneMap_.end(); sit++ )
     {
-        delete sit->second;
+        if (sit != sceneMap_.end())
+            if (sit->second != nullptr)
+                delete sit->second;
     }
+
 
 }

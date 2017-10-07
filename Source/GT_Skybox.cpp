@@ -96,3 +96,8 @@ void GT_Skybox::Draw(GT_Camera* tempCam)
 
 
 }
+
+GT_Skybox::~GT_Skybox()
+{
+    delete skyboxShader_;
+}

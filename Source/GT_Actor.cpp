@@ -12,7 +12,6 @@ GT_Actor::GT_Actor(GT_Model* actorModel)
       viewPosLoc_(glGetUniformLocation(actorShader_->shaderProgram_, "viewPos")),
       scaleActor_(1.0f)
 {
-
 }
 
 void GT_Actor::setPosition(glm::vec3 pos_)

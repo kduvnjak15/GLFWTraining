@@ -15,6 +15,6 @@ public:
 
     void draw();
 
-    ~GT_Particle();
+    ~GT_Particle() = default;
 };
 

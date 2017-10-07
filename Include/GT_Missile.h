@@ -25,9 +25,12 @@ public:
     bool isFired() { return fired_; }
 
     GLboolean isDead() { return dead_;}
+    void selfDestruct() { dead_ = true; }
 
     glm::vec3 getPosition() {return position_; }
     void printOwner() { std::cout << ownerPtr_ << std::endl; }
+
+
 
 protected:
 

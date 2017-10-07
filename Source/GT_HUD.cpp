@@ -34,7 +34,7 @@ void GT_HUD::definePanels()
 {
     // Radar
     panel Radar;
-    Radar.topLeft        = glm::vec2(0.65, -0.98);
+    Radar.topLeft        = glm::vec2(0.6, -0.98);
     Radar.bottomRight    = glm::vec2(0.95, -0.45);
 
     // Mission objectives

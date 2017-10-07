@@ -24,6 +24,8 @@ public:
 
     void bonusMissiles(int n) { appendMissiles(n);}
 
+    ~GT_Fighter();
+
 private:
 
     GLint isTarget_;

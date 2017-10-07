@@ -81,21 +81,31 @@ GT_Locator::~GT_Locator()
     if (skybox_)    delete skybox_;
     if (particle_)  delete particle_;
     if (hud_)       delete hud_;
+    if (fonts_)     delete fonts_;
+    if (gameCamera_)delete gameCamera_;
+    if (menuCamera_)delete menuCamera_;
 
     if (sfSpray_)   delete sfSpray_;
     if (sfLand_)    delete sfLand_;
     if (sceneManager_) delete sceneManager_;
 
 
-    for (auto it = models_.begin(); it != models_.end(); it++)
+    for (auto it = models_.begin(); it != models_.end(); )
     {
-        models_.erase(it);
+        it = models_.erase(it);
     }
 
-    for (auto it = actors_.begin(); it != actors_.end(); it++)
+    std::cout << "Models have " << models_.size() << "elements left"<< std::endl;
+
+    for (auto it = actors_.begin(); it != actors_.end();)
     {
-        actors_.erase(it);
+        it = actors_.erase(it);
     }
+
+    std::cout << "Actors have " << models_.size() << "elements left"<< std::endl;
+
+    delete fighter_;
+    delete ussCarrier_;
 
 
 }

@@ -185,3 +185,10 @@ void GT_Primitive::draw(GT_Camera *tempCam)
     glBindVertexArray(0);
 }
 
+GT_Primitive::~GT_Primitive()
+{
+    delete primitiveShader_;
+    std::cout << "GT_Primitive dtor" << std::endl;
+
+}
+

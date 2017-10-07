@@ -77,3 +77,15 @@ void GT_Weapon::appendMissiles(int num)
 
 
 }
+
+GT_Weapon::~GT_Weapon()
+{
+    std::vector<GT_Missile*>::iterator mit = missiles_.begin();
+    for (; mit != missiles_.end(); )
+            mit = missiles_.erase(mit);
+
+
+    std::cout <<" missiles deleted "<< missiles_.size() << std::endl;
+}
+
+

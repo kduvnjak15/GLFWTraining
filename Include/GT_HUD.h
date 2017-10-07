@@ -13,6 +13,8 @@ class GT_HUD : public GT_Primitive
 {
 public:
 
+    friend class GT_Radar;
+
     GT_HUD();
 
     void setRadarEnemyListPtr(std::vector<GT_Enemy*> &enemyList) { radar_->setRadarEnemyList(enemyList); }

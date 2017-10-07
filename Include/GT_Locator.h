@@ -80,6 +80,12 @@ public:
         return fighter_;
     }
 
+    static void resetFighter()
+    {
+        delete fighter_;
+        fighter_ = new GT_Fighter();
+    }
+
     static GT_USSCarrier* getUSSCarrier()
     {
         return ussCarrier_;

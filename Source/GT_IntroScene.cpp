@@ -104,7 +104,7 @@ void GT_IntroScene::sceneKeyboardHandler(bool* keys, int key, int scancode, int 
 
     if (keys[GLFW_KEY_ESCAPE] && action == GLFW_PRESS)
     {
-         GT_Locator::getSceneManager()->activateScene( exitGame );
+         GT_Locator::getSceneManager()->activateScene(menuScene);
     }
 }
 

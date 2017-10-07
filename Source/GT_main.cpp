@@ -57,7 +57,7 @@ public:
     }
     virtual ~GAME()
     {
-        delete windowPtr_;
+        delete locator_;
     }
 
     bool initGAME()
@@ -106,7 +106,7 @@ public:
 
     void loadGame()
     {
-        GT_Locator_ = new GT_Locator();
+        locator_ = new GT_Locator();
     }
 
     bool Run()
@@ -125,8 +125,6 @@ public:
             glfwPollEvents();
 
             /////////////////////    rendering    //////////////////
-            glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
             currScene_ = GT_Locator::getSceneManager()->getActiveScene();
             if (currScene_ != nullptr )
@@ -207,7 +205,7 @@ private:
     std::vector<GT_Scene*> scenes_;
     GT_Scene* currScene_;
 
-    GT_Locator* GT_Locator_;
+    GT_Locator* locator_;
 
 };
 
@@ -218,15 +216,19 @@ int main(int argc, char** argv)
     if ( !gamePtr->initGAME() )
     {
         std::cout<<" GameInit Failed! "<<std::endl;
+        delete gamePtr;
         return -1;
     }
 
     if ( !gamePtr->Run() )
     {
         std::cout<<" GameInit Failed! "<<std::endl;
+        delete gamePtr;
         return -1;
     }
 
+
     std::cout<<"GameOver"<<std::endl;
+    delete gamePtr;
     return 0;
 }

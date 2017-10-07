@@ -89,3 +89,11 @@ void GT_Enemy::Integrate(GT_Camera *tempCam, GLfloat DT_)
     GT_Weapon::Integrate(DT_);
 }
 
+GT_Enemy::~GT_Enemy()
+{
+    for (int i = 0 ; i < missiles_.size(); i++)
+    {
+        missiles_[i]->selfDestruct();
+    }
+    std::cout << "enemy deleted " << this << std::endl;
+}

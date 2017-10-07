@@ -23,6 +23,8 @@ public:
     void appendMissiles(int num);
     GLuint getNumOfMissiles_() {return numOfMissiles_;}
 
+    ~GT_Weapon();
+
 protected:
 
     GLuint numOfMissiles_;

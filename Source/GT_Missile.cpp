@@ -71,12 +71,13 @@ void GT_Missile::Draw(GT_Camera *tempCam)
 
     glm::mat4 tr  = glm::translate(glm::mat4(1.0f), position_);
 
+
     glm::mat4 planeOrient = glm::lookAt(glm::vec3(0.0f), this->front_, this->up_);
 
     glm::mat4 view = tempCam->GetViewMatrix();
     glm::mat4 projection = glm::perspective(ZOOM, (tempCam->getWindowWidth()*1.0f)/tempCam->getWindowHeight(), 0.1f, horizon);
 
-    model =  tr * yawRot * rollRot * pitchRot * glm::inverse(planeOrient) * rot * sc;
+    model =  tr */* yawRot * rollRot * pitchRot **/ glm::inverse(planeOrient) * rot * sc;
 
     glUniformMatrix4fv(modelLoc_, 1, GL_FALSE, glm::value_ptr(model));
     glUniformMatrix4fv(viewLoc_,  1, GL_FALSE, glm::value_ptr(view));

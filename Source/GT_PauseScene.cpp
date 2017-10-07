@@ -1,6 +1,8 @@
 
 
 #include "GT_PauseScene.h"
+#include "GT_GameplayScene.h"
+#include "GT_MenuScene.h"
 
 #include "GT_Locator.h"
 
@@ -110,9 +112,21 @@ void GT_PauseScene::sceneKeyboardHandler(bool* keys, int key, int scancode, int 
     if (keys[GLFW_KEY_ENTER] && action == GLFW_PRESS)
     {
         if (currButton_ == 0)
+        {
             GT_Locator::getSceneManager()->activateScene( gameplay );
+        }
         else if (currButton_ == 1)
+        {
+            GT_Locator::getSceneManager()->activateScene( gameplay );
+            GT_GameplayScene* gameplayScenePtr =dynamic_cast<GT_GameplayScene*>(GT_Locator::getSceneManager()->getActiveScene());
+            gameplayScenePtr->resetGameplay();
+
             GT_Locator::getSceneManager()->activateScene( menuScene );
+            GT_MenuScene* menuScenePtr =dynamic_cast<GT_MenuScene*>(GT_Locator::getSceneManager()->getActiveScene());
+            menuScenePtr->resetMenuGameplay();
+
+
+        }
     }    
 }
 

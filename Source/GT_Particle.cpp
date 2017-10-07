@@ -50,8 +50,4 @@ void GT_Particle::draw()
 }
 
 
-GT_Particle::~GT_Particle()
-{
-    delete primitiveShader_;
-}
 

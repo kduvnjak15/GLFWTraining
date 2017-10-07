@@ -73,7 +73,6 @@ void GT_Fighter::Draw(GT_Camera *tempCam)
     GT_Weapon::Draw(tempCam);
 }
 
-
 void GT_Fighter::Integrate(GT_Camera *tempCam, GLfloat DT_)
 {
 
@@ -103,4 +102,10 @@ void GT_Fighter::evade(bool flag)
         evade_--;
     if (evade_ < 0)
         evade_ = 0;
+}
+
+
+GT_Fighter::~GT_Fighter()
+{
+    std::cout << "fighter deleted " << std::endl;
 }

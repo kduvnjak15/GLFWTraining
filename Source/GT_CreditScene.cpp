@@ -48,17 +48,17 @@ void GT_CreditScene::sceneKeyboardHandler(bool *keys, int key, int scancode, int
 
 void GT_CreditScene::printMSG()
 {
-    font_->PrintLine("Sky Knights", 440.0f, 450.0f, .50f, glm::vec3(1.0, 1.0f, 1.0f));
+    font_->PrintLine("Sky Knights", 0.45, 0.8, .70f, glm::vec3(1.0, 1.0f, 1.0f));
 
-    font_->PrintLine("This flight simulation game is demo project for MACHINA", 200.0f, 400.0f, .50f, glm::vec3(1.0, 1.0f, 1.0f));
-    font_->PrintLine("game programming course. Written entirely in C++ and ", 200.0f, 370.0f, .50f, glm::vec3(1.0, 1.0f, 1.0f));
-    font_->PrintLine("OpenGL 3.3.", 200.0f, 340.0f, .50f, glm::vec3(1.0, 1.0f, 1.0f));
+    font_->PrintLine("This flight simulation game is demo project for MACHINA", 0.30f, 0.70f, .60f, glm::vec3(1.0, 1.0f, 1.0f));
+    font_->PrintLine("game programming course. Written entirely in C++ and ", 0.30f,  0.65f, .60f, glm::vec3(1.0, 1.0f, 1.0f));
+    font_->PrintLine("OpenGL 3.3.", 0.30f, 0.60f, .50f, glm::vec3(1.0, 1.0f, 1.0f));
 
-    font_->PrintLine("Author:                         Kresimir Duvnjak", 200.0f, 280.0f, .50f, glm::vec3(1.0, 1.0f, 1.0f));
+    font_->PrintLine("Author:                         Kresimir Duvnjak", 0.30f, 0.45f, .50f, glm::vec3(1.0, 1.0f, 1.0f));
 
-    font_->PrintLine("Special thanks to:       Dini Selimovic", 200.0f, 220.0f, .50f, glm::vec3(1.0, 1.0f, 1.0f));
-    font_->PrintLine("                                      Tomislav Vrdoljak", 200.0f, 190.0f, .50f, glm::vec3(1.0, 1.0f, 1.0f));
-    font_->PrintLine("All rights reserved, 2017", 370.0f, 110.0f, .50f, glm::vec3(1.0, 1.0f, 1.0f));
+    font_->PrintLine("Special thanks to:       Dini Selimovic", 0.30f, 0.40f, .50f, glm::vec3(1.0, 1.0f, 1.0f));
+    font_->PrintLine("                                      Tomislav Vrdoljak", 0.30f, 0.37f, .50f, glm::vec3(1.0, 1.0f, 1.0f));
+    font_->PrintLine("All rights reserved, 2017", 0.42f, 0.20f, .50f, glm::vec3(1.0, 1.0f, 1.0f));
 
 }
 

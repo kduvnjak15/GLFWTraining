@@ -74,13 +74,22 @@ void GT_MenuScene::sceneKeyboardHandler(bool* keys, int key, int scancode, int a
             {
                 GT_Locator::getSceneManager()->activateScene( gameplay );
             }
-        }
 
-        if (currButton_ == 1)
+        }
+        else if (currButton_ == 1)
             GT_Locator::getSceneManager()->activateScene( credits );
-        if (currButton_ == 2)
+        else if (currButton_ == 2)
             GT_Locator::getSceneManager()->activateScene( exitGame );
     }
+}
+
+void GT_MenuScene::resetMenuGameplay()
+{
+    startAnimateGameplay_ = false;
+    stopAnimateGameplay_  = false;
+
+    dirtySound_ = true;
+    dirtySoundJet_ = true;
 }
 
 
@@ -117,7 +126,6 @@ void GT_MenuScene::animateGameplay()
         soundJet_.play();
         dirtySoundJet_ = false;
     }
-
 
     if (fighter_->getPosition().x > 400.0f)
     {
@@ -166,16 +174,6 @@ void GT_MenuScene::renderScene()
 
         font_->PrintLine(buttons_[i], 0.45f, 0.50f-i*0.050f, fontSize, glm::vec3(0.0, 0.3f, 0.2f));
     }
-
-
-//    font_->PrintLine("Time: ", 25.0f, 25.0f, .50f, glm::vec3(1.0, 0.1f, 0.1f));
-//    font_->PrintLine( std::to_string(glfwGetTime()), 120.0f, 25.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
-//    font_->PrintLine("FPS: ", 25.0f, 50.0f, .50f, glm::vec3(1.0, 0.1f, 0.1f));
-//    font_->PrintLine( std::to_string(1/deltaTime_), 120.0f, 50.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
-//    font_->PrintLine("Speed: ", 25.0f, 75.0f, .50f, glm::vec3(1.0, 0.1f, 0.1f));
-//    font_->PrintLine( std::to_string(sceneCamera_->getSpeed()), 120.0f, 75.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
-//    font_->PrintLine("Altitude: ", 25.0f, 100.0f, .50f, glm::vec3(1.0, 0.1f, 0.1f));
-//    font_->PrintLine( std::to_string(sceneCamera_->getCameraPos().y), 120.0f, 100.0f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
 
     ////////////////////////   rendering phase   /////////////////////////////
 

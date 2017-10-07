@@ -13,7 +13,7 @@ GT_Alphabet::GT_Alphabet(GT_Camera *tempCam)
     }
 
     FT_Face face;
-    if (FT_New_Face(ft, "/usr/share/fonts/truetype/freefont/FreeSans.ttf", 0, &face))
+    if (FT_New_Face(ft, "../Content/FreeSans.ttf", 0, &face))
     {
         std::cout << "ERRROR::FREETYPE Failed to load font " << std::endl;
     }
@@ -83,6 +83,9 @@ void GT_Alphabet::RenderText(GT_Shader &shader, std::string text, GLfloat x, GLf
 
     x = tempCam_->getWindowWidth()  * x;
     y = tempCam_->getWindowHeight() * y;
+
+    scale = tempCam_->getWindowWidth() / 1920.0f * scale;
+
 
     shader.Use();
     glUniform4f(glGetUniformLocation(shader.shaderProgram_, "textColor"), color.x, color.y, color.z, color.w);

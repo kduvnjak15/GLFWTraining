@@ -17,7 +17,8 @@ public:
 
     bool isDead() { return dead_; }
 
-    ~GT_Enemy() { std::cout << "enemy deleted " << this << std::endl; }
+    ~GT_Enemy() ;
+
 
 private:
 

@@ -23,7 +23,7 @@ public:
     GLuint viewLoc_;
     GLuint projLoc_;
 
-    ~GT_Primitive() { std::cout << "GT_Primitive dtor" << std::endl; }
+    ~GT_Primitive();
 
 protected:
 

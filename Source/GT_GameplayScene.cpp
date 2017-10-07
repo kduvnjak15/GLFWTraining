@@ -249,7 +249,10 @@ void GT_GameplayScene::integrateScene(GLfloat deltaTime)
 {
 
     if (this->fighter_->explode_ || this->ussCarrier_->explode_)
+    {
+        sound_.stop();
         GT_Locator::getSceneManager()->activateScene( gameover );
+    }
 
     if (level_ > 2 && !(fighter_->isFreeMode()))
     {
@@ -270,11 +273,37 @@ void GT_GameplayScene::integrateScene(GLfloat deltaTime)
         sceneCamera_->enforceGravity(gravityFactor);
 
     if (sceneCamera_->getCameraPos().y < 10)
+    {
+        sound_.stop();
         GT_Locator::getSceneManager()->activateScene( gameover );
+    }
 
     checkCrosshair();
 }
 
+void GT_GameplayScene::resetGameplay()
+{
+    sound_.stop();
+    dirtySound_ = true;
+
+    delete fighter_;
+    fighter_ = new GT_Fighter();
+
+    ussCarrier_->setPosition( glm::vec3(0.0f, 80.0f, 0.0f));
+    ussCarrier_->explode_ = false;
+
+    sceneCamera_->setSpeed(150.0f);
+
+    level_ = 0;
+    std::vector<GT_Enemy*>::iterator eit;
+    for (eit = enemies_.begin(); eit!=enemies_.end(); )
+    {
+        eit = enemies_.erase(eit);
+    }
+    enemies_.clear();
+
+
+}
 
 void GT_GameplayScene::nextLevel()
 {
@@ -300,14 +329,10 @@ void GT_GameplayScene::checkForBouncingBox()
             sceneCamera_->getCameraPos().z > bouncingBoxThreshold_ || sceneCamera_->getCameraPos().z < -bouncingBoxThreshold_ )
     {
 
-        std::cout << sceneCamera_->getCameraPos().x << std::endl;
-        std::cout << sceneCamera_->getCameraPos().y << std::endl;
-        std::cout << sceneCamera_->getCameraPos().z << std::endl;
         sceneCamera_->setCameraFront(-1.0f*sceneCamera_->getCameraFront());
         sceneCamera_->setCameraRight(-1.0f*sceneCamera_->getCameraRight());
 
         tooFarMSGtime_ = glfwGetTime();
-
     }
 
 
