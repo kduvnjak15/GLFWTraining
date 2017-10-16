@@ -40,20 +40,20 @@ void GT_GameplayScene::checkKeyboardInput()
 void GT_GameplayScene::printMSG()
 {
     font_->PrintLine("Time: ", 0.015f, 0.05f, .50f, glm::vec3(1.0, 0.1f, 0.1f));
-    font_->PrintLine( std::to_string(glfwGetTime()), 0.07f, 0.05f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
+    font_->PrintLine( to_string(glfwGetTime()), 0.07f, 0.05f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
     font_->PrintLine("FPS: ",  0.015f, 0.07f, .50f, glm::vec3(1.0, 0.1f, 0.1f));
-    font_->PrintLine( std::to_string(60.0f - 1/deltaTime_), 0.07f, 0.07f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
+    font_->PrintLine( to_string(60.0f - 1/deltaTime_), 0.07f, 0.07f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
     font_->PrintLine("Speed: ", 0.015f, 0.09f, .50f, glm::vec3(1.0, 0.1f, 0.1f));
-    font_->PrintLine( std::to_string(sceneCamera_->getSpeed()), 0.07f, 0.09f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
+    font_->PrintLine( to_string(sceneCamera_->getSpeed()), 0.07f, 0.09f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
     font_->PrintLine("Altitude: ", 0.015f, 0.11f, .50f, glm::vec3(1.0, 0.1f, 0.1f));
-    font_->PrintLine( std::to_string(sceneCamera_->getCameraPos().y), 0.07f, 0.11f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
+    font_->PrintLine( to_string(sceneCamera_->getCameraPos().y), 0.07f, 0.11f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
     font_->PrintLine("Level: ", 0.015f, 0.13f, .50f, glm::vec3(1.0, 0.1f, 0.1f));
-    font_->PrintLine((fighter_->isFreeMode() ? "free mode" : std::to_string(level_)),0.07f, 0.13, .50f, glm::vec3(0.5, 0.8f, 0.2f));
+    font_->PrintLine((fighter_->isFreeMode() ? "free mode" : to_string(level_)),0.07f, 0.13, .50f, glm::vec3(0.5, 0.8f, 0.2f));
     font_->PrintLine("Bogies: ", 0.015f, 0.15, .50f, glm::vec3(1.0, 0.1f, 0.1f));
-    font_->PrintLine( std::to_string(enemies_.size()), 0.07f, 0.15f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
+    font_->PrintLine( to_string(enemies_.size()), 0.07f, 0.15f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
 
     font_->PrintLine("Missiles: ", 0.015f, 0.17f, .50f, glm::vec3(1.0, 0.1f, 0.1f));
-    font_->PrintLine( std::to_string(fighter_->getNumOfMissiles_()), 0.07f, 0.17f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
+    font_->PrintLine( to_string(fighter_->getNumOfMissiles_()), 0.07f, 0.17f, .50f, glm::vec3(0.5, 0.8f, 0.2f));
 
 
     glm::vec3 activeCol(1.0f, 0.1f, 0.1f);

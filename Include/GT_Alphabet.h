@@ -13,6 +13,15 @@
 
 #include "GT_Camera.h"
 
+#include <sstream>
+
+template <typename T>
+std::string to_string(const T& value) {
+    std::stringstream ss;
+    ss << value;
+    return ss.str();
+}
+
 struct Character
 {
     GLuint TextureID;
