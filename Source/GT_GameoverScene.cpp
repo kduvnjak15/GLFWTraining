@@ -46,17 +46,21 @@ void GT_GameoverScene::sceneKeyboardHandler(bool *keys, int key, int scancode, i
     keys_ = keys;
     if (keys_[GLFW_KEY_ESCAPE] && action == GLFW_PRESS)
     {
+        if (fighter_->isFreeMode() && sceneEnum_ == WIN)
+        {
+            GT_Locator::getSceneManager()->activateScene( gameplay );
+            return;
+        }
+
         GT_Locator::getSceneManager()->activateScene( gameplay );
         GT_GameplayScene* gameplayScenePtr =dynamic_cast<GT_GameplayScene*>(GT_Locator::getSceneManager()->getActiveScene());
-        if (!fighter_->isFreeMode() && sceneEnum_ != WIN)
-        {
-            gameplayScenePtr->resetGameplay();
-
-            GT_Locator::getSceneManager()->activateScene( menuScene );
-            GT_MenuScene* menuScenePtr =dynamic_cast<GT_MenuScene*>(GT_Locator::getSceneManager()->getActiveScene());
-            menuScenePtr->resetMenuGameplay();
-        }
+        gameplayScenePtr->resetGameplay();
+        GT_Locator::getSceneManager()->activateScene( menuScene );
+        GT_MenuScene* menuScenePtr =dynamic_cast<GT_MenuScene*>(GT_Locator::getSceneManager()->getActiveScene());
+        menuScenePtr->resetMenuGameplay();
     }
+
+
 
 }
 
