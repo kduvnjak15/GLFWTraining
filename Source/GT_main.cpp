@@ -111,7 +111,7 @@ public:
 
     bool Run()
     {
-        glfwSwapInterval(1);
+        glfwSwapInterval(10);
 
         loadGame();
 
@@ -119,7 +119,6 @@ public:
 
         while (!glfwWindowShouldClose(windowPtr_))
         {
-
             ///////////////////////////////////////////////////////
 
             glfwPollEvents();
@@ -127,6 +126,9 @@ public:
             /////////////////////    rendering    //////////////////
 
             currScene_ = GT_Locator::getSceneManager()->getActiveScene();
+            if (glfwGetTime() - currScene_->getLastFrame()  < 1/60.0)
+                continue;
+
             if (currScene_ != nullptr )
                 currScene_->renderScene();
             else

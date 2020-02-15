@@ -48,6 +48,8 @@ public:
     bool keyPressed_;
     GLfloat keyDelay_;
 
+    GLfloat getLastFrame() {return lastFrame_;}
+
 protected:    
 
     void updateClock();
